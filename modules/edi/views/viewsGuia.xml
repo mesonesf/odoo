@@ -1,0 +1,17 @@
+<odoo>
+    <data>
+        <!-- Heredar la vista de árbol (lista) de guias -->
+        <record id="view_picking_tree_inherit_ws" model="ir.ui.view">
+            <field name="name">stock.picking.tree.inherit.ws</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.vpicktree"/>
+            <field name="arch" type="xml">
+                <!-- Añadir campo ws_response al costado de "Contacto" -->
+                <xpath expr="//field[@name='partner_id']" position="after">
+                    <field name="ws_response" string="Estado WS" readonly="1" class="oe_inline"/>
+                    <button name="action_show_guia" string="Ver Guia" type="object" class="oe_highlight"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

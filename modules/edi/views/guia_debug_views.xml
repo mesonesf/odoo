@@ -1,0 +1,17 @@
+<odoo>
+    <record id="view_guia_debug_form" model="ir.ui.view">
+        <field name="name">guia.debug.form</field>
+        <field name="model">guia.debug</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="guia_id" readonly="1"/>
+                        <field name="guia_data" widget="text" readonly="1" nolabel="1"/>
+                        <field name="line_details" widget="text" readonly="1" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>

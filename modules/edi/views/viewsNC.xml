@@ -1,0 +1,17 @@
+<odoo>
+  <data>
+    <!-- Heredar la vista de árbol (lista) de facturas de cliente -->
+    <record id="view_out_invoice_tree_extendedNC" model="ir.ui.view">
+      <field name="name">account.move.out.credit_note.tree.extended</field>
+      <field name="model">account.move</field>
+      <field name="inherit_id" ref="account.view_out_credit_note_tree"/>  <!-- ¡ID clave! -->
+      <field name="arch" type="xml">
+        <!-- Añadir ws_response al costado de invoice_date -->
+        <xpath expr="//field[@name='invoice_date']" position="after">
+          <field name="ws_response" string="Estado WS" readonly="1" class="oe_inline"/>
+          <button name="action_show_payloadNC" string="Ver Payload" type="object" class="oe_highlight"/>
+        </xpath>
+      </field>
+    </record>
+  </data>
+</odoo>
