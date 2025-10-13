@@ -3,9 +3,9 @@ import requests
 import logging
 import json
 
-#modifique el 2025.10.06 INI
+#modifique el 2025.10.09 INI
 from odoo.exceptions import ValidationError
-#modifique el 2025.10.06 FIN
+#modifique el 2025.10.09 FIN
 
 
 _logger = logging.getLogger(__name__)
@@ -35,31 +35,27 @@ class StockPicking(models.Model):
         help="Seleccione el vehículo asignado a esta guía."
     )
 
-    #modifique el 2025.10.06 INI
-    @api.constrains('vehicle_id_guia', 'picking_type_id')
-    def _check_vehicle_required(self):
-        for picking in self:
-            if (picking.picking_type_id.code == 'outgoing' and 
-            not picking.vehicle_id_guia):
-                raise ValidationError("🚛 ¡Debe seleccionar un vehículo para guías de remisión!")
-    #modifique el 2025.10.06 FIN
-        
-    #esta variable se utilizará para poder saber la serie de la guia
-    # a través de su asiento diario
+
+    #modifique el 2025.10.09 INI
+    #esta variable se utilizará para poder saber la serie de la guia a través de su asiento diario
     ws_diario = ""
-
     def button_validate(self):
-        """Genera el diccionario con los datos de la factura para el API."""
-        global  ws_diario
+         print("✅ MI VALIDACIÓN SE ESTÁ EJECUTANDO")
+         """Genera el diccionario con los datos de la factura para el API."""
+         global  ws_diario
+         result = super(StockPicking, self).button_validate()
 
-        result = super(StockPicking, self).button_validate()
-        
-        #     """ Llama al WS para validar la Guia """    
-        #    Se ejecuta el WS cuando presionamos el boton de confirmar Documento
-        if self.picking_type_id.code == 'outgoing':
-             ws_diario = self.env['account.journal'].search([('name', 'ilike', 'Guias de Remision')], limit=1)
-             self._send_guia_to_ws()
-        return result
+         for picking in self:
+            if (picking.picking_type_id.code == 'outgoing'):
+                if not picking.vehicle_id_guia:
+                        raise ValidationError("🚛 ¡Debess seleccionar un vehículo para guías de remisión!")
+                else:
+                        ws_diario = self.env['account.journal'].search([('name', 'ilike', 'Guias de Remision')], limit=1)
+                        picking._send_guia_to_ws()
+            return result
+    #modifique el 2025.10.09 FIN
+
+
 
     
     def _send_guia_to_ws(self):

@@ -4,15 +4,18 @@
         <field name="model">stock.picking</field>
         <field name="inherit_id" ref="stock.view_picking_form"/>
         <field name="arch" type="xml">
+            <!-- modifique el 2025.10.09 INI -->
             <!-- Añadir campos en una nueva pestaña -->
             <xpath expr="//page[@name='note']" position="before">
                 <page name="transport_info" string="Datos de Transporte">
                     <group>
-                        <field name="vehicle_id_guia" widget="selection"/>  <!-- Usar widget de selección -->
+                        <field name="vehicle_id_guia" widget="selection" required="picking_type_id.code == 'outgoing'"
+                   placeholder="Seleccione vehículo para guías de remisión"/>  <!-- Usar widget de selección -->
                         <!--<field name="driver_id"/> -->
                     </group>
                 </page>
             </xpath>
+            <!-- modifique el 2025.10.09 FIN -->
         </field>
     </record>
 </odoo>
