@@ -1,0 +1,11 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_medical_specialty_user,medical.specialty.user,model_medical_specialty,base.group_user,1,1,1,1
+access_medical_template_user,medical.template.user,model_medical_template,base.group_user,1,1,1,1
+access_medical_template_question_user,medical.template.question.user,model_medical_template_question,base.group_user,1,1,1,1
+access_medical_patient_user,medical.patient.user,model_medical_patient,base.group_user,1,1,1,1
+access_medical_record_answer_user,medical.record.answer.user,model_medical_record_answer,base.group_user,1,1,1,1
+access_medical_clinical_record_user,medical.clinical.record.user,model_medical_clinical_record,base.group_user,1,1,1,1
+access_medical_evaluation_user,medical.evaluation.user,model_medical_evaluation,base.group_user,1,1,1,1
+access_medical_treatment_user,medical.treatment.user,model_medical_treatment,base.group_user,1,1,1,1
+access_medical_treatment_line_user,medical.treatment.line.user,model_medical_treatment_line,base.group_user,1,1,1,1
+access_medical_treatment_session_user,medical.treatment.session.user,model_medical_treatment_session,base.group_user,1,1,1,1

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Secuencia para Fichas Clínicas -->
+        <record id="seq_medical_clinical_record" model="ir.sequence">
+            <field name="name">Medical Clinical Record</field>
+            <field name="code">medical.clinical.record</field>
+            <field name="prefix">FICHA/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <!-- Secuencia para Evaluaciones -->
+        <record id="seq_medical_evaluation" model="ir.sequence">
+            <field name="name">Medical Evaluation</field>
+            <field name="code">medical.evaluation</field>
+            <field name="prefix">EVAL/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <!-- Secuencia para Tratamientos -->
+        <record id="seq_medical_treatment" model="ir.sequence">
+            <field name="name">Medical Treatment</field>
+            <field name="code">medical.treatment</field>
+            <field name="prefix">TRAT/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+    </data>
+</odoo>

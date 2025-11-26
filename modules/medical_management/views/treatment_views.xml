@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_medical_session_calendar" model="ir.ui.view">
+            <field name="name">medical.treatment.session.calendar</field>
+            <field name="model">medical.treatment.session</field>
+            <field name="arch" type="xml">
+                <calendar string="Sesiones Médicas" date_start="date" color="practitioner_id" mode="month" quick_create="0">
+                    <field name="patient_id"/>
+                    <field name="treatment_id"/>
+                    <field name="state"/>
+                </calendar>
+            </field>
+        </record>
+
+        <record id="view_medical_session_form" model="ir.ui.view">
+            <field name="name">medical.treatment.session.form</field>
+            <field name="model">medical.treatment.session</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="action_mark_done" string="Marcar como Realizada" type="object" class="btn-success" invisible="state != 'scheduled'"/>
+                        <button name="action_cancel" string="Cancelar" type="object" invisible="state == 'cancel'"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <field name="treatment_id" readonly="1" invisible="not context.get('default_treatment_id')"/>
+                            <field name="date"/>
+                            <field name="practitioner_id"/>
+                            <field name="patient_id" readonly="1"/>
+                        </group>
+                        <group string="Ejecución">
+                            <field name="procedure_notes" placeholder="Describa el procedimiento realizado en esta sesión..."/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        
+         <record id="view_medical_session_list" model="ir.ui.view">
+            <field name="name">medical.treatment.session.list</field>
+            <field name="model">medical.treatment.session</field>
+            <field name="arch" type="xml">
+                <list decoration-success="state=='done'" decoration-muted="state=='cancel'" decoration-info="state=='scheduled'">
+                    <field name="date"/>
+                    <field name="patient_id"/>
+                    <field name="treatment_id"/>
+                    <field name="practitioner_id"/>
+                    <field name="state"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_medical_treatment_list" model="ir.ui.view">
+            <field name="name">medical.treatment.list</field>
+            <field name="model">medical.treatment</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="name"/>
+                    <field name="patient_id"/>
+                    <field name="specialty_id"/>
+                    <field name="treatment_type"/>
+                    <field name="session_count"/>
+                    <field name="state" widget="badge" decoration-info="state == 'confirmed'" decoration-success="state == 'done'"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_medical_treatment_form" model="ir.ui.view">
+            <field name="name">medical.treatment.form</field>
+            <field name="model">medical.treatment</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="action_confirm" string="Confirmar Plan" type="object" class="btn-primary" invisible="state != 'draft'"/>
+                        
+                        <button name="action_create_invoice" string="Crear Factura" type="object" class="btn-secondary" 
+                                invisible="state == 'draft' or state == 'cancel'"/>
+                        
+                        <button name="action_done" string="Finalizar Tratamiento" type="object" class="btn-success" invisible="state != 'in_progress' and state != 'confirmed'"/>
+                        <button name="action_cancel" string="Cancelar" type="object" invisible="state == 'done' or state == 'cancel'"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <div name="button_box" class="oe_button_box">
+                            <button name="action_view_invoices" type="object" class="oe_stat_button" icon="fa-pencil-square-o" invisible="invoice_count == 0">
+                                <field name="invoice_count" widget="statinfo" string="Facturas"/>
+                            </button>
+                        </div>
+
+                        <div class="oe_title">
+                            <h1><field name="name"/></h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="patient_id" readonly="state != 'draft'"/>
+                                <field name="specialty_id" readonly="state != 'draft'"/>
+                                <field name="treatment_type" widget="radio" readonly="state != 'draft'"/>
+                            </group>
+                            <group>
+                                <field name="date" readonly="1"/>
+                                <field name="practitioner_id"/>
+                                <field name="evaluation_id"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Receta / Servicios">
+                                <field name="line_ids" readonly="state == 'done' or state == 'cancel'">
+                                    <list editable="bottom">
+                                        <field name="product_id"/>
+                                        <field name="quantity"/>
+                                        <field name="instructions"/>
+                                    </list>
+                                </field>
+                            </page>
+                            
+                            <page string="Sesiones Programadas" invisible="treatment_type != 'in_person'">
+                                <field name="session_ids" mode="list,kanban" readonly="state == 'done' or state == 'cancel'">
+                                    <list editable="bottom">
+                                        <field name="date"/>
+                                        <field name="practitioner_id"/>
+                                        <field name="procedure_notes"/>
+                                        <field name="state" widget="badge" decoration-success="state=='done'"/>
+                                        <button name="action_mark_done" icon="fa-check" type="object" title="Marcar Realizada" invisible="state != 'scheduled'"/>
+                                    </list>
+                                </field>
+                            </page>
+                            
+                            <page string="Notas">
+                                <field name="notes" placeholder="Indicaciones adicionales..."/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_medical_treatment" model="ir.actions.act_window">
+            <field name="name">Planes de Tratamiento</field>
+            <field name="res_model">medical.treatment</field>
+            <field name="view_mode">list,form</field>
+            <field name="help" type="html">
+              <p class="o_view_nocontent_smiling_face">
+                Cree su primer Plan de Tratamiento
+              </p>
+            </field>
+        </record>
+
+        <record id="action_medical_session_calendar" model="ir.actions.act_window">
+            <field name="name">Calendario de Sesiones</field>
+            <field name="res_model">medical.treatment.session</field>
+            <field name="view_mode">calendar,list,form</field>
+        </record>
+    </data>
+</odoo>

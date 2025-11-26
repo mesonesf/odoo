@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Plantillas Médicas - List -->
+        <record id="view_medical_template_list" model="ir.ui.view">
+            <field name="name">medical.template.list</field>
+            <field name="model">medical.template</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="name"/>
+                    <field name="template_type"/>
+                    <field name="specialty_id"/>
+                    <field name="active"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Plantillas Médicas - Form -->
+        <record id="view_medical_template_form" model="ir.ui.view">
+            <field name="name">medical.template.form</field>
+            <field name="model">medical.template</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name" required="1"/>
+                                <field name="template_type" required="1"/>
+                                <field name="specialty_id" required="1"/>
+                            </group>
+                            <group>
+                                <field name="active"/>
+                            </group>
+                        </group>
+                        
+                        <!-- AÑADIR PESTAÑA DE PREGUNTAS -->
+                        <notebook>
+                            <page string="Preguntas">
+                                <field name="question_ids" mode="list,form" nolabel="1">
+                                    <list editable="bottom">
+                                        <field name="sequence" widget="handle"/>
+                                        <field name="question_text"/>
+                                        <field name="question_type"/>
+                                        <field name="required"/>
+                                    </list>
+                                    <form>
+                                        <group>
+                                            <group>
+                                                <field name="sequence" required="1"/>
+                                                <field name="question_type" required="1"/>
+                                                <field name="required"/>
+                                            </group>
+                                        </group>
+                                        <field name="question_text" required="1" nolabel="1" placeholder="Ingrese el texto de la pregunta..."/>
+                                    </form>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Acción para Plantillas -->
+        <record id="action_medical_template" model="ir.actions.act_window">
+            <field name="name">Plantillas Médicas</field>
+            <field name="res_model">medical.template</field>
+            <field name="view_mode">list,form</field>
+            <field name="view_id" ref="view_medical_template_list"/>
+        </record>
+    </data>
+</odoo>

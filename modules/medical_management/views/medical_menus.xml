@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Menú Principal -->
+        <menuitem id="menu_medical_management" name="Gestión Médica" sequence="10"/>
+        
+        <!-- Submenús -->
+        <menuitem id="menu_medical_configuration" name="Configuración" parent="menu_medical_management" sequence="10"/>
+        <menuitem id="menu_medical_patients" name="Pacientes" parent="menu_medical_management" sequence="20"/>
+        <menuitem id="menu_medical_clinical" name="Clínica" parent="menu_medical_management" sequence="30"/>
+
+        <!-- Configuración -->
+        <menuitem id="menu_medical_specialties" name="Especialidades" parent="menu_medical_configuration" action="action_medical_specialty" sequence="10"/>
+        <menuitem id="menu_medical_templates" name="Plantillas" parent="menu_medical_configuration" action="action_medical_template" sequence="20"/>
+
+        <!-- Pacientes -->
+        <menuitem id="menu_patients_list" name="Pacientes" parent="menu_medical_patients" action="action_medical_patient" sequence="10"/>
+
+        <!-- Clínica -->
+        <menuitem id="menu_clinical_records" name="Fichas Clínicas" parent="menu_medical_clinical" action="action_medical_clinical_record" sequence="10"/>
+        <menuitem id="menu_evaluations" name="Evaluaciones Médicas" parent="menu_medical_clinical" action="action_medical_evaluation" sequence="20"/>
+        <menuitem id="menu_treatments" name="Tratamientos" parent="menu_medical_clinical" action="action_medical_treatment" sequence="30"/>
+        <menuitem id="menu_sessions" name="Calendario de Sesiones" parent="menu_medical_clinical" action="action_medical_session_calendar" sequence="40"/>
+    </data>
+</odoo>
