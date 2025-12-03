@@ -24,7 +24,8 @@ class AccountMove(models.Model):
     """ Aqui se crea el campo en la BD con el nombre SerieCorre para almacenar la Serie del Correlativo """
     #ws_seriecorre = fields.Char(string="Serie Correlativo", readonly=True)
 
-    def action_post(self):
+    #def action_post(self):
+    def action_fe_payload(self):
         """Genera el diccionario con los datos de la factura para el API."""
         global  ws_diario
 
@@ -1044,8 +1045,11 @@ class AccountMove(models.Model):
 
         self.ensure_one()
 
+        Tax=0.18
+
         # Busca el diario (ej: Diario de Ventas)
         ws_diario = self.env['account.journal'].search([], limit=1)
+
 
         """Obtiene Datos de la Factura."""
         factura_original = self.reversed_entry_id
