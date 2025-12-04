@@ -65,7 +65,7 @@ class StockPicking(models.Model):
 
         """ Método para consumir el WS de prueba """
         #api_url = "http://localhost:5000/validate_invoice"
-        api_url = "https://testsee.itc.com.pe/api/billservice"
+        api_url = self.company.service_url #"https://testsee.itc.com.pe/api/billservice"
 
         """Genera el JSON en el formato específico requerido."""
         self.ensure_one()
@@ -90,7 +90,7 @@ class StockPicking(models.Model):
                # CABECERA
                 "identificador": "GR",
                 "cod_tip_cpe": "09",
-                "cod_cliente_emis": 799,
+                "cod_cliente_emis": self.company.service_code or "", #self.company.service_code or "", #799,
                 'txt_serie': ws_diario.code, #G001
                 'txt_correlativo': self.name[7:], #self.name, #, #"00000077",
                 'num_ruc_rem': self.company_id.partner_id.vat or '',
@@ -115,7 +115,7 @@ class StockPicking(models.Model):
                 'mnt_tot_peso_bruto':sum(move.product_id.weight * move.quantity for move in self.move_ids if move.product_id.weight) or 0,
                 'cod_mot_trasalado':"01",
                 'trans_cod_tip_modalidad':"02",
-                'observaciones':"la guia de remision tiene que ser llevada obligatoriament",
+                'observaciones':"la guia de remision tiene que ser llevada obligatoriamente",
                 "txt_desc_motiv_tras": "VENTA - transporte privado",
                 "indicador": [
                     {
@@ -150,7 +150,7 @@ class StockPicking(models.Model):
                 # CABECERA
                 "identificador": "GR",
                 "cod_tip_cpe": "09",
-                "cod_cliente_emis": 799,
+                "cod_cliente_emis": self.company.service_code or "", #self.company.service_code or "", #799,
                 'txt_serie': ws_diario.code, #G001
                 'txt_correlativo': self.name[7:], #self.name, #, #"00000077",
                 'num_ruc_rem': self.company_id.partner_id.vat or '',
@@ -192,7 +192,7 @@ class StockPicking(models.Model):
 
         headers = {
                 'Content-Type': 'application/json',
-                'Authorization': f'WsC0nexBYB@:YQSa3C13gQKQb3LbLUdG2w==',  # ⭐¡Aquí va el token!
+                'Authorization': self.company.service_token #f'WsC0nexBYB@:YQSa3C13gQKQb3LbLUdG2w==',  # ⭐¡Aquí va el token!
             }
             
         try:
@@ -246,7 +246,7 @@ class StockPicking(models.Model):
             # "identificador": "GR",
             # "modelo": modelo,
             # "cod_tip_cpe": "09",
-            # "cod_cliente_emis": 799,
+            # "cod_cliente_emis": self.company.service_code or "", #self.company.service_code or "", #799,
             # 'num_ruc_rem': self.company_id.partner_id.vat or '',
             # 'nom_rzn_soc_rem': self.company_id.partner_id.name or '',
             # 'cod_tip_nif_rem':6,
@@ -268,7 +268,7 @@ class StockPicking(models.Model):
             
             "identificador": "GR",
             "cod_tip_cpe": "09",
-            "cod_cliente_emis": 799,
+            "cod_cliente_emis": self.company.service_code or "", #self.company.service_code or "", #799,
             'txt_serie': ws_diario.code, #G001
             'txt_correlativo': self.name[7:], #self.name, #, #"00000077",
             'num_ruc_rem': self.company_id.partner_id.vat or '',

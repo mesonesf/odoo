@@ -54,7 +54,7 @@ class AccountMove(models.Model):
 
         """ Método para consumir el WS de prueba """
         #api_url = "http://localhost:5000/validate_invoice"
-        api_url = "https://testsee.itc.com.pe/api/billservice"
+        api_url = self.company.service_url #"https://testsee.itc.com.pe/api/billservice"
 
         """Genera el JSON en el formato específico requerido."""
         self.ensure_one()
@@ -141,7 +141,7 @@ class AccountMove(models.Model):
             "cod_mnd": self.currency_id.name, #"PEN",
             "cod_tip_escenario": "01",
             "txt_placa": "",
-            "cod_cliente_emis": 799,
+            "cod_cliente_emis": self.company.service_code or "", #self.company.service_code or "", #799,
             "num_ruc_emis": self.company_id.vat or "", #"20603073828",
             "nom_rzn_soc_emis": self.company_id.name or "", #"BYBCOM",
             "cod_tip_nif_emis": 6,
@@ -177,7 +177,7 @@ class AccountMove(models.Model):
             "tipo_cambio": 0.00,
             "txt_condicion_pago": "20 dias",
             "flag_pagado": 0,
-            "observaciones": "ambiente de prueba",
+            "observaciones": "ambiente de produccion",
             "orden_compra": "",
             "guia_remision": ";;;",
             "flag_envio_automatico": 0,
@@ -241,7 +241,7 @@ class AccountMove(models.Model):
 
         headers = {
                 'Content-Type': 'application/json',
-                'Authorization': f'WsC0nexBYB@:YQSa3C13gQKQb3LbLUdG2w==',  # ⭐¡Aquí va el token!
+                'Authorization': self.company.service_token #f'WsC0nexBYB@:YQSa3C13gQKQb3LbLUdG2w==',  # ⭐¡Aquí va el token!
             }
             
         try:
@@ -279,7 +279,7 @@ class AccountMove(models.Model):
 
         """ Método para consumir el WS de prueba """
         #api_url = "http://localhost:5000/validate_invoice"
-        api_url = "https://testsee.itc.com.pe/api/billservice"
+        api_url = self.company.service_url #"https://testsee.itc.com.pe/api/billservice"
 
         """Genera el JSON en el formato específico requerido."""
         self.ensure_one()
@@ -361,7 +361,7 @@ class AccountMove(models.Model):
             "cod_mnd": self.currency_id.name, #"PEN",
             "cod_tip_escenario": "01",
             "txt_placa": "",
-            "cod_cliente_emis": 799,
+            "cod_cliente_emis": self.company.service_code or "", #self.company.service_code or "", #799,
             "num_ruc_emis": self.company_id.vat or "", #"20603073828",
             "nom_rzn_soc_emis": self.company_id.name or "", #"BYBCOM",
             "cod_tip_nif_emis": 6,
@@ -397,7 +397,7 @@ class AccountMove(models.Model):
             "tipo_cambio": 0.00,
             "txt_condicion_pago": "20 dias",
             "flag_pagado": 0,
-            "observaciones": "ambiente de prueba",
+            "observaciones": "ambiente de produccion",
             "orden_compra": "",
             "guia_remision": ";;;",
             "flag_envio_automatico": 0,
@@ -459,7 +459,7 @@ class AccountMove(models.Model):
 
         headers = {
                 'Content-Type': 'application/json',
-                'Authorization': f'WsC0nexBYB@:YQSa3C13gQKQb3LbLUdG2w==',  # ⭐¡Aquí va el token!
+                'Authorization': self.company.service_token #f'WsC0nexBYB@:YQSa3C13gQKQb3LbLUdG2w==',  # ⭐¡Aquí va el token!
             }
             
         try:
@@ -497,7 +497,7 @@ class AccountMove(models.Model):
 
         """ Método para consumir el WS de prueba """
         #api_url = "http://localhost:5000/validate_invoice"
-        api_url = "https://testsee.itc.com.pe/api/billservice"
+        api_url = self.company.service_url #"https://testsee.itc.com.pe/api/billservice"
 
         """Genera el JSON en el formato específico requerido."""
         self.ensure_one()
@@ -582,7 +582,7 @@ class AccountMove(models.Model):
             "cod_mnd": self.currency_id.name, #"PEN",
             "cod_tip_escenario": "01",
             "txt_placa": "",
-            "cod_cliente_emis": 799,
+            "cod_cliente_emis": self.company.service_code or "", #self.company.service_code or "", #799,
             "num_ruc_emis": self.company_id.vat or "", #"20603073828",
             "nom_rzn_soc_emis": self.company_id.name or "", #"BYBCOM",
             "cod_tip_nif_emis": 6,
@@ -639,7 +639,7 @@ class AccountMove(models.Model):
 
         headers = {
                 'Content-Type': 'application/json',
-                'Authorization': f'WsC0nexBYB@:YQSa3C13gQKQb3LbLUdG2w==',  # ⭐¡Aquí va el token!
+                'Authorization': self.company.service_token #f'WsC0nexBYB@:YQSa3C13gQKQb3LbLUdG2w==',  # ⭐¡Aquí va el token!
             }
             
         try:
@@ -677,7 +677,7 @@ class AccountMove(models.Model):
 
         """ Método para consumir el WS de prueba """
         #api_url = "http://localhost:5000/validate_invoice"
-        api_url = "https://testsee.itc.com.pe/api/billservice"
+        api_url = self.company.service_url #"https://testsee.itc.com.pe/api/billservice"
 
         """Genera el JSON en el formato específico requerido."""
         self.ensure_one()
@@ -761,7 +761,7 @@ class AccountMove(models.Model):
             "cod_mnd": self.currency_id.name, #"PEN",
             "cod_tip_escenario": "01",
             "txt_placa": "",
-            "cod_cliente_emis": 799,
+            "cod_cliente_emis": self.company.service_code or "", #self.company.service_code or "", #799,
             "num_ruc_emis": self.company_id.vat or "", #"20603073828",
             "nom_rzn_soc_emis": self.company_id.name or "", #"BYBCOM",
             "cod_tip_nif_emis": 6,
@@ -814,7 +814,7 @@ class AccountMove(models.Model):
 
         headers = {
                 'Content-Type': 'application/json',
-                'Authorization': f'WsC0nexBYB@:YQSa3C13gQKQb3LbLUdG2w==',  # ⭐¡Aquí va el token!
+                'Authorization': self.company.service_token #f'WsC0nexBYB@:YQSa3C13gQKQb3LbLUdG2w==',  # ⭐¡Aquí va el token!
             }
             
         try:
@@ -887,7 +887,7 @@ class AccountMove(models.Model):
                     "cod_mnd": self.currency_id.name, #"PEN",
                     "cod_tip_escenario": "01",
                     "txt_placa": "",
-                    "cod_cliente_emis": 799,
+                    "cod_cliente_emis": self.company.service_code or "", #self.company.service_code or "", #799,
                     "num_ruc_emis": self.company_id.vat or "", #"20603073828",
                     "nom_rzn_soc_emis": self.company_id.name or "", #"BYBCOM",
                     "cod_tip_nif_emis": 6,
@@ -923,7 +923,7 @@ class AccountMove(models.Model):
                     "tipo_cambio": 0.00,
                     "txt_condicion_pago": "20 dias",
                     "flag_pagado": 0,
-                    "observaciones": "ambiente de prueba",
+                    "observaciones": "ambiente de produccion",
                     "orden_compra": "",
                     "guia_remision": ";;;",
                     "flag_envio_automatico": 0,
@@ -1063,7 +1063,7 @@ class AccountMove(models.Model):
             "cod_tip_cpe": "07",
             "cod_mnd": self.currency_id.name, #"PEN",
             "cod_tip_escenario": "01",
-            "cod_cliente_emis": 799,
+            "cod_cliente_emis": self.company.service_code or "", #self.company.service_code or "", #799,
             "num_ruc_emis": self.company_id.vat or "", #"20603073828",
             "nom_rzn_soc_emis": self.company_id.name or "", #"BYBCOM",
             "cod_tip_nif_emis": 6,

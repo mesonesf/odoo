@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': "Modulo de Facturacion Electronica",
-
+    'version': '1.0',
     'summary': "Gestiona los Documentos Oficiales de la SUNAT",
 
     'description': """
@@ -15,10 +15,9 @@
     # Check https://github.com/odoo/odoo/blob/15.0/odoo/addons/base/data/ir_module_category_data.xml
     # for the full list
     'category': 'EDI',
-    'version': '0.1',
-
+    'author': 'Mejores Horizontes: Manuel Fernando Mesones Sanchez',
     # any module necessary for this one to work correctly
-    'depends': ['account','fleet'],
+    'depends': ['account','fleet','base'],
 
     # always loaded
     'data': [
@@ -30,6 +29,7 @@
         'views/stock_picking_views.xml',
         'views/viewsGuia.xml',
         'views/guia_debug_views.xml',
+        'views/res_company_view.xml'
     ],
     # only loaded in demonstration mode
     'demo': [

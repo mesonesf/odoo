@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_company_form_custom_token" model="ir.ui.view">
+        <field name="name">res.company.form.custom.token</field>
+        <field name="model">res.company</field>
+        <field name="inherit_id" ref="base.view_company_form"/>
+        <field name="arch" type="xml">
+            
+            <xpath expr="//notebook" position="inside">
+                <page string="Integración / API">
+                    <group>
+                        <group string="Conexión">
+                           <field name="service_url" widget="url" placeholder="https://api.ejemplo.com/v1"/>
+                        </group>
+                        <group string="Credenciales">
+                            <field name="service_token" password="True"/>
+                            <field name="service_code"/> 
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+
+        </field>
+    </record>
+</odoo>

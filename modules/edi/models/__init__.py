@@ -5,4 +5,4 @@ from . import models
 from . import payload_debug
 from . import stock_picking
 from . import guia_debug
-
+from . import res_company

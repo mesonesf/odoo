@@ -1,11 +1,13 @@
 {
      'name': 'Medical Management',
      'version': '1.0.1',
+     'category': 'Medical',
      'summary': 'Sistema de Gestión Médica Integral',
       'description': """
           Módulo completo para gestión de pacientes, fichas clínicas, evaluaciones, 
           tratamientos y programación de sesiones médicas.
       """,
+     'author': 'Mejores Horizontes: Manuel Fernando Mesones Sanchez',
      'depends': ['base','hr','product','mail', 'account'],
      'data': [
          'data/sequences.xml',
