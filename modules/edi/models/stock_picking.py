@@ -92,7 +92,8 @@ class StockPicking(models.Model):
                 "cod_tip_cpe": "09",
                 "cod_cliente_emis": self.company_id.service_code or "", #self.company_id.service_code or "", #799,
                 'txt_serie': ws_diario.code, #G001
-                'txt_correlativo': self.name[7:], #self.name, #, #"00000077",
+                #'txt_correlativo': self.name[7:], #self.name, #, #"00000077",
+                "txt_correlativo": self.name[7:] if self.name and self.name != '/' else "", #self.name, #, #"00000077",
                 'num_ruc_rem': self.company_id.partner_id.vat or '',
                 'nom_rzn_soc_rem': self.company_id.partner_id.name or '',
                 'cod_tip_nif_rem':6,
@@ -152,7 +153,8 @@ class StockPicking(models.Model):
                 "cod_tip_cpe": "09",
                 "cod_cliente_emis": self.company_id.service_code or "", #self.company_id.service_code or "", #799,
                 'txt_serie': ws_diario.code, #G001
-                'txt_correlativo': self.name[7:], #self.name, #, #"00000077",
+                #'txt_correlativo': self.name[7:], #self.name, #, #"00000077",
+                "txt_correlativo": self.name[7:] if self.name and self.name != '/' else "", #self.name, #, #"00000077",
                 'num_ruc_rem': self.company_id.partner_id.vat or '',
                 'nom_rzn_soc_rem': self.company_id.partner_id.name or '',
                 'cod_tip_nif_rem':6,
@@ -243,6 +245,7 @@ class StockPicking(models.Model):
             'invoice': {
             # "txt_serie": ws_diario.code,
             # 'txt_correlativo': self.name[7:], #self.name, #, #"00000077",
+            # "txt_correlativo": self.name[7:] if self.name and self.name != '/' else "", #self.name, #, #"00000077",
             # "identificador": "GR",
             # "modelo": modelo,
             # "cod_tip_cpe": "09",
@@ -270,7 +273,8 @@ class StockPicking(models.Model):
             "cod_tip_cpe": "09",
             "cod_cliente_emis": self.company_id.service_code or "", #self.company_id.service_code or "", #799,
             'txt_serie': ws_diario.code, #G001
-            'txt_correlativo': self.name[7:], #self.name, #, #"00000077",
+            #'txt_correlativo': self.name[7:], #self.name, #, #"00000077",
+            "txt_correlativo": self.name[7:] if self.name and self.name != '/' else "", #self.name, #, #"00000077",
             'num_ruc_rem': self.company_id.partner_id.vat or '',
             'nom_rzn_soc_rem': self.company_id.partner_id.name or '',
             'cod_tip_nif_rem':6,

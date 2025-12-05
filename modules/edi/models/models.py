@@ -133,10 +133,11 @@ class AccountMove(models.Model):
         
         payload = {
             "identificador": "FC",
-            "fec_emis": self.invoice_date.strftime("%Y-%m-%d"), #"2025-06-05",
+            "fec_emis": (self.invoice_date or fields.Date.context_today(self)).strftime("%Y-%m-%d"),
             "hora_emis": "00:00:00",
             "txt_serie": ws_diario.code, #self.sequence_prefix, #, #"F001",
-            "txt_correlativo": self.name[5:], #self.name, #, #"00000077",
+            #"txt_correlativo": self.name[5:], #self.name, #, #"00000077",
+            "txt_correlativo": self.name[5:] if self.name and self.name != '/' else "", #self.name, #, #"00000077",
             "cod_tip_cpe": "01",
             "cod_mnd": self.currency_id.name, #"PEN",
             "cod_tip_escenario": "01",
@@ -353,10 +354,11 @@ class AccountMove(models.Model):
 
         payload = {
             "identificador": "BC",
-            "fec_emis": self.invoice_date.strftime("%Y-%m-%d"), #"2025-06-05",
+            "fec_emis": (self.invoice_date or fields.Date.context_today(self)).strftime("%Y-%m-%d"),
             "hora_emis": "00:00:00",
             "txt_serie": ws_diario.code, #self.sequence_prefix, #, #"B001",
-            "txt_correlativo": self.name[5:], #self.name, #self.name[2:], #"00000077",
+            #"txt_correlativo": self.name[5:], #self.name, #self.name[2:], #"00000077",
+            "txt_correlativo": self.name[5:] if self.name and self.name != '/' else "", #self.name, #, #"00000077",
             "cod_tip_cpe": "03",
             "cod_mnd": self.currency_id.name, #"PEN",
             "cod_tip_escenario": "01",
@@ -574,10 +576,11 @@ class AccountMove(models.Model):
 
         payload = {
             "identificador": "CC",
-            "fec_emis": self.invoice_date.strftime("%Y-%m-%d"), #"2025-06-05",
+            "fec_emis": (self.invoice_date or fields.Date.context_today(self)).strftime("%Y-%m-%d"),
             "hora_emis": "00:00:00",
             "txt_serie": self.sequence_prefix, #"F001", #factura_original.ws_seriecorre, #, #ws_diario.code, #
-            "txt_correlativo": self.name[5:], #self.name, #self.name[2:], #"00000077",
+            #"txt_correlativo": self.name[5:], #self.name, #self.name[2:], #"00000077",
+            "txt_correlativo": self.name[5:] if self.name and self.name != '/' else "", #self.name, #, #"00000077",
             "cod_tip_cpe": "07",
             "cod_mnd": self.currency_id.name, #"PEN",
             "cod_tip_escenario": "01",
@@ -753,10 +756,11 @@ class AccountMove(models.Model):
             mnt_tot_exoneradas = 0
         payload = {
             "identificador": "DC",
-            "fec_emis": self.invoice_date.strftime("%Y-%m-%d"), #"2025-06-05",
+            "fec_emis": (self.invoice_date or fields.Date.context_today(self)).strftime("%Y-%m-%d"),
             "hora_emis": "00:00:00",
             "txt_serie": self.sequence_prefix, #"F001", #factura_original.ws_seriecorre, #, #ws_diario.code, #
-            "txt_correlativo": self.name[5:], #self.name, #self.name[2:], #"00000077",
+            #"txt_correlativo": self.name[5:], #self.name, #self.name[2:], #"00000077",
+            "txt_correlativo": self.name[5:] if self.name and self.name != '/' else "", #self.name, #, #"00000077",
             "cod_tip_cpe": "08",
             "cod_mnd": self.currency_id.name, #"PEN",
             "cod_tip_escenario": "01",
@@ -868,8 +872,9 @@ class AccountMove(models.Model):
         return {
             'invoice': {
                     # "serie": ws_diario.code,
-                    # "fec_emis": self.invoice_date.strftime("%Y-%m-%d"), #"2025-05-27",
+                    # "fec_emis": (self.invoice_date or fields.Date.context_today(self)).strftime("%Y-%m-%d"),
                     # "txt_correlativo": self.name, #self.name[2:], #'00000036',
+                    # "txt_correlativo": self.name if self.name and self.name != '/' else "", #self.name, #, #"00000077",
                     # "cod_mnd": self.currency_id.name, #"PEN",
                     # "num_iden_recp": self.partner_id.vat or "Sin RUC", #"20600184718",
                     # "nom_rzn_soc_recp": self.partner_id.complete_name or "Sin Razon Social", #"AquaJet Store SAC -",
@@ -879,10 +884,11 @@ class AccountMove(models.Model):
                     # "mnt_tot": self.amount_total,
 
                     "identificador": "FC",
-                    "fec_emis": self.invoice_date.strftime("%Y-%m-%d"), #"2025-06-05",
+                    "fec_emis": (self.invoice_date or fields.Date.context_today(self)).strftime("%Y-%m-%d"),
                     "hora_emis": "00:00:00",
                     "txt_serie": ws_diario.code, #self.sequence_prefix, #, #"F001",
-                    "txt_correlativo": self.name[5:], #self.name, #, #"00000077",
+                    #"txt_correlativo": self.name[5:], #self.name, #, #"00000077",
+                    "txt_correlativo": self.name[5:] if self.name and self.name != '/' else "", #self.name, #, #"00000077",
                     "cod_tip_cpe": "01",
                     "cod_mnd": self.currency_id.name, #"PEN",
                     "cod_tip_escenario": "01",
@@ -1057,9 +1063,10 @@ class AccountMove(models.Model):
             'invoice': {
             "serie": ws_diario.code,
             "identificador": "CC",
-            "fec_emis": self.invoice_date.strftime("%Y-%m-%d"), #"2025-06-05",
+            "fec_emis": (self.invoice_date or fields.Date.context_today(self)).strftime("%Y-%m-%d"),
             "txt_serie": "F001",
-            "txt_correlativo": self.name, #self.name[2:], #"00000077",
+            #"txt_correlativo": self.name, #self.name[2:], #"00000077",
+            "txt_correlativo": self.name if self.name and self.name != '/' else "", #self.name, #, #"00000077",
             "cod_tip_cpe": "07",
             "cod_mnd": self.currency_id.name, #"PEN",
             "cod_tip_escenario": "01",
