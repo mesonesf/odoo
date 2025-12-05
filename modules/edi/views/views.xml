@@ -9,7 +9,7 @@
         <!-- Añadir ws_response al costado de invoice_date -->
         <xpath expr="//field[@name='invoice_date']" position="after">
           <field name="ws_response" string="Estado WS" readonly="1" class="oe_inline"/>
-          <!--<button name="action_show_payload" string="Ver Payload" type="object" class="oe_highlight"/> -->
+          <button name="action_show_payload" string="Ver Payload" type="object" class="oe_highlight"/>
           <button name="action_fe_payload" string="Electronico" type="object" class="oe_highlight"/>
         </xpath>
       </field>
