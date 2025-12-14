@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_audit_login_log_admin,audit.login.log.admin,model_audit_login_log,base.group_system,1,1,1,1
+access_audit_login_log_user,audit.login.log.user,model_audit_login_log,base.group_user,0,0,0,0

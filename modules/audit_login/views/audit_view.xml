@@ -1,0 +1,47 @@
+<odoo>
+    <data>
+        <record id="view_audit_login_log_tree" model="ir.ui.view">
+            <field name="name">audit.login.log.tree</field>
+            <field name="model">audit.login.log</field>
+            <field name="arch" type="xml">
+                <list string="Auditoría de Logins" create="false" edit="false" delete="false">
+                    <field name="create_date" string="Fecha Registro"/>
+                    <field name="user_id"/>
+                    <field name="ip_address"/>
+                    <field name="browser_os_info"/>
+                    <field name="user_agent" optional="hide"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_audit_login_log_search" model="ir.ui.view">
+            <field name="name">audit.login.log.search</field>
+            <field name="model">audit.login.log</field>
+            <field name="arch" type="xml">
+                <search string="Buscar Logs">
+                    <field name="user_id"/>
+                    <field name="ip_address"/>
+                    <field name="browser_os_info"/>
+                    <group expand="1" string="Agrupar Por">
+                        <filter string="Usuario" name="group_by_user" context="{'group_by':'user_id'}"/>
+                        <filter string="Sistema Operativo" name="group_by_os" context="{'group_by':'browser_os_info'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_audit_login_log" model="ir.actions.act_window">
+            <field name="name">Auditoría de Logins</field>
+            <field name="res_model">audit.login.log</field>
+            <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="view_audit_login_log_search"/>
+        </record>
+
+        <menuitem id="menu_audit_login_root"
+                  name="Auditoría Logins"
+                  parent="base.menu_users"
+                  action="action_audit_login_log"
+                  sequence="100"
+                  groups="base.group_system"/>
+    </data>
+</odoo>
