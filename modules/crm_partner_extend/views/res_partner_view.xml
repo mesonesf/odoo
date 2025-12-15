@@ -1,0 +1,51 @@
+<odoo>
+    <record id="view_partner_form_extend_crm" model="ir.ui.view">
+        <field name="name">res.partner.form.extend.crm</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            
+            <xpath expr="//group[@name='container_row_2']" position="after">
+                
+                <group string="Perfil Corporativo (CRM)" name="crm_segmentation">
+                    <group>
+                        <field name="tamano_empresa" widget="radio" options="{'horizontal': true}"/>
+                    </group>
+                    <group>
+                        <field name="numero_trabajadores"/>
+                    </group>
+                </group>
+                
+            </xpath>
+
+        </field>
+    </record>
+    
+    <record id="view_partner_tree_extend_crm" model="ir.ui.view">
+        <field name="name">res.partner.tree.extend.crm</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='email']" position="after">
+                <field name="tamano_empresa" optional="hide"/>
+                <field name="numero_trabajadores" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_partner_search_extend_crm" model="ir.ui.view">
+        <field name="name">res.partner.search.extend.crm</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='type_person']" position="after">
+                <separator/>
+                <filter string="Es Corporativo" name="filter_corporate" domain="[('tamano_empresa', '=', 'CORPORATIVA')]"/>
+                <filter string="Es Grande" name="filter_large" domain="[('tamano_empresa', '=', 'GRANDE')]"/>
+                <group expand="0" string="Agrupar Por">
+                    <filter string="Tamaño Empresa" name="group_tamano" context="{'group_by': 'tamano_empresa'}"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>
