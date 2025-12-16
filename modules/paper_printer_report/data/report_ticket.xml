@@ -1,0 +1,68 @@
+<odoo>
+    <data>
+        <record id="action_report_invoice_ticket" model="ir.actions.report">
+            <field name="name">Factura (Ticket 72mm)</field>
+            <field name="model">account.move</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">paper_printer_report.report_invoice_ticket_view</field>
+            <field name="report_file">paper_printer_report.report_invoice_ticket_view</field>
+            <field name="print_report_name">"Ticket - %s" % (object.name)</field>
+            <field name="binding_model_id" ref="account.model_account_move"/>
+            <field name="binding_type">report</field>
+            <field name="paperformat_id" ref="paper_printer_report.paperformat_ticket_printer"/>
+        </record>
+
+        <template id="report_invoice_ticket_view">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-set="lang" t-value="o.partner_id.lang"/>
+                    <t t-set="print_with_payments" t-value="True"/>
+                    
+                    <div class="article" t-att-data-oe-model="o and o._name" t-att-data-oe-id="o and o.id">
+                        
+                        <style>
+                            body {
+                                font-family: 'Courier New', monospace !important;
+                                font-size: 14px !important;
+                                background-color: white !important;
+                                margin: 0 !important;
+                                padding: 0 !important;
+                            }
+                            
+                            /* Ajustes para la tabla de facturas dentro del ticket */
+                            table { 
+                                width: 100% !important; 
+                                font-size: 13px !important;
+                            }
+                            
+                            /* Ocultar elementos que no sirven en ticket si la vista original los trae */
+                            .row, .col-*, .col {
+                                margin: 0 !important;
+                                padding: 0 !important;
+                            }
+
+                            /* Encabezados más pequeños para el ticket */
+                            h1, h2, h3 { font-size: 16px !important; margin: 5px 0; }
+                            
+                            /* Forzar saltos de línea en textos largos */
+                            td, th, div {
+                                word-wrap: break-word;
+                                white-space: normal;
+                            }
+                        </style>
+
+                        <div class="page">
+                            <div style="text-align:center; margin-bottom: 10px;">
+                                <strong t-field="o.company_id.name"/>
+                                <br/>
+                                <span t-field="o.company_id.vat"/>
+                            </div>
+
+                            <t t-call="account.report_invoice_document" t-lang="lang"/>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>
