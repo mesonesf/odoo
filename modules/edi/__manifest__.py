@@ -29,7 +29,8 @@
         'views/stock_picking_views.xml',
         'views/viewsGuia.xml',
         'views/guia_debug_views.xml',
-        'views/res_company_view.xml'
+        'views/res_company_view.xml',
+        'views/account_journal_view.xml'
     ],
     # only loaded in demonstration mode
     'demo': [
