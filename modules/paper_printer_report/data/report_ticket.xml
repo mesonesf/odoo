@@ -21,34 +21,27 @@
                     <div class="article" t-att-data-oe-model="o and o._name" t-att-data-oe-id="o and o.id">
                         
                         <style>
-                            body {
-                                font-family: 'Courier New', monospace !important;
-                                font-size: 14px !important;
-                                background-color: white !important;
-                                margin: 0 !important;
-                                padding: 0 !important;
-                            }
-                            
-                            /* Ajustes para la tabla de facturas dentro del ticket */
-                            table { 
-                                width: 100% !important; 
-                                font-size: 13px !important;
-                            }
-                            
-                            /* Ocultar elementos que no sirven en ticket si la vista original los trae */
-                            .row, .col-*, .col {
-                                margin: 0 !important;
-                                padding: 0 !important;
-                            }
+                                body {
+                                    font-family: 'Courier New', monospace !important; /* Courier va mejor en NCR */
+                                    font-size: 12pt !important; /* 12pt es un tamaño estándar legible */
+                                    background-color: white !important;
+                                    width: 100% !important; /* Deja que el margen de Odoo controle el ancho */
+                                    }
 
-                            /* Encabezados más pequeños para el ticket */
-                            h1, h2, h3 { font-size: 16px !important; margin: 5px 0; }
-                            
-                            /* Forzar saltos de línea en textos largos */
-                            td, th, div {
-                                word-wrap: break-word;
-                                white-space: normal;
-                            }
+                                h1, h2 { font-size: 16pt !important; }
+                                h3, h4 { font-size: 14pt !important; }
+
+                                /* IMPORTANTE: Evita que las tablas rompan el ancho */
+                                table {
+                                    width: 100% !important;
+                                    font-size: 11pt !important;
+                                    table-layout: fixed; /* Esto evita que una columna ancha "empuje" y encoja todo */
+                                }
+
+                                td, th {
+                                    word-wrap: break-word; /* Fuerza a cortar palabras largas */
+                                    overflow-wrap: break-word;
+                                }
                         </style>
 
                         <div class="page">
