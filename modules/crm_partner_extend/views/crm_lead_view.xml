@@ -1,0 +1,25 @@
+<odoo>
+    <record id="crm_lead_view_form_extend" model="ir.ui.view">
+        <field name="name">crm.lead.form.extend</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+        <field name="arch" type="xml">
+            
+            <xpath expr="//group[@name='opportunity_partner']" position="after">
+                <group string="Clasificación Avanzada">
+                    <field name="origen_tipico_id" options="{'no_create': True}"/>
+                    <field name="tipo_cuenta" widget="radio" options="{'horizontal': true}"/>
+                    <label for="linea_producto_id" string="Interés Producto"/>
+                    <div class="o_row">
+                        <field name="linea_producto_id" placeholder="Línea..." options="{'no_create': True}"/>
+                        <field name="tipo_producto_id" placeholder="Tipo..." options="{'no_create': True}"/>
+                    </div>
+                    <field name="volumen_negocio"/>
+                    <field name="normativa_id" options="{'no_create': True}"/>
+                    <field name="dolor_id" options="{'no_create': True}"/>
+                </group>
+            </xpath>
+
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_crm_origen,crm.origen,model_crm_origen,base.group_user,1,1,1,1
+access_crm_linea,crm.linea.producto,model_crm_linea_producto,base.group_user,1,1,1,1
+access_crm_tipo,crm.tipo.producto,model_crm_tipo_producto,base.group_user,1,1,1,1
+access_crm_normativa,crm.normativa,model_crm_normativa,base.group_user,1,1,1,1
+access_crm_dolor,crm.dolor,model_crm_dolor,base.group_user,1,1,1,1

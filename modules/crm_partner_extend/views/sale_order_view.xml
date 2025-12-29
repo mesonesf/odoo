@@ -1,0 +1,59 @@
+<odoo>
+    <record id="view_order_form_extend_link" model="ir.ui.view">
+        <field name="name">sale.order.form.extend.link</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='payment_term_id']" position="after">
+                <field name="enlace_externo" widget="url"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_order_form_crm_simplified" model="ir.ui.view">
+        <field name="name">sale.order.form.crm.simplified</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="mode">primary</field>
+        <field name="priority">1000</field>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='order_line']/list//field[@name='product_template_id']" position="attributes">
+                <attribute name="column_invisible">1</attribute>
+                <attribute name="required">0</attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='order_line']/list//field[@name='product_id']" position="replace">
+                <field name="product_id"
+                       string="Producto"
+                       widget="many2one" 
+                       domain="[('sale_ok', '=', True), '|', ('company_id', '=', False), ('company_id', '=', parent.company_id)]"
+                       context="{'partner_id': parent.partner_id, 'quantity': product_uom_qty, 'pricelist': parent.pricelist_id, 'uom': product_uom, 'company_id': parent.company_id}"
+                       options="{'no_open': True, 'no_create': True}"
+                       required="1"/>
+            </xpath>
+            
+            <xpath expr="//field[@name='order_line']/list//field[@name='name']" position="attributes">
+                <attribute name="optional">show</attribute>
+            </xpath>
+
+        </field>
+    </record>
+
+    <record id="action_quotations_crm" model="ir.actions.act_window">
+        <field name="name">Cotizaciones CRM</field>
+        <field name="res_model">sale.order</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="domain">[('state', 'in', ('draft', 'sent'))]</field>
+        <field name="context">{'default_product_custom_attribute_value_ids': [], 'disable_product_configurator': True}</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('sale.view_quotation_tree_with_onboarding')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('view_order_form_crm_simplified')})]"/>
+    </record>
+
+    <menuitem id="menu_sale_quotations_crm"
+              name="Cotizaciones CRM"
+              action="action_quotations_crm"
+              parent="crm.crm_menu_sales"
+              sequence="10"/>
+</odoo>

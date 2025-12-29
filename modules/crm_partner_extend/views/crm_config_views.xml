@@ -1,0 +1,42 @@
+<odoo>
+    <record id="action_crm_origen" model="ir.actions.act_window">
+        <field name="name">Orígenes Típicos</field>
+        <field name="res_model">crm.origen</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_crm_linea" model="ir.actions.act_window">
+        <field name="name">Líneas de Producto</field>
+        <field name="res_model">crm.linea.producto</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_crm_tipo" model="ir.actions.act_window">
+        <field name="name">Tipos de Producto</field>
+        <field name="res_model">crm.tipo.producto</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_crm_normativa" model="ir.actions.act_window">
+        <field name="name">Normativas</field>
+        <field name="res_model">crm.normativa</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_crm_dolor" model="ir.actions.act_window">
+        <field name="name">Dolores / Pain Points</field>
+        <field name="res_model">crm.dolor</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_crm_config_extend" 
+              name="Configuración Extendida" 
+              parent="crm.crm_menu_config" 
+              sequence="100"/>
+
+    <menuitem id="menu_crm_origen" action="action_crm_origen" parent="menu_crm_config_extend"/>
+    <menuitem id="menu_crm_linea" action="action_crm_linea" parent="menu_crm_config_extend"/>
+    <menuitem id="menu_crm_tipo" action="action_crm_tipo" parent="menu_crm_config_extend"/>
+    <menuitem id="menu_crm_normativa" action="action_crm_normativa" parent="menu_crm_config_extend"/>
+    <menuitem id="menu_crm_dolor" action="action_crm_dolor" parent="menu_crm_config_extend"/>
+</odoo>
