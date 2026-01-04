@@ -49,9 +49,9 @@
         </field>
     </record>
 </odoo> -->
-<odoo>
-    <record id="view_partner_form_extend_sunat_crm" model="ir.ui.view">
-        <field name="name">res.partner.form.extend.sunat.crm</field>
+<!-- <odoo>
+    <record id="view_partner_form_extend_v3" model="ir.ui.view">
+        <field name="name">res.partner.form.extend.v3</field>
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="arch" type="xml">
@@ -59,23 +59,56 @@
             <xpath expr="//group[@name='container_row_2']" position="after">
                 <group string="Datos SUNAT &amp; Perfil" col="2">
                     <group string="Fiscal (SUNAT)">
-                        <field name="estado_contribuyente" widget="badge" 
-                               decoration-success="estado_contribuyente == 'ACTIVO'"
-                               decoration-danger="estado_contribuyente != 'ACTIVO'"/>
-                        <field name="condicion_contribuyente" widget="badge"
-                               decoration-success="condicion_contribuyente == 'HABIDO'"
-                               decoration-danger="condicion_contribuyente != 'HABIDO'"/>
+                        <field name="estado_contribuyente" widget="badge" decoration-success="estado_contribuyente == 'ACTIVO'"/>
+                        <field name="condicion_contribuyente" widget="badge" decoration-success="condicion_contribuyente == 'HABIDO'"/>
+                        <field name="numero_trabajadores"/>
+                        <field name="tamano_empresa"/>
                     </group>
                     <group string="Perfilación CRM">
-                        <field name="tamano_empresa"/>
-                        <field name="numero_trabajadores"/>
                         <field name="riesgo_crediticio" widget="priority"/>
-                        <field name="rol_decision"/>
-                        <field name="preferencia_contacto"/>
+                        <field name="tipo_cuenta" widget="radio" options="{'horizontal': true}"/>
                     </group>
                 </group>
             </xpath>
 
+            <xpath expr="//field[@name='industry_id']" position="attributes">
+                <attribute name="string">Rubro/Sector</attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='child_ids']/form//field[@name='function']" position="after">
+                <field name="rol_decision" invisible="type != 'contact'"/>
+                <field name="preferencia_contacto" invisible="type != 'contact'"/>
+            </xpath>
+
+        </field>
+    </record>
+</odoo> -->
+<odoo>
+    <record id="view_partner_form_extend_v3" model="ir.ui.view">
+        <field name="name">res.partner.form.extend.v3</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='container_row_2']" position="after">
+                <group string="Perfilación &amp; SUNAT">
+                    <group>
+                        <field name="estado_contribuyente" widget="badge" decoration-success="estado_contribuyente == 'ACTIVO'"/>
+                        <field name="condicion_contribuyente" widget="badge" decoration-success="condicion_contribuyente == 'HABIDO'"/>
+                        <field name="tipo_cuenta" widget="radio" options="{'horizontal': True}"/>
+                    </group>
+                    <group>
+                        <field name="tamano_empresa"/>
+                        <field name="riesgo_crediticio" widget="priority"/>
+                    </group>
+                </group>
+            </xpath>
+            <xpath expr="//field[@name='industry_id']" position="attributes">
+                <attribute name="string">Rubro/Sector</attribute>
+            </xpath>
+            <xpath expr="//field[@name='child_ids']/form//field[@name='function']" position="after">
+                <field name="rol_decision" invisible="type != 'contact'"/>
+                <field name="preferencia_contacto" invisible="type != 'contact'"/>
+            </xpath>
         </field>
     </record>
 </odoo>

@@ -8,7 +8,7 @@
             <xpath expr="//group[@name='opportunity_partner']" position="after">
                 <group string="Clasificación Avanzada">
                     <field name="origen_tipico_id" options="{'no_create': True}"/>
-                    <field name="tipo_cuenta" widget="radio" options="{'horizontal': true}"/>
+                    
                     <label for="linea_producto_id" string="Interés Producto"/>
                     <div class="o_row">
                         <field name="linea_producto_id" placeholder="Línea..." options="{'no_create': True}"/>
