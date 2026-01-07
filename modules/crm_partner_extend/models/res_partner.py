@@ -153,6 +153,8 @@
 #         except Exception as e:
 #             # Ahora el logger ya no dará error porque está definido arriba
 #             _logger.error(">>> Error crítico en consulta SUNAT: %s", str(e))
+
+#Aqui se completa la mayoria de cambios en campos incluyendo el WS para saber el estado Activo y habido
 import logging
 import requests
 import urllib3

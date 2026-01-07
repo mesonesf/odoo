@@ -1,0 +1,31 @@
+<odoo>
+    <record id="action_report_balance" model="ir.actions.report">
+        <field name="name">Balance General - Perú</field>
+        <field name="model">financial.report.wizard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">l10n_pe_financial_reports.report_template_view</field>
+        <field name="report_file">l10n_pe_financial_reports.report_template_view</field>
+        <field name="binding_model_id" ref="model_financial_report_wizard"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <record id="action_report_pyl" model="ir.actions.report">
+        <field name="name">Ganancias y Pérdidas - Perú</field>
+        <field name="model">financial.report.wizard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">l10n_pe_financial_reports.report_template_view</field>
+        <field name="report_file">l10n_pe_financial_reports.report_template_view</field>
+        <field name="binding_model_id" ref="model_financial_report_wizard"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <record id="action_report_patrimonio" model="ir.actions.report">
+        <field name="name">Cambios en el Patrimonio - Perú</field>
+        <field name="model">financial.report.wizard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">l10n_pe_financial_reports.report_template_view</field>
+        <field name="report_file">l10n_pe_financial_reports.report_template_view</field>
+        <field name="binding_model_id" ref="model_financial_report_wizard"/>
+        <field name="binding_type">report</field>
+    </record>
+</odoo>

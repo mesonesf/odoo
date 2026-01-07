@@ -103,7 +103,7 @@
                 </group>
             </xpath>
             <xpath expr="//field[@name='industry_id']" position="attributes">
-                <attribute name="string">Rubro/Sector</attribute>
+                <attribute name="string">Sector / Rubro</attribute>
             </xpath>
             <xpath expr="//field[@name='child_ids']/form//field[@name='function']" position="after">
                 <field name="rol_decision" invisible="type != 'contact'"/>

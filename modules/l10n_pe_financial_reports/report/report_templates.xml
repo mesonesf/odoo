@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_template_view">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <div class="page" style="font-family: 'Arial', sans-serif; font-size: 11px;">
+                    
+                    <div class="text-center" style="border-bottom: 2px solid black; margin-bottom: 20px;">
+                        <h4 t-if="data['report_type'] == 'balance'">ESTADO DE SITUACIÓN FINANCIERA (NIIF)</h4>
+                        <h4 t-if="data['report_type'] == 'pyl'">ESTADO DE RESULTADOS POR FUNCIÓN</h4>
+                        <p>Al <span t-esc="data['date_to']"/> (Expresado en Soles)</p>
+                    </div>
+
+                    <t t-if="data['report_type'] == 'balance'">
+                        <div class="row">
+                            <div class="col-6">
+                                <table class="table table-sm table-borderless">
+                                    <tr class="font-weight-bold"><td>ACTIVO CORRIENTE</td><td/></tr>
+                                    <tr t-foreach="act_corriente" t-as="a">
+                                        <td class="pl-3"><span t-esc="a['name']"/></td>
+                                        <td class="text-right"><span t-esc="a['balance']" t-options='{"widget": "float", "precision": 2}'/></td>
+                                    </tr>
+                                    <tr class="font-weight-bold border-top"><td>Total Activo Corriente</td><td class="text-right"><span t-esc="total_act_c" t-options='{"widget": "float", "precision": 2}'/></td></tr>
+                                    
+                                    <tr class="font-weight-bold mt-2"><td>ACTIVO NO CORRIENTE</td><td/></tr>
+                                    <tr t-foreach="act_no_corriente" t-as="anc">
+                                        <td class="pl-3"><span t-esc="anc['name']"/></td>
+                                        <td class="text-right"><span t-esc="anc['balance']" t-options='{"widget": "float", "precision": 2}'/></td>
+                                    </tr>
+                                    <tr class="font-weight-bold border-top"><td>Total Activo No Corriente</td><td class="text-right"><span t-esc="total_act_nc" t-options='{"widget": "float", "precision": 2}'/></td></tr>
+                                    <tr class="table-active font-weight-bold"><td>TOTAL ACTIVO</td><td class="text-right"><span t-esc="total_activo" t-options='{"widget": "float", "precision": 2}'/></td></tr>
+                                </table>
+                            </div>
+                            <div class="col-6">
+                                <table class="table table-sm table-borderless">
+                                    <tr class="font-weight-bold"><td>PASIVO CORRIENTE</td><td/></tr>
+                                    <tr t-foreach="pas_corriente" t-as="pc">
+                                        <td class="pl-3"><span t-esc="pc['name']"/></td>
+                                        <td class="text-right"><span t-esc="-pc['balance']" t-options='{"widget": "float", "precision": 2}'/></td>
+                                    </tr>
+                                    <tr class="font-weight-bold border-top"><td>TOTAL PASIVO Y PATRIMONIO</td><td class="text-right"><span t-esc="total_pas_pat" t-options='{"widget": "float", "precision": 2}'/></td></tr>
+                                </table>
+                            </div>
+                        </div>
+                    </t>
+
+                    <t t-if="data['report_type'] == 'pyl'">
+                        <table class="table table-sm table-borderless mt-4">
+                            <tr><td>Ventas Netas de Bienes y Servicios</td><td class="text-right"><span t-esc="ventas" t-options='{"widget": "float", "precision": 2}'/></td></tr>
+                            <tr><td>Costo de Ventas</td><td class="text-right">(<span t-esc="costo_ventas" t-options='{"widget": "float", "precision": 2}'/>)</td></tr>
+                            <tr class="font-weight-bold table-light"><td>GANANCIA (PÉRDIDA) BRUTA</td><td class="text-right"><span t-esc="utilidad_bruta" t-options='{"widget": "float", "precision": 2}'/></td></tr>
+                            <tr><td>Gastos de Administración</td><td class="text-right">(<span t-esc="gastos_adm" t-options='{"widget": "float", "precision": 2}'/>)</td></tr>
+                            <tr><td>Gastos de Ventas</td><td class="text-right">(<span t-esc="gastos_ventas" t-options='{"widget": "float", "precision": 2}'/>)</td></tr>
+                            <tr class="font-weight-bold table-light"><td>GANANCIA (PÉRDIDA) OPERATIVA</td><td class="text-right"><span t-esc="utilidad_operativa" t-options='{"widget": "float", "precision": 2}'/></td></tr>
+                            <tr><td>Otros Ingresos / Gastos Financieros</td><td class="text-right"><span t-esc="otros_ingresos - otros_gastos" t-options='{"widget": "float", "precision": 2}'/></td></tr>
+                            <tr class="font-weight-bold table-dark text-white"><td>RESULTADO NETO DEL EJERCICIO</td><td class="text-right"><span t-esc="utilidad_neta" t-options='{"widget": "float", "precision": 2}'/></td></tr>
+                        </table>
+                    </t>
+                    
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>
