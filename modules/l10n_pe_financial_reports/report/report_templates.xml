@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <record id="action_report_financial" model="ir.actions.report">
+        <field name="name">Estados Financieros (NIIF)</field>
+        <field name="model">financial.report.wizard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">l10n_pe_financial_reports.report_template_view</field>
+        <field name="report_file">l10n_pe_financial_reports.report_template_view</field>
+        <field name="binding_model_id" ref="model_financial_report_wizard"/>
+        <field name="binding_type">report</field>
+    </record>
+
     <template id="report_template_view">
         <t t-call="web.html_container">
             <t t-call="web.external_layout">
@@ -7,8 +17,9 @@
                     
                     <div class="text-center" style="border-bottom: 2px solid black; margin-bottom: 20px;">
                         <h4 t-if="data['report_type'] == 'balance'">ESTADO DE SITUACIÓN FINANCIERA (NIIF)</h4>
-                        <h4 t-if="data['report_type'] == 'pyl'">ESTADO DE RESULTADOS POR FUNCIÓN</h4>
-                        <p>Al <span t-esc="data['date_to']"/> (Expresado en Soles)</p>
+                        <h4 t-if="data['report_type'] == 'pyl'">ESTADO DE RESULTADOS POR NATURALEZA</h4>
+                        <h4 t-if="data['report_type'] == 'patrimonio'">ESTADO DE CAMBIOS EN EL PATRIMONIO</h4>
+                        <p>Del <span t-esc="data['date_from']"/> Al <span t-esc="data['date_to']"/></p>
                     </div>
 
                     <t t-if="data['report_type'] == 'balance'">
@@ -38,7 +49,23 @@
                                         <td class="pl-3"><span t-esc="pc['name']"/></td>
                                         <td class="text-right"><span t-esc="-pc['balance']" t-options='{"widget": "float", "precision": 2}'/></td>
                                     </tr>
-                                    <tr class="font-weight-bold border-top"><td>TOTAL PASIVO Y PATRIMONIO</td><td class="text-right"><span t-esc="total_pas_pat" t-options='{"widget": "float", "precision": 2}'/></td></tr>
+                                    <tr class="font-weight-bold border-top"><td>Total Pasivo Corriente</td><td class="text-right"><span t-esc="total_pas_c" t-options='{"widget": "float", "precision": 2}'/></td></tr>
+                                    
+                                    <tr class="font-weight-bold mt-2"><td>PASIVO NO CORRIENTE</td><td/></tr>
+                                    <tr t-foreach="pas_no_corriente" t-as="pnc">
+                                        <td class="pl-3"><span t-esc="pnc['name']"/></td>
+                                        <td class="text-right"><span t-esc="-pnc['balance']" t-options='{"widget": "float", "precision": 2}'/></td>
+                                    </tr>
+                                    <tr class="font-weight-bold border-top"><td>Total Pasivo No Corriente</td><td class="text-right"><span t-esc="total_pas_nc" t-options='{"widget": "float", "precision": 2}'/></td></tr>
+
+                                    <tr class="font-weight-bold mt-2"><td>PATRIMONIO</td><td/></tr>
+                                    <tr t-foreach="patrimonio" t-as="pat">
+                                        <td class="pl-3"><span t-esc="pat['name']"/></td>
+                                        <td class="text-right"><span t-esc="-pat['balance']" t-options='{"widget": "float", "precision": 2}'/></td>
+                                    </tr>
+                                    <tr class="font-weight-bold border-top"><td>Total Patrimonio</td><td class="text-right"><span t-esc="total_pat" t-options='{"widget": "float", "precision": 2}'/></td></tr>
+
+                                    <tr class="table-active font-weight-bold mt-4"><td>TOTAL PASIVO Y PATRIMONIO</td><td class="text-right"><span t-esc="total_pas_pat" t-options='{"widget": "float", "precision": 2}'/></td></tr>
                                 </table>
                             </div>
                         </div>
@@ -46,15 +73,54 @@
 
                     <t t-if="data['report_type'] == 'pyl'">
                         <table class="table table-sm table-borderless mt-4">
-                            <tr><td>Ventas Netas de Bienes y Servicios</td><td class="text-right"><span t-esc="ventas" t-options='{"widget": "float", "precision": 2}'/></td></tr>
-                            <tr><td>Costo de Ventas</td><td class="text-right">(<span t-esc="costo_ventas" t-options='{"widget": "float", "precision": 2}'/>)</td></tr>
-                            <tr class="font-weight-bold table-light"><td>GANANCIA (PÉRDIDA) BRUTA</td><td class="text-right"><span t-esc="utilidad_bruta" t-options='{"widget": "float", "precision": 2}'/></td></tr>
-                            <tr><td>Gastos de Administración</td><td class="text-right">(<span t-esc="gastos_adm" t-options='{"widget": "float", "precision": 2}'/>)</td></tr>
-                            <tr><td>Gastos de Ventas</td><td class="text-right">(<span t-esc="gastos_ventas" t-options='{"widget": "float", "precision": 2}'/>)</td></tr>
-                            <tr class="font-weight-bold table-light"><td>GANANCIA (PÉRDIDA) OPERATIVA</td><td class="text-right"><span t-esc="utilidad_operativa" t-options='{"widget": "float", "precision": 2}'/></td></tr>
-                            <tr><td>Otros Ingresos / Gastos Financieros</td><td class="text-right"><span t-esc="otros_ingresos - otros_gastos" t-options='{"widget": "float", "precision": 2}'/></td></tr>
+                            <tr class="font-weight-bold"><td>INGRESOS OPERACIONALES</td><td/></tr>
+                            <tr><td class="pl-3">Ventas Netas (70)</td><td class="text-right"><span t-esc="ventas" t-options='{"widget": "float", "precision": 2}'/></td></tr>
+                            <tr><td class="pl-3">Otros Ingresos (75, 77)</td><td class="text-right"><span t-esc="otros_ingresos" t-options='{"widget": "float", "precision": 2}'/></td></tr>
+                            
+                            <tr class="font-weight-bold mt-2"><td>GASTOS OPERACIONALES</td><td/></tr>
+                            <tr><td class="pl-3">Compras (60)</td><td class="text-right text-danger">(<span t-esc="compras" t-options='{"widget": "float", "precision": 2}'/>)</td></tr>
+                            <tr><td class="pl-3">Variación de Existencias (61)</td><td class="text-right text-danger">(<span t-esc="variacion_inv" t-options='{"widget": "float", "precision": 2}'/>)</td></tr>
+                            <tr><td class="pl-3">Gastos de Personal (62)</td><td class="text-right text-danger">(<span t-esc="personal" t-options='{"widget": "float", "precision": 2}'/>)</td></tr>
+                            <tr><td class="pl-3">Servicios Prestados por Terceros (63)</td><td class="text-right text-danger">(<span t-esc="servicios" t-options='{"widget": "float", "precision": 2}'/>)</td></tr>
+                            <tr><td class="pl-3">Tributos (64)</td><td class="text-right text-danger">(<span t-esc="tributos" t-options='{"widget": "float", "precision": 2}'/>)</td></tr>
+                            <tr><td class="pl-3">Cargas Diversas de Gestión (65)</td><td class="text-right text-danger">(<span t-esc="otros_gastos" t-options='{"widget": "float", "precision": 2}'/>)</td></tr>
+
+                            <tr class="font-weight-bold table-light mt-2"><td>RESULTADO DE OPERACIÓN</td><td class="text-right"><span t-esc="utilidad_operativa" t-options='{"widget": "float", "precision": 2}'/></td></tr>
+                            <tr><td>Gastos Financieros (67)</td><td class="text-right text-danger">(<span t-esc="financieros" t-options='{"widget": "float", "precision": 2}'/>)</td></tr>
                             <tr class="font-weight-bold table-dark text-white"><td>RESULTADO NETO DEL EJERCICIO</td><td class="text-right"><span t-esc="utilidad_neta" t-options='{"widget": "float", "precision": 2}'/></td></tr>
                         </table>
+                    </t>
+
+                    <t t-if="data['report_type'] == 'patrimonio'">
+                        <table class="table table-sm table-striped mt-4">
+                            <thead>
+                                <tr class="text-center table-active">
+                                    <th class="text-left">Cuenta Patrimonial</th>
+                                    <th>Saldo Inicial</th>
+                                    <th>Variación del Periodo</th>
+                                    <th>Saldo Final</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="cambios_patrimonio" t-as="p">
+                                    <td><span t-esc="p['code']"/> - <span t-esc="p['name']"/></td>
+                                    <td class="text-right"><span t-esc="p['inicial']" t-options='{"widget": "float", "precision": 2}'/></td>
+                                    <td class="text-right">
+                                        <span t-esc="p['variacion']" t-options='{"widget": "float", "precision": 2}' t-att-class="'text-danger' if p['variacion'] &lt; 0 else ''"/>
+                                    </td>
+                                    <td class="text-right font-weight-bold"><span t-esc="p['final']" t-options='{"widget": "float", "precision": 2}'/></td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr class="font-weight-bold table-dark text-white">
+                                    <td>TOTAL PATRIMONIO</td>
+                                    <td class="text-right"><span t-esc="total_pat_inicial" t-options='{"widget": "float", "precision": 2}'/></td>
+                                    <td class="text-right"><span t-esc="total_pat_variacion" t-options='{"widget": "float", "precision": 2}'/></td>
+                                    <td class="text-right"><span t-esc="total_pat_final" t-options='{"widget": "float", "precision": 2}'/></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        <p class="mt-2 text-muted text-center" style="font-size:10px;">* Los saldos positivos representan saldo Acreedor (Haber).</p>
                     </t>
                     
                 </div>

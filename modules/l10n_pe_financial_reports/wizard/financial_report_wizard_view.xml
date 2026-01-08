@@ -1,32 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="view_financial_report_wizard" model="ir.ui.view">
+    <record id="view_financial_report_wizard_form" model="ir.ui.view">
         <field name="name">financial.report.wizard.form</field>
         <field name="model">financial.report.wizard</field>
         <field name="arch" type="xml">
-            <form>
+            <form string="Generar Reportes Financieros">
                 <group>
-                    <field name="report_type"/>
-                    <field name="date_from"/>
-                    <field name="date_to"/>
+                    <group>
+                        <field name="date_from"/>
+                        <field name="date_to"/>
+                    </group>
+                    <group>
+                        <field name="report_type" widget="radio"/>
+                    </group>
                 </group>
                 <footer>
-                    <button name="action_print" string="Generar PDF" type="object" class="btn-primary"/>
+                    <button name="action_print_report" string="Imprimir PDF" type="object" class="btn-primary"/>
                     <button string="Cancelar" class="btn-secondary" special="cancel"/>
                 </footer>
             </form>
         </field>
     </record>
 
-    <record id="action_financial_report_wizard" model="ir.actions.act_window">
-        <field name="name">Reportes Contables Perú</field>
+    <record id="action_financial_report_wizard_window" model="ir.actions.act_window">
+        <field name="name">Reportes Financieros Perú</field>
         <field name="res_model">financial.report.wizard</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>
     </record>
 
-    <menuitem id="menu_finance_reports_peru" 
-              name="Reportes Financieros (SUNAT)" 
-              parent="account.menu_finance_reports" 
-              action="action_financial_report_wizard" 
+    <menuitem id="menu_financial_report_wizard"
+              name="Reportes NIIF"
+              parent="account.menu_finance_reports"
+              action="action_financial_report_wizard_window"
               sequence="100"/>
 </odoo>
