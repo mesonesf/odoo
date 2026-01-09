@@ -5,6 +5,15 @@
         <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="arch" type="xml">
             
+            <xpath expr="//field[@name='vat']" position="after">
+                <button name="action_buscar_ruc" 
+                        type="object" 
+                        string=" Consultar SUNAT" 
+                        icon="fa-search" 
+                        class="btn-primary" 
+                        invisible="not vat"/>
+            </xpath>
+
             <xpath expr="//group[@name='container_row_2']" position="after">
                 <group string="Datos SUNAT &amp; Perfil" col="2">
                     <group string="Fiscal (SUNAT)">
@@ -15,7 +24,6 @@
                         <field name="condicion_contribuyente" widget="badge" 
                                decoration-success="condicion_contribuyente == 'HABIDO'"
                                decoration-danger="condicion_contribuyente == 'NO_HABIDO'"/>
-                        
                         <field name="numero_trabajadores"/>
                         <field name="tamano_empresa"/>
                     </group>
