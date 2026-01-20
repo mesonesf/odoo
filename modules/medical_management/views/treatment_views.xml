@@ -5,10 +5,17 @@
             <field name="name">medical.treatment.session.calendar</field>
             <field name="model">medical.treatment.session</field>
             <field name="arch" type="xml">
-                <calendar string="Sesiones Médicas" date_start="date" color="practitioner_id" mode="month" quick_create="0">
-                    <field name="patient_id"/>
-                    <field name="treatment_id"/>
-                    <field name="state"/>
+                <calendar string="Sesiones Médicas" 
+                        date_start="date" 
+                        color="practitioner_id" 
+                        mode="month" 
+                        quick_create="0">
+                    
+                    <field name="patient_id" avatar_field="avatar_128"/>
+                    
+                    <field name="practitioner_id" filters="1"/>
+                    <field name="specialty_id"/>
+                    <field name="state" widget="badge"/>
                 </calendar>
             </field>
         </record>
@@ -20,7 +27,7 @@
                 <form>
                     <header>
                         <button name="action_mark_done" string="Marcar como Realizada" type="object" class="btn-success" invisible="state != 'scheduled'"/>
-                        <button name="action_cancel" string="Cancelar" type="object" invisible="state == 'cancel'"/>
+                        <button name="action_cancel" string="Cancelar Tratamiento" type="object" invisible="state == 'cancel'"/>
                         <field name="state" widget="statusbar"/>
                     </header>
                     <sheet>
@@ -29,6 +36,7 @@
                             <field name="date"/>
                             <field name="practitioner_id"/>
                             <field name="patient_id" readonly="1"/>
+                            <field name="specialty_id"/>
                         </group>
                         <group string="Ejecución">
                             <field name="procedure_notes" placeholder="Describa el procedimiento realizado en esta sesión..."/>

@@ -137,9 +137,22 @@ class MedicalTreatmentSession(models.Model):
     _description = 'Sesión de Tratamiento'
     _inherit = ['mail.thread']
     _order = 'date asc'
+
+    # --- CAMBIO CLAVE: Esto define que el nombre a mostrar sea el del paciente ---
+    _rec_name = 'patient_id' 
+
     
     name = fields.Char(string='Sesión', compute='_compute_name', store=True)
     treatment_id = fields.Many2one('medical.treatment', string='Tratamiento', required=True, ondelete='cascade')
+    # --- NUEVO CAMPO RELACIONADO ---
+    # Esto traerá automáticamente el nombre de la especialidad para mostrarlo en el calendario
+    specialty_id = fields.Many2one(
+        related='treatment_id.specialty_id', 
+        string='Especialidad', 
+        store=True, 
+        readonly=True
+    )
+    # -------------------------------
     patient_id = fields.Many2one(related='treatment_id.patient_id', store=True)
     date = fields.Datetime(string='Fecha y Hora', required=True)
     practitioner_id = fields.Many2one('hr.employee', string='Especialista', required=True)
