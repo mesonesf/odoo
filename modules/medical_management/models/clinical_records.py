@@ -1,7 +1,8 @@
 from odoo import models, fields, api, Command
 from odoo.exceptions import ValidationError, UserError
-import logging  # Importar logging
-_logger = logging.getLogger(__name__) # Definir el logger
+import logging
+
+_logger = logging.getLogger(__name__)
 
 class MedicalClinicalRecord(models.Model):
     _name = 'medical.clinical.record'
@@ -10,12 +11,9 @@ class MedicalClinicalRecord(models.Model):
     
     name = fields.Char(string='Referencia', readonly=True, default='Nuevo')
     
-    # --- CAMBIO: Añadido ondelete='restrict' ---
-    # Esto previene que un Paciente sea borrado si tiene fichas.
     patient_id = fields.Many2one('medical.patient', string='Paciente', required=True, ondelete='restrict')
     specialty_id = fields.Many2one('medical.specialty', string='Especialidad', required=True, ondelete='restrict')
     practitioner_id = fields.Many2one('hr.employee', string='Especialista', required=True, ondelete='restrict')
-    # --- FIN CAMBIO ---
 
     date = fields.Datetime(string='Fecha de Atención', default=fields.Datetime.now, required=True)
     
@@ -36,13 +34,65 @@ class MedicalClinicalRecord(models.Model):
     
     evaluation_id = fields.Many2one('medical.evaluation', string='Evaluación Relacionada', readonly=True)
 
+    # --- PUNTO 3: AUTO-COMPLETADO BASADO EN HISTORIAL ---
+    
+    @api.onchange('patient_id')
+    def _onchange_patient_id_load_history(self):
+        """Al elegir paciente, sugerir especialidad y especialista de su última atención"""
+        if self.patient_id and self.state == 'draft':
+            last_record = self.search([
+                ('patient_id', '=', self.patient_id.id),
+                ('state', '=', 'completed')
+            ], order='date desc', limit=1)
+            
+            if last_record:
+                self.specialty_id = last_record.specialty_id
+                self.practitioner_id = last_record.practitioner_id
+                # El cambio de specialty_id disparará _onchange_specialty_id automáticamente
+
+    @api.onchange('template_id')
+    def _onchange_template_id(self):
+        """Cargar respuestas de la plantilla o heredar de la última atención si coinciden"""
+        if not self.template_id:
+            self.answer_ids = [Command.clear()]
+            return
+        
+        if self.state == 'draft':
+            # Buscamos si el paciente tiene una ficha previa CON ESTA MISMA PLANTILLA
+            last_record = self.search([
+                ('patient_id', '=', self.patient_id.id),
+                ('template_id', '=', self.template_id.id),
+                ('state', '=', 'completed')
+            ], order='date desc', limit=1)
+
+            new_answers = [Command.clear()]
+            
+            if last_record:
+                # HEREDAR: Copiamos los valores de la ficha anterior
+                for old_ans in last_record.answer_ids:
+                    new_answers.append(Command.create({
+                        'question_id': old_ans.question_id.id,
+                        'boolean_answer': old_ans.boolean_answer,
+                        'text_answer': old_ans.text_answer,
+                    }))
+                _logger.info(f"Heredando datos de la Ficha {last_record.name} para el paciente {self.patient_id.name}")
+            else:
+                # NUEVO: Crear respuestas vacías basadas en la plantilla
+                for question in self.template_id.question_ids:
+                    new_answers.append(Command.create({
+                        'question_id': question.id,
+                    }))
+            
+            self.answer_ids = new_answers
+
+    # --- FIN PUNTO 3 ---
+
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
             if vals.get('name', 'Nuevo') == 'Nuevo':
                 vals['name'] = self.env['ir.sequence'].next_by_code('medical.clinical.record') or 'Nuevo'
-        records = super().create(vals_list)
-        return records
+        return super().create(vals_list)
 
     def write(self, vals):
         for record in self:
@@ -66,25 +116,7 @@ class MedicalClinicalRecord(models.Model):
         else:
             self.template_id = False
 
-    @api.onchange('template_id')
-    def _onchange_template_id(self):
-        if not self.template_id:
-            self.answer_ids = [Command.clear()]
-            return
-        if self.state == 'draft':
-            new_answers = [Command.clear()]
-            for question in self.template_id.question_ids:
-                new_answers.append(Command.create({
-                    'question_id': question.id,
-                }))
-            self.answer_ids = new_answers
-
     def action_complete(self):
-        """Completar ficha clínica y crear evaluación (PLAN B)"""
-        _logger.warning("="*50)
-        _logger.warning("*** DEBUG: Ficha Clínica action_complete() EJECUTADO ***")
-        _logger.warning("="*50)
-
         self.ensure_one()
         if not self.answer_ids:
             raise ValidationError('Debe completar las respuestas de la ficha clínica.')
@@ -111,7 +143,6 @@ class MedicalClinicalRecord(models.Model):
         })
         self.evaluation_id = evaluation.id
         self.state = 'completed'
-        
         return True
 
     def action_view_evaluation(self):

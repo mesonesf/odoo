@@ -10,9 +10,7 @@
                         color="practitioner_id" 
                         mode="month" 
                         quick_create="0">
-                    
                     <field name="patient_id" avatar_field="avatar_128"/>
-                    
                     <field name="practitioner_id" filters="1"/>
                     <field name="specialty_id"/>
                     <field name="state" widget="badge"/>
@@ -46,7 +44,7 @@
             </field>
         </record>
         
-         <record id="view_medical_session_list" model="ir.ui.view">
+        <record id="view_medical_session_list" model="ir.ui.view">
             <field name="name">medical.treatment.session.list</field>
             <field name="model">medical.treatment.session</field>
             <field name="arch" type="xml">
@@ -82,10 +80,8 @@
                 <form>
                     <header>
                         <button name="action_confirm" string="Confirmar Plan" type="object" class="btn-primary" invisible="state != 'draft'"/>
-                        
                         <button name="action_create_invoice" string="Crear Factura" type="object" class="btn-secondary" 
                                 invisible="state == 'draft' or state == 'cancel'"/>
-                        
                         <button name="action_done" string="Finalizar Tratamiento" type="object" class="btn-success" invisible="state != 'in_progress' and state != 'confirmed'"/>
                         <button name="action_cancel" string="Cancelar" type="object" invisible="state == 'done' or state == 'cancel'"/>
                         <field name="state" widget="statusbar"/>
@@ -96,7 +92,6 @@
                                 <field name="invoice_count" widget="statinfo" string="Facturas"/>
                             </button>
                         </div>
-
                         <div class="oe_title">
                             <h1><field name="name"/></h1>
                         </div>
@@ -122,7 +117,6 @@
                                     </list>
                                 </field>
                             </page>
-                            
                             <page string="Sesiones Programadas" invisible="treatment_type != 'in_person'">
                                 <field name="session_ids" mode="list,kanban" readonly="state == 'done' or state == 'cancel'">
                                     <list editable="bottom">
@@ -134,7 +128,6 @@
                                     </list>
                                 </field>
                             </page>
-                            
                             <page string="Notas">
                                 <field name="notes" placeholder="Indicaciones adicionales..."/>
                             </page>
@@ -145,15 +138,30 @@
             </field>
         </record>
 
+        <record id="view_medical_invoice_line_report_list" model="ir.ui.view">
+            <field name="name">medical.invoice.line.report.list</field>
+            <field name="model">account.move.line</field>
+            <field name="arch" type="xml">
+                <list string="Detalle de Facturación" create="0" edit="0">
+                    <field name="date" optional="show"/>
+                    <field name="partner_id" string="Paciente"/>
+                    <field name="move_id" string="Factura"/>
+                    <field name="product_id"/>
+                    <field name="name" string="Descripción"/>
+                    <field name="quantity" sum="Total Cantidad"/>
+                    <field name="price_unit" widget="monetary"/>
+                    <field name="price_subtotal" widget="monetary" sum="Total Subtotal"/>
+                    <field name="parent_state" widget="badge" 
+                           decoration-success="parent_state == 'posted'" 
+                           decoration-info="parent_state == 'draft'" string="Estado"/>
+                </list>
+            </field>
+        </record>
+
         <record id="action_medical_treatment" model="ir.actions.act_window">
             <field name="name">Planes de Tratamiento</field>
             <field name="res_model">medical.treatment</field>
             <field name="view_mode">list,form</field>
-            <field name="help" type="html">
-              <p class="o_view_nocontent_smiling_face">
-                Cree su primer Plan de Tratamiento
-              </p>
-            </field>
         </record>
 
         <record id="action_medical_session_calendar" model="ir.actions.act_window">
@@ -161,5 +169,18 @@
             <field name="res_model">medical.treatment.session</field>
             <field name="view_mode">calendar,list,form</field>
         </record>
+
+        <record id="action_medical_invoice_analysis" model="ir.actions.act_window">
+            <field name="name">Análisis de Facturación Médica</field>
+            <field name="res_model">account.move.line</field>
+            <field name="view_mode">list,pivot,graph</field>
+            <field name="domain">[('move_id.move_type', '=', 'out_invoice'), ('move_id.treatment_id', '!=', False), ('display_type', '=', 'product')]</field>
+            <field name="context">{
+                'search_default_group_by_partner': 1,
+                'expand': 1
+            }</field>
+            <field name="view_id" ref="view_medical_invoice_line_report_list"/>
+        </record>
+
     </data>
 </odoo>

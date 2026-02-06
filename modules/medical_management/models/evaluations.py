@@ -1,6 +1,7 @@
 from odoo import models, fields, api, Command
 from odoo.exceptions import ValidationError, UserError
 import logging
+
 _logger = logging.getLogger(__name__)
 
 class MedicalEvaluation(models.Model):
@@ -34,77 +35,114 @@ class MedicalEvaluation(models.Model):
         ('completed', 'Completada')
     ], string='Estado', default='draft')
     
-    # Campo comentado temporalmente para evitar warning en la instalación
-    # Cuando creemos el modelo 'medical.treatment', quitaremos el '#'
     treatment_id = fields.Many2one('medical.treatment', string='Tratamiento Relacionado', readonly=True)
 
+    # --- MÉTODO REFORZADO: CREATE ---
     @api.model_create_multi
     def create(self, vals_list):
-        _logger.warning("="*50)
-        _logger.warning("*** DEBUG: Evaluación create() EJECUTADO ***")
-        _logger.warning("="*50)
-
         for vals in vals_list:
             if vals.get('name', 'Nuevo') == 'Nuevo':
                 vals['name'] = self.env['ir.sequence'].next_by_code('medical.evaluation') or 'Nuevo'
             
+            # 1. Autoselección de plantilla si no viene en los valores
             if 'template_id' not in vals and 'specialty_id' in vals:
                 template = self.env['medical.template'].search([
                     ('specialty_id', '=', vals['specialty_id']),
                     ('template_type', '=', 'evaluation'),
                     ('active', '=', True)
                 ], limit=1)
-                
                 if template:
                     vals['template_id'] = template.id
-                else:
-                    specialty_name = self.env['medical.specialty'].browse(vals['specialty_id']).name
-                    raise ValidationError(
-                        f"No se puede crear la Evaluación. "
-                        f"No se encontró una Plantilla de Evaluación activa "
-                        f"para la especialidad '{specialty_name}'.\n\n"
-                        f"Por favor, vaya a Configuración > Plantillas y cree una."
-                    )
 
         records = super().create(vals_list)
         
+        # 2. Carga de respuestas (Nueva lógica que busca historial)
         for record in records:
             if record.template_id and not record.answer_ids:
-                record._create_answers_from_template()
+                record._load_answers_logic()
         
         return records
 
-    def write(self, vals):
-        for record in self:
-            if record.state == 'completed' and any(field in vals for field in ['answer_ids', 'template_id']):
-                raise UserError('No se puede modificar una evaluación completada.')
-        return super().write(vals)
+    def _load_answers_logic(self):
+        """Busca historial o crea respuestas vacías (Funciona para UI y para el servidor)"""
+        self.ensure_one()
+        
+        # Buscamos la última evaluación completada de este paciente con esta misma plantilla
+        last_eval = self.search([
+            ('patient_id', '=', self.patient_id.id),
+            ('template_id', '=', self.template_id.id),
+            ('state', '=', 'completed'),
+            ('id', '!=', self.id) # Que no sea la actual
+        ], order='date desc', limit=1)
 
-    def _create_answers_from_template(self):
-        """Crear respuestas vacías desde la plantilla (para backend)"""
         vals_list = []
-        for question in self.template_id.question_ids:
-            vals_list.append({
-                'evaluation_id': self.id,
-                'question_id': question.id,
-            })
+        if last_eval:
+            _logger.info(f"HEREDANDO HISTORIAL: Evaluación {self.name} copia a {last_eval.name}")
+            for old_ans in last_eval.answer_ids:
+                vals_list.append({
+                    'evaluation_id': self.id,
+                    'question_id': old_ans.question_id.id,
+                    'boolean_answer': old_ans.boolean_answer,
+                    'text_answer': old_ans.text_answer,
+                })
+        else:
+            # Si no hay historial, cargar plantilla vacía
+            for question in self.template_id.question_ids:
+                vals_list.append({
+                    'evaluation_id': self.id,
+                    'question_id': question.id,
+                })
+        
         if vals_list:
             self.env['medical.record.answer'].create(vals_list)
 
+    # --- UI ONCHANGES (Para cuando creas manualmente en el módulo) ---
+
+    @api.onchange('patient_id')
+    def _onchange_patient_id_load_history(self):
+        if self.patient_id and self.state == 'draft':
+            last_eval = self.search([
+                ('patient_id', '=', self.patient_id.id),
+                ('state', '=', 'completed')
+            ], order='date desc', limit=1)
+            
+            if last_eval:
+                self.specialty_id = last_eval.specialty_id
+                self.practitioner_id = last_eval.practitioner_id
+
     @api.onchange('template_id')
     def _onchange_template_id(self):
-        """Actualizar respuestas cuando cambia la plantilla (para UI)"""
+        """Actualiza la vista previa de respuestas en la web"""
         if not self.template_id:
             self.answer_ids = [Command.clear()]
             return
-            
+        
         if self.state == 'draft':
-            new_answers = [Command.clear()]
-            for question in self.template_id.question_ids:
-                new_answers.append(Command.create({
-                    'question_id': question.id,
-                }))
+            # Limpiamos y dejamos que el sistema cargue
+            self.answer_ids = [Command.clear()]
+            # Esta llamada simula la lógica de búsqueda de historial en la UI
+            last_eval = self.search([
+                ('patient_id', '=', self.patient_id.id),
+                ('template_id', '=', self.template_id.id),
+                ('state', '=', 'completed')
+            ], order='date desc', limit=1)
+
+            new_answers = []
+            if last_eval:
+                for old_ans in last_eval.answer_ids:
+                    new_answers.append(Command.create({
+                        'question_id': old_ans.question_id.id,
+                        'boolean_answer': old_ans.boolean_answer,
+                        'text_answer': old_ans.text_answer,
+                    }))
+            else:
+                for question in self.template_id.question_ids:
+                    new_answers.append(Command.create({
+                        'question_id': question.id,
+                    }))
             self.answer_ids = new_answers
+
+    # --- ACCIONES RESTANTES ---
 
     def action_complete(self):
         self.ensure_one()
@@ -131,7 +169,6 @@ class MedicalEvaluation(models.Model):
         self.ensure_one()
         if self.state != 'completed':
             raise ValidationError('Debe completar la evaluación antes de crear un tratamiento.')
-        
         if self.treatment_id:
              raise ValidationError('Esta evaluación ya tiene un tratamiento relacionado.')
         
@@ -151,11 +188,8 @@ class MedicalEvaluation(models.Model):
              'view_mode': 'form',
              'target': 'current',
          }
-        #raise UserError("La creación de tratamientos aún no está implementada.")
-
 
     def action_view_treatment(self):
-        """Ver tratamiento relacionado"""
         self.ensure_one()
         if not self.treatment_id:
              raise UserError('No hay tratamiento relacionado con esta evaluación.')
@@ -167,11 +201,8 @@ class MedicalEvaluation(models.Model):
              'view_mode': 'form',
              'target': 'current',
          }
-        #raise UserError("La vista de tratamientos aún no está implementada.")
 
-    
     def action_view_clinical_record(self):
-        """Ver ficha clínica relacionada"""
         self.ensure_one()
         if not self.clinical_record_id:
              raise UserError('No hay ficha clínica vinculada.')

@@ -8,7 +8,7 @@
           tratamientos y programación de sesiones médicas.
       """,
      'author': 'Mejores Horizontes: Manuel Fernando Mesones Sanchez',
-     'depends': ['base','hr','product','mail', 'account'],
+     'depends': ['base','hr','product','mail', 'account','calendar'],
      'data': [
          'data/sequences.xml',
          'security/ir.model.access.csv',

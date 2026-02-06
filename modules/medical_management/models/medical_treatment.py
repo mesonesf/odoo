@@ -1,5 +1,6 @@
 from odoo import models, fields, api, Command
 from odoo.exceptions import ValidationError, UserError
+from datetime import timedelta
 
 class MedicalTreatment(models.Model):
     _name = 'medical.treatment'
@@ -9,7 +10,6 @@ class MedicalTreatment(models.Model):
     
     name = fields.Char(string='Referencia', readonly=True, default='Nuevo')
     
-    # ... (Tus campos existentes: patient_id, evaluation_id, etc.) ...
     patient_id = fields.Many2one('medical.patient', string='Paciente', required=True, tracking=True)
     evaluation_id = fields.Many2one('medical.evaluation', string='Evaluación Origen', readonly=True)
     specialty_id = fields.Many2one('medical.specialty', string='Especialidad', required=True)
@@ -33,11 +33,9 @@ class MedicalTreatment(models.Model):
         ('cancel', 'Cancelado')
     ], string='Estado', default='draft', tracking=True)
 
-    # --- NUEVOS CAMPOS PARA FACTURACIÓN ---
     invoice_ids = fields.One2many('account.move', 'treatment_id', string='Facturas')
     invoice_count = fields.Integer(string='N° Facturas', compute='_compute_invoice_count')
 
-    # --- CÓMPUTOS ---
     @api.depends('session_ids')
     def _compute_session_count(self):
         for record in self:
@@ -48,7 +46,6 @@ class MedicalTreatment(models.Model):
         for record in self:
             record.invoice_count = len(record.invoice_ids)
 
-    # --- ACCIONES EXISTENTES ---
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
@@ -69,37 +66,28 @@ class MedicalTreatment(models.Model):
     def action_cancel(self):
         self.state = 'cancel'
 
-    # --- NUEVA ACCIÓN: CREAR FACTURA ---
     def action_create_invoice(self):
-        """Crea una factura borrador con las líneas del tratamiento"""
         self.ensure_one()
-        
         if not self.line_ids:
             raise UserError('No hay servicios ni productos para facturar en este tratamiento.')
 
-        # Preparamos las líneas de la factura
         invoice_lines = []
         for line in self.line_ids:
             invoice_lines.append(Command.create({
                 'product_id': line.product_id.id,
                 'quantity': line.quantity,
-                'name': line.product_id.name, # Descripción
-                # Odoo calculará el precio automáticamente basado en el producto
+                'name': line.product_id.name,
             }))
 
-        # Creamos la factura
         invoice_vals = {
-            'move_type': 'out_invoice', # Factura de Cliente
-            'partner_id': self.patient_id.partner_id.id, # Usamos el partner_id del paciente
+            'move_type': 'out_invoice',
+            'partner_id': self.patient_id.partner_id.id,
             'invoice_line_ids': invoice_lines,
-            'invoice_origin': self.name, # Referencia al tratamiento
-            'treatment_id': self.id, # Vinculamos para el smart button
+            'invoice_origin': self.name,
+            'treatment_id': self.id,
             'invoice_date': fields.Date.context_today(self),
         }
-        
         new_invoice = self.env['account.move'].create(invoice_vals)
-        
-        # Abrimos la factura creada
         return {
             'type': 'ir.actions.act_window',
             'name': 'Factura Borrador',
@@ -110,7 +98,6 @@ class MedicalTreatment(models.Model):
         }
 
     def action_view_invoices(self):
-        """Botón inteligente para ver las facturas"""
         self.ensure_one()
         return {
             'type': 'ir.actions.act_window',
@@ -121,7 +108,6 @@ class MedicalTreatment(models.Model):
             'context': {'default_partner_id': self.patient_id.partner_id.id}
         }
 
-# ... (Clases MedicalTreatmentLine y MedicalTreatmentSession se mantienen igual) ...
 class MedicalTreatmentLine(models.Model):
     _name = 'medical.treatment.line'
     _description = 'Línea de Tratamiento (Producto/Servicio)'
@@ -132,27 +118,22 @@ class MedicalTreatmentLine(models.Model):
     instructions = fields.Char(string='Indicaciones Específicas')
 
 class MedicalTreatmentSession(models.Model):
-    # ... (El código de sesiones que ya tenías se mantiene igual) ...
     _name = 'medical.treatment.session'
     _description = 'Sesión de Tratamiento'
     _inherit = ['mail.thread']
     _order = 'date asc'
-
-    # --- CAMBIO CLAVE: Esto define que el nombre a mostrar sea el del paciente ---
     _rec_name = 'patient_id' 
 
-    
     name = fields.Char(string='Sesión', compute='_compute_name', store=True)
     treatment_id = fields.Many2one('medical.treatment', string='Tratamiento', required=True, ondelete='cascade')
-    # --- NUEVO CAMPO RELACIONADO ---
-    # Esto traerá automáticamente el nombre de la especialidad para mostrarlo en el calendario
+    
     specialty_id = fields.Many2one(
         related='treatment_id.specialty_id', 
         string='Especialidad', 
         store=True, 
         readonly=True
     )
-    # -------------------------------
+
     patient_id = fields.Many2one(related='treatment_id.patient_id', store=True)
     date = fields.Datetime(string='Fecha y Hora', required=True)
     practitioner_id = fields.Many2one('hr.employee', string='Especialista', required=True)
@@ -163,6 +144,9 @@ class MedicalTreatmentSession(models.Model):
         ('cancel', 'Cancelada')
     ], string='Estado', default='scheduled', tracking=True)
 
+    # Campo para vincular con el Calendario de Odoo
+    calendar_event_id = fields.Many2one('calendar.event', string='Evento de Calendario', ondelete='set null')
+
     @api.depends('treatment_id', 'date')
     def _compute_name(self):
         for session in self:
@@ -171,6 +155,57 @@ class MedicalTreatmentSession(models.Model):
             else:
                 session.name = "Nueva Sesión"
 
+    # --- LÓGICA DE SINCRONIZACIÓN CON CALENDARIO ---
+
+    def _sync_to_calendar(self):
+        """Crea o actualiza el evento en el calendario de Odoo"""
+        for record in self:
+            if not record.date or not record.patient_id:
+                continue
+            
+            # Participantes: Paciente + Especialista (si tiene usuario en Odoo)
+            partner_ids = [record.patient_id.partner_id.id]
+            if record.practitioner_id.user_id:
+                partner_ids.append(record.practitioner_id.user_id.partner_id.id)
+
+            vals = {
+                'name': f"Cita: {record.patient_id.name} - {record.specialty_id.name or ''}",
+                'start': record.date,
+                'stop': record.date + timedelta(hours=1), # Duración de 1 hora
+                'partner_ids': [Command.set(partner_ids)],
+                'description': record.procedure_notes or f"Sesión del Plan {record.treatment_id.name}",
+                'user_id': record.practitioner_id.user_id.id if record.practitioner_id.user_id else self.env.user.id,
+            }
+
+            if record.calendar_event_id:
+                record.calendar_event_id.write(vals)
+            else:
+                event = self.env['calendar.event'].with_context(no_mail_index=False).create(vals)
+                record.calendar_event_id = event
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        records = super().create(vals_list)
+        for rec in records:
+            rec._sync_to_calendar()
+        return records
+
+    def write(self, vals):
+        result = super().write(vals)
+        if any(field in vals for field in ['date', 'practitioner_id', 'patient_id', 'procedure_notes']):
+            self._sync_to_calendar()
+        return result
+
+    def unlink(self):
+        """Elimina el evento del calendario si se borra la sesión"""
+        events_to_delete = self.mapped('calendar_event_id')
+        res = super().unlink()
+        if events_to_delete:
+            events_to_delete.unlink()
+        return res
+
+    # --- ACCIONES ---
+
     def action_mark_done(self):
         self.state = 'done'
         if self.treatment_id.state == 'confirmed':
@@ -178,10 +213,9 @@ class MedicalTreatmentSession(models.Model):
 
     def action_cancel(self):
         self.state = 'cancel'
+        if self.calendar_event_id:
+            self.calendar_event_id.unlink()
 
-# --- EXTENSIÓN DEL MODELO ACCOUNT.MOVE ---
-# Necesitamos añadir un campo a account.move para que el campo One2many funcione
 class AccountMove(models.Model):
     _inherit = 'account.move'
-    
     treatment_id = fields.Many2one('medical.treatment', string='Tratamiento Origen', readonly=True)

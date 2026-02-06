@@ -8,6 +8,7 @@
         <menuitem id="menu_medical_configuration" name="Configuración" parent="menu_medical_management" sequence="10"/>
         <menuitem id="menu_medical_patients" name="Pacientes" parent="menu_medical_management" sequence="20"/>
         <menuitem id="menu_medical_clinical" name="Clínica" parent="menu_medical_management" sequence="30"/>
+        <menuitem id="menu_medical_reporting" name="Reportes" parent="menu_medical_management" sequence="40"/>
 
         <!-- Configuración -->
         <menuitem id="menu_medical_specialties" name="Especialidades" parent="menu_medical_configuration" action="action_medical_specialty" sequence="10"/>
@@ -21,5 +22,9 @@
         <menuitem id="menu_evaluations" name="Evaluaciones Médicas" parent="menu_medical_clinical" action="action_medical_evaluation" sequence="20"/>
         <menuitem id="menu_treatments" name="Tratamientos" parent="menu_medical_clinical" action="action_medical_treatment" sequence="30"/>
         <menuitem id="menu_sessions" name="Calendario de Sesiones" parent="menu_medical_clinical" action="action_medical_session_calendar" sequence="40"/>
+
+        <!-- Reportes-->
+    
+        <menuitem id="menu_medical_invoice_analysis" name="Detalle de Facturación" parent="menu_medical_reporting" action="action_medical_invoice_analysis" sequence="10"/>
     </data>
 </odoo>
