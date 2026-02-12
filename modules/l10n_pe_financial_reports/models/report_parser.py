@@ -45,15 +45,24 @@ class FinancialReportParser(models.AbstractModel):
             res = list(accounts.values())
 
             if report_type == 'balance':
-                vals['act_corriente'] = [a for a in res if a['code'].startswith(('10','11','12','13','14','16','18','20','21'))]
-                vals['act_no_corriente'] = [a for a in res if a['code'].startswith(('3'))]
-                vals['pas_corriente'] = [a for a in res if a['code'].startswith(('40','41','42','43','44','45','46','48'))]
-                vals['pas_no_corriente'] = [a for a in res if a['code'].startswith(('47','49'))]
-                vals['patrimonio'] = [a for a in res if a['code'].startswith('5')]
+                #vals['act_corriente'] = [a for a in res if a['code'].startswith(('10','11','12','13','14','16','18','20','21'))]
+                #vals['act_no_corriente'] = [a for a in res if a['code'].startswith(('3'))]
+                #vals['pas_corriente'] = [a for a in res if a['code'].startswith(('40','41','42','43','44','45','46','48'))]
+                #vals['pas_no_corriente'] = [a for a in res if a['code'].startswith(('47','49'))]
+                #vals['patrimonio'] = [a for a in res if a['code'].startswith('5')]
+
+                vals['act_corriente'] = [a for a in res if a['code'] and a['code'].startswith(('10','11','12','13','14','16','18','20','21'))]
+                vals['act_no_corriente'] = [a for a in res if a['code'] and a['code'].startswith(('3'))]
+                vals['pas_corriente'] = [a for a in res if a['code'] and a['code'].startswith(('40','41','42','43','44','45','46','48'))]
+                vals['pas_no_corriente'] = [a for a in res if a['code'] and a['code'].startswith(('47','49'))]
+                vals['patrimonio'] = [a for a in res if a['code'] and a['code'].startswith('5')]
                 
                 # Ajuste de Utilidad del ejercicio para cuadrar Balance
-                ing = sum(-a['balance'] for a in res if a['code'].startswith('7'))
-                gas = sum(a['balance'] for a in res if a['code'].startswith('6'))
+                #ing = sum(-a['balance'] for a in res if a['code'].startswith('7'))
+                #gas = sum(a['balance'] for a in res if a['code'].startswith('6'))
+                
+                ing = sum(-a['balance'] for a in res if a['code'] and a['code'].startswith('7'))
+                gas = sum(a['balance'] for a in res if a['code'] and a['code'].startswith('6'))
                 util = ing - gas
                 if util != 0:
                     vals['patrimonio'].append({'code': 'UTIL', 'name': 'RESULTADO DEL EJERCICIO', 'balance': -util})
@@ -67,15 +76,26 @@ class FinancialReportParser(models.AbstractModel):
                 vals['total_pas_pat'] = vals['total_pas_c'] + vals['total_pas_nc'] + vals['total_pat']
 
             elif report_type == 'pyl':
-                vals['ventas'] = sum(-a['balance'] for a in res if a['code'].startswith('70'))
-                vals['otros_ingresos'] = sum(-a['balance'] for a in res if a['code'].startswith(('75','77')))
-                vals['compras'] = sum(a['balance'] for a in res if a['code'].startswith('60'))
-                vals['variacion_inv'] = sum(a['balance'] for a in res if a['code'].startswith('61'))
-                vals['personal'] = sum(a['balance'] for a in res if a['code'].startswith('62'))
-                vals['servicios'] = sum(a['balance'] for a in res if a['code'].startswith('63'))
-                vals['tributos'] = sum(a['balance'] for a in res if a['code'].startswith('64'))
-                vals['otros_gastos'] = sum(a['balance'] for a in res if a['code'].startswith('65'))
-                vals['financieros'] = sum(a['balance'] for a in res if a['code'].startswith('67'))
+                #vals['ventas'] = sum(-a['balance'] for a in res if a['code'].startswith('70'))
+                #vals['otros_ingresos'] = sum(-a['balance'] for a in res if a['code'].startswith(('75','77')))
+                #vals['compras'] = sum(a['balance'] for a in res if a['code'].startswith('60'))
+                #vals['variacion_inv'] = sum(a['balance'] for a in res if a['code'].startswith('61'))
+                #vals['personal'] = sum(a['balance'] for a in res if a['code'].startswith('62'))
+                #vals['servicios'] = sum(a['balance'] for a in res if a['code'].startswith('63'))
+                #vals['tributos'] = sum(a['balance'] for a in res if a['code'].startswith('64'))
+                #vals['otros_gastos'] = sum(a['balance'] for a in res if a['code'].startswith('65'))
+                #vals['financieros'] = sum(a['balance'] for a in res if a['code'].startswith('67'))
+
+
+                vals['ventas'] = sum(-a['balance'] for a in res if a['code'] and a['code'].startswith('70'))
+                vals['otros_ingresos'] = sum(-a['balance'] for a in res if a['code'] and a['code'].startswith(('75','77')))
+                vals['compras'] = sum(a['balance'] for a in res if a['code'] and a['code'].startswith('60'))
+                vals['variacion_inv'] = sum(a['balance'] for a in res if a['code'] and a['code'].startswith('61'))
+                vals['personal'] = sum(a['balance'] for a in res if a['code'] and a['code'].startswith('62'))
+                vals['servicios'] = sum(a['balance'] for a in res if a['code'] and a['code'].startswith('63'))
+                vals['tributos'] = sum(a['balance'] for a in res if a['code'] and a['code'].startswith('64'))
+                vals['otros_gastos'] = sum(a['balance'] for a in res if a['code'] and a['code'].startswith('65'))
+                vals['financieros'] = sum(a['balance'] for a in res if a['code'] and a['code'].startswith('67'))
                 vals['utilidad_operativa'] = (vals['ventas'] + vals['otros_ingresos']) - (vals['compras'] + vals['variacion_inv'] + vals['personal'] + vals['servicios'] + vals['tributos'] + vals['otros_gastos'])
                 vals['utilidad_neta'] = vals['utilidad_operativa'] - vals['financieros']
 
