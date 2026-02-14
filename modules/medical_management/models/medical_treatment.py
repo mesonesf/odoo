@@ -15,6 +15,8 @@ class MedicalTreatment(models.Model):
     specialty_id = fields.Many2one('medical.specialty', string='Especialidad', required=True)
     practitioner_id = fields.Many2one('hr.employee', string='Especialista Responsable', required=True)
     date = fields.Datetime(string='Fecha de Creación', default=fields.Datetime.now, required=True)
+    company_id = fields.Many2one('res.company', string='Compañía', required=True, default=lambda self: self.env.company)
+    
     treatment_type = fields.Selection([
         ('in_person', 'Presencial (Centro Médico)'),
         ('home', 'Domiciliario')
@@ -114,8 +116,29 @@ class MedicalTreatmentLine(models.Model):
     
     treatment_id = fields.Many2one('medical.treatment', string='Tratamiento', ondelete='cascade')
     product_id = fields.Many2one('product.product', string='Producto/Servicio', required=True)
+    
+    # --- NUEVOS CAMPOS DE PRECIO ---
+    price_unit = fields.Float(string='Precio Unitario', digits='Product Price')
     quantity = fields.Float(string='Cantidad', default=1.0)
+    price_subtotal = fields.Monetary(string='Subtotal', compute='_compute_subtotal', currency_field='currency_id')
+    
+    # Campo necesario para manejar monedas (si usas la moneda de la compañía)
+    currency_id = fields.Many2one('res.currency', related='treatment_id.company_id.currency_id')
     instructions = fields.Char(string='Indicaciones Específicas')
+
+    @api.onchange('product_id')
+    def _onchange_product_id(self):
+        """Al elegir producto, jalar su precio de venta automáticamente"""
+        if self.product_id:
+            self.price_unit = self.product_id.list_price
+
+    @api.depends('quantity', 'price_unit')
+    def _compute_subtotal(self):
+        """Calcular Precio x Cantidad"""
+        for line in self:
+            line.price_subtotal = line.quantity * line.price_unit
+
+
 
 class MedicalTreatmentSession(models.Model):
     _name = 'medical.treatment.session'
