@@ -1,150 +1,141 @@
-from odoo import models, api
+from odoo import models, api, _
 
 class FinancialReportParser(models.AbstractModel):
     _name = 'report.l10n_pe_financial_reports.report_template_view'
-    _description = 'Parser Financiero Completo'
+    _description = 'Parser de Reportes Financieros con Cuadre NIIF'
 
     @api.model
     def _get_report_values(self, docids, data=None):
         date_from = data.get('date_from')
         date_to = data.get('date_to')
         report_type = data.get('report_type')
-
-        # 1. Variables Base
+        
         vals = {
             'data': data,
-            'act_corriente': [], 'act_no_corriente': [], 
-            'pas_corriente': [], 'pas_no_corriente': [], 'patrimonio': [],
-            'total_act_c': 0.0, 'total_act_nc': 0.0, 'total_activo': 0.0,
-            'total_pas_c': 0.0, 'total_pas_nc': 0.0, 'total_pat': 0.0, 'total_pas_pat': 0.0,
-            'ventas': 0.0, 'otros_ingresos': 0.0, 
-            'compras': 0.0, 'variacion_inv': 0.0, 
-            'personal': 0.0, 'servicios': 0.0, 
-            'tributos': 0.0, 'otros_gastos': 0.0, 
-            'financieros': 0.0,
-            'utilidad_operativa': 0.0, 'utilidad_neta': 0.0,
-            # Nueva variable para el reporte de cambios
-            'cambios_patrimonio': [] 
+            'ventas': 0.0, 'otros_ingresos': 0.0, 'compras': 0.0, 
+            'variacion_inv': 0.0, 'personal': 0.0, 'servicios': 0.0, 
+            'tributos': 0.0, 'otros_gastos': 0.0, 'financieros': 0.0,
+            'utilidad_neta': 0.0,
+            'propiedad_planta_equipo': 0.0,
+            'depreciacion_acumulada': 0.0,
+            'act_no_corriente': [],
+            'act_corriente': [],
+            'pas_corriente': [],
+            'pas_no_corriente': [],
+            'patrimonio': [],
+            'total_act_c': 0.0,
+            'total_act_nc': 0.0,
+            'total_activo': 0.0,
+            'total_pas_c': 0.0,
+            'total_pas_nc': 0.0,
+            'total_pat': 0.0,
+            'total_pas_pat': 0.0
         }
 
-        # 2. Lógica para BALANCE y PyL (Usa lógica de saldos acumulados al corte)
-        if report_type in ['balance', 'pyl']:
-            domain_balance = [('date', '<=', date_to), ('parent_state', '=', 'posted')]
-            domain_pyl = [('date', '>=', date_from), ('date', '<=', date_to), ('parent_state', '=', 'posted')]
+        # --- 1. CÁLCULO DE UTILIDAD (Para el balance y PyL) ---
+        dominio_resultados = [
+            ('date', '>=', date_from), 
+            ('date', '<=', date_to), 
+            ('parent_state', '=', 'posted')
+        ]
+        lineas_res = self.env['account.move.line'].search(dominio_resultados)
+        
+        ingresos = sum(-l.balance for l in lineas_res if l.account_id.code and l.account_id.code.startswith('7'))
+        gastos = sum(l.balance for l in lineas_res if l.account_id.code and l.account_id.code.startswith('6'))
+        utilidad_del_periodo = ingresos - gastos
+        vals['utilidad_neta'] = utilidad_del_periodo
+
+        # --- 2. SALDOS DE CUENTAS (Para Balance) ---
+        accounts = self.env['account.account'].search([], order="code asc")
+        res = []
+        for acc in accounts:
+            domain_b = [
+                ('account_id', '=', acc.id), 
+                ('date', '<=', date_to), 
+                ('parent_state', '=', 'posted')
+            ]
+            # Usar search_read para mayor eficiencia en saldos
+            lines_b = self.env['account.move.line'].search(domain_b)
+            balance = sum(l.debit - l.credit for l in lines_b)
+            if balance != 0:
+                res.append({
+                    'code': acc.code or '', 
+                    'name': acc.name, 
+                    'balance': balance
+                })
+
+        if report_type == 'balance':
+            # Activo Corriente
+            vals['act_corriente'] = [a for a in res if a['code'].startswith(('10','11','12','13','14','16','18','19','2'))]
             
-            domain = domain_balance if report_type == 'balance' else domain_pyl
-            move_lines = self.env['account.move.line'].search(domain)
+            # Activo No Corriente (Lógica NIIF: Agrupar 33 y 39)
+            ppe_list = [a for a in res if a['code'].startswith('33')]
+            dep_list = [a for a in res if a['code'].startswith('39')]
+            vals['propiedad_planta_equipo'] = sum(a['balance'] for a in ppe_list)
+            vals['depreciacion_acumulada'] = sum(a['balance'] for a in dep_list)
+            vals['act_no_corriente'] = [a for a in res if a['code'].startswith('3') and not a['code'].startswith(('33', '39'))]
 
-            accounts = {}
-            for line in move_lines:
-                acc = line.account_id
-                if acc.id not in accounts:
-                    accounts[acc.id] = {'code': acc.code, 'name': acc.name, 'balance': 0.0}
-                accounts[acc.id]['balance'] += (line.debit - line.credit)
+            # Pasivo y Patrimonio
+            vals['pas_corriente'] = [a for a in res if a['code'].startswith(('40','41','42','43','44','45','46','48'))]
+            vals['pas_no_corriente'] = [a for a in res if a['code'].startswith(('47','49'))]
+            vals['patrimonio'] = [a for a in res if a['code'].startswith('5')]
+
+            # Totales
+            vals['total_act_c'] = sum(a['balance'] for a in vals['act_corriente'])
+            vals['total_act_nc'] = vals['propiedad_planta_equipo'] + vals['depreciacion_acumulada'] + sum(a['balance'] for a in vals['act_no_corriente'])
+            vals['total_activo'] = vals['total_act_c'] + vals['total_act_nc']
+            vals['total_pas_c'] = sum(-a['balance'] for a in vals['pas_corriente'])
+            vals['total_pas_nc'] = sum(-a['balance'] for a in vals['pas_no_corriente'])
+            vals['total_pat'] = sum(-a['balance'] for a in vals['patrimonio']) + utilidad_del_periodo
+            vals['total_pas_pat'] = vals['total_pas_c'] + vals['total_pas_nc'] + vals['total_pat']
+
+        elif report_type == 'pyl':
+            vals['ventas'] = sum(-l.balance for l in lineas_res if l.account_id.code and l.account_id.code.startswith('70'))
+            vals['otros_ingresos'] = sum(-l.balance for l in lineas_res if l.account_id.code and l.account_id.code.startswith(('75', '77')))
+            vals['compras'] = sum(l.balance for l in lineas_res if l.account_id.code and l.account_id.code.startswith('60'))
+            vals['variacion_inv'] = sum(l.balance for l in lineas_res if l.account_id.code and l.account_id.code.startswith('61'))
+            vals['personal'] = sum(l.balance for l in lineas_res if l.account_id.code and l.account_id.code.startswith('62'))
+            vals['servicios'] = sum(l.balance for l in lineas_res if l.account_id.code and l.account_id.code.startswith('63'))
+            vals['tributos'] = sum(l.balance for l in lineas_res if l.account_id.code and l.account_id.code.startswith('64'))
+            vals['otros_gastos'] = sum(l.balance for l in lineas_res if l.account_id.code and l.account_id.code.startswith('65'))
+            vals['financieros'] = sum(l.balance for l in lineas_res if l.account_id.code and l.account_id.code.startswith('67'))
             
-            res = list(accounts.values())
+            vals['utilidad_operativa'] = (vals['ventas'] + vals['otros_ingresos']) - \
+                                         (vals['compras'] + vals['variacion_inv'] + vals['personal'] + \
+                                          vals['servicios'] + vals['tributos'] + vals['otros_gastos'])
 
-            if report_type == 'balance':
-                #vals['act_corriente'] = [a for a in res if a['code'].startswith(('10','11','12','13','14','16','18','20','21'))]
-                #vals['act_no_corriente'] = [a for a in res if a['code'].startswith(('3'))]
-                #vals['pas_corriente'] = [a for a in res if a['code'].startswith(('40','41','42','43','44','45','46','48'))]
-                #vals['pas_no_corriente'] = [a for a in res if a['code'].startswith(('47','49'))]
-                #vals['patrimonio'] = [a for a in res if a['code'].startswith('5')]
-
-                vals['act_corriente'] = [a for a in res if a['code'] and a['code'].startswith(('10','11','12','13','14','16','18','20','21'))]
-                vals['act_no_corriente'] = [a for a in res if a['code'] and a['code'].startswith(('3'))]
-                vals['pas_corriente'] = [a for a in res if a['code'] and a['code'].startswith(('40','41','42','43','44','45','46','48'))]
-                vals['pas_no_corriente'] = [a for a in res if a['code'] and a['code'].startswith(('47','49'))]
-                vals['patrimonio'] = [a for a in res if a['code'] and a['code'].startswith('5')]
-                
-                # Ajuste de Utilidad del ejercicio para cuadrar Balance
-                #ing = sum(-a['balance'] for a in res if a['code'].startswith('7'))
-                #gas = sum(a['balance'] for a in res if a['code'].startswith('6'))
-                
-                ing = sum(-a['balance'] for a in res if a['code'] and a['code'].startswith('7'))
-                gas = sum(a['balance'] for a in res if a['code'] and a['code'].startswith('6'))
-                util = ing - gas
-                if util != 0:
-                    vals['patrimonio'].append({'code': 'UTIL', 'name': 'RESULTADO DEL EJERCICIO', 'balance': -util})
-
-                vals['total_act_c'] = sum(x['balance'] for x in vals['act_corriente'])
-                vals['total_act_nc'] = sum(x['balance'] for x in vals['act_no_corriente'])
-                vals['total_activo'] = vals['total_act_c'] + vals['total_act_nc']
-                vals['total_pas_c'] = sum(-x['balance'] for x in vals['pas_corriente'])
-                vals['total_pas_nc'] = sum(-x['balance'] for x in vals['pas_no_corriente'])
-                vals['total_pat'] = sum(-x['balance'] for x in vals['patrimonio'])
-                vals['total_pas_pat'] = vals['total_pas_c'] + vals['total_pas_nc'] + vals['total_pat']
-
-            elif report_type == 'pyl':
-                #vals['ventas'] = sum(-a['balance'] for a in res if a['code'].startswith('70'))
-                #vals['otros_ingresos'] = sum(-a['balance'] for a in res if a['code'].startswith(('75','77')))
-                #vals['compras'] = sum(a['balance'] for a in res if a['code'].startswith('60'))
-                #vals['variacion_inv'] = sum(a['balance'] for a in res if a['code'].startswith('61'))
-                #vals['personal'] = sum(a['balance'] for a in res if a['code'].startswith('62'))
-                #vals['servicios'] = sum(a['balance'] for a in res if a['code'].startswith('63'))
-                #vals['tributos'] = sum(a['balance'] for a in res if a['code'].startswith('64'))
-                #vals['otros_gastos'] = sum(a['balance'] for a in res if a['code'].startswith('65'))
-                #vals['financieros'] = sum(a['balance'] for a in res if a['code'].startswith('67'))
-
-
-                vals['ventas'] = sum(-a['balance'] for a in res if a['code'] and a['code'].startswith('70'))
-                vals['otros_ingresos'] = sum(-a['balance'] for a in res if a['code'] and a['code'].startswith(('75','77')))
-                vals['compras'] = sum(a['balance'] for a in res if a['code'] and a['code'].startswith('60'))
-                vals['variacion_inv'] = sum(a['balance'] for a in res if a['code'] and a['code'].startswith('61'))
-                vals['personal'] = sum(a['balance'] for a in res if a['code'] and a['code'].startswith('62'))
-                vals['servicios'] = sum(a['balance'] for a in res if a['code'] and a['code'].startswith('63'))
-                vals['tributos'] = sum(a['balance'] for a in res if a['code'] and a['code'].startswith('64'))
-                vals['otros_gastos'] = sum(a['balance'] for a in res if a['code'] and a['code'].startswith('65'))
-                vals['financieros'] = sum(a['balance'] for a in res if a['code'] and a['code'].startswith('67'))
-                vals['utilidad_operativa'] = (vals['ventas'] + vals['otros_ingresos']) - (vals['compras'] + vals['variacion_inv'] + vals['personal'] + vals['servicios'] + vals['tributos'] + vals['otros_gastos'])
-                vals['utilidad_neta'] = vals['utilidad_operativa'] - vals['financieros']
-
-        # 3. Lógica EXCLUSIVA para CAMBIOS EN EL PATRIMONIO
-        elif report_type == 'patrimonio':
-            # Buscamos cuentas de clase 5
-            accounts_obj = self.env['account.account'].search([('code', 'like', '5%')])
-            patrimonio_lines = []
-            
-            total_inicial = 0.0
-            total_variacion = 0.0
-            total_final = 0.0
-
-            for acc in accounts_obj:
-                # Saldo Inicial: Movimientos ANTES de date_from
-                lines_init = self.env['account.move.line'].search([
-                    ('account_id', '=', acc.id),
-                    ('date', '<', date_from),
-                    ('parent_state', '=', 'posted')
-                ])
-                # Saldo Periodo: Movimientos ENTRE fechas
-                lines_period = self.env['account.move.line'].search([
-                    ('account_id', '=', acc.id),
-                    ('date', '>=', date_from),
-                    ('date', '<=', date_to),
-                    ('parent_state', '=', 'posted')
-                ])
-
-                # Nota: En patrimonio, SALDO ACREEDOR (Haber) es positivo para la presentación
-                saldo_inicial = sum(l.credit - l.debit for l in lines_init)
-                variacion = sum(l.credit - l.debit for l in lines_period)
-                saldo_final = saldo_inicial + variacion
-
-                if saldo_inicial != 0 or variacion != 0:
-                    patrimonio_lines.append({
-                        'code': acc.code,
-                        'name': acc.name,
-                        'inicial': saldo_inicial,
-                        'variacion': variacion,
-                        'final': saldo_final
+        elif report_type == 'mayor':
+            cuentas_mayor = []
+            for acc in accounts:
+                init_lines = self.env['account.move.line'].search([('account_id', '=', acc.id), ('date', '<', date_from), ('parent_state', '=', 'posted')])
+                saldo_inicial = sum(l.debit - l.credit for l in init_lines)
+                movs = self.env['account.move.line'].search([
+                    ('account_id', '=', acc.id), ('date', '>=', date_from), ('date', '<=', date_to), ('parent_state', '=', 'posted')
+                ], order='date asc')
+                if movs or saldo_inicial != 0:
+                    cuentas_mayor.append({
+                        'code': acc.code or '', 
+                        'name': acc.name, 
+                        'inicial': saldo_inicial, 
+                        'movimientos': movs, 
+                        'final': saldo_inicial + sum(l.debit - l.credit for l in movs)
                     })
-                    total_inicial += saldo_inicial
-                    total_variacion += variacion
-                    total_final += saldo_final
+            vals['cuentas_mayor'] = cuentas_mayor
 
-            # Agregamos totales al final de la lista o los pasamos aparte
-            vals['cambios_patrimonio'] = patrimonio_lines
-            vals['total_pat_inicial'] = total_inicial
-            vals['total_pat_variacion'] = total_variacion
-            vals['total_pat_final'] = total_final
+        elif report_type == 'flujo':
+            lines_f = self.env['account.move.line'].search([
+                ('account_id.code', '=like', '10%'), ('date', '>=', date_from), ('date', '<=', date_to), ('parent_state', '=', 'posted')
+            ])
+            vals['entradas'] = sum(l.debit for l in lines_f)
+            vals['salidas'] = sum(l.credit for l in lines_f)
+            vals['flujo_neto'] = vals['entradas'] - vals['salidas']
+
+        elif report_type == 'diario':
+            vals['asientos'] = self.env['account.move.line'].search([
+                ('date', '>=', date_from), ('date', '<=', date_to), ('parent_state', '=', 'posted')
+            ], order='date asc, move_id asc')
+
+        elif report_type == 'notas':
+            vals['notas_html'] = data.get('notas_text', 'Sin notas.')
 
         return vals

@@ -1,0 +1,21 @@
+{
+    'name': 'Supply Chain Approvals Pro',
+    'version': '18.0.3.0.0',
+    'category': 'Inventory/Purchase',
+    'summary': 'Flujo de aprobaciones mancomunadas configurables por usuario',
+    'author': 'Tu Nombre',
+    'depends': ['base', 'purchase', 'stock', 'account'],
+    'data': [
+        'security/security.xml',
+        'security/ir.model.access.csv',
+        'wizard/approval_wizard_view.xml',
+        'views/res_users_views.xml',
+        'views/purchase_order_views.xml',
+        'views/stock_picking_views.xml',
+        'views/account_move_views.xml',
+        'views/account_payment_views.xml',
+    ],
+    'installable': True,
+    'application': False,
+    'license': 'LGPL-3',
+}

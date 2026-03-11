@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_treasury_movement_form" model="ir.ui.view">
+        <field name="name">treasury.movement.v3.form</field>
+        <field name="model">treasury.movement.v3</field>
+        <field name="arch" type="xml">
+            <form string="Movimiento de Tesorería">
+                <header>
+                    <button name="action_post" string="Publicar" type="object" class="oe_highlight" invisible="state != 'draft'"/>
+                    <button name="action_draft" string="Volver a Borrador" type="object" invisible="state == 'draft'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,posted"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="type"/>
+                            <field name="partner_id"/>
+                            <field name="date"/>
+                            <field name="payment_method"/>
+                        </group>
+                        <group>
+                            <field name="amount"/>
+                            <field name="payment_account_id"/>
+                            <field name="counterpart_account_id"/>
+                            <field name="journal_id"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="memo"/>
+                        <field name="move_id"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_treasury_movement_list" model="ir.ui.view">
+        <field name="name">treasury.movement.v3.list</field>
+        <field name="model">treasury.movement.v3</field>
+        <field name="arch" type="xml">
+            <list string="Movimientos de Tesorería">
+                <field name="name"/>
+                <field name="date"/>
+                <field name="type"/>
+                <field name="partner_id"/>
+                <field name="amount"/>
+                <field name="state"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_treasury_movement" model="ir.actions.act_window">
+        <field name="name">Caja y Bancos</field>
+        <field name="res_model">treasury.movement.v3</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_treasury_movement" name="Caja y Bancos" parent="account.menu_finance_entries" action="action_treasury_movement" sequence="101"/>
+</odoo>

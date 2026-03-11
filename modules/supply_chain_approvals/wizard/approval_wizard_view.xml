@@ -1,0 +1,26 @@
+<odoo>
+    <record id="view_approval_wizard_form" model="ir.ui.view">
+        <field name="name">approval.wizard.form</field>
+        <field name="model">approval.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Confirmar Acción">
+                <group>
+                    <div class="alert alert-info" role="alert" invisible="action_type != 'approve'">
+                        Está a punto de firmar la aprobación de este documento.
+                    </div>
+                    <div class="alert alert-warning" role="alert" invisible="action_type != 'reject'">
+                        Está a punto de RECHAZAR este documento. Se devolverá a borrador o cancelará.
+                    </div>
+                    <field name="reason" placeholder="Escriba su observación obligatoria aquí..."/>
+                    <field name="res_model" invisible="1"/>
+                    <field name="res_id" invisible="1"/>
+                    <field name="action_type" invisible="1"/>
+                </group>
+                <footer>
+                    <button string="Confirmar" type="object" name="action_confirm" class="btn-primary"/>
+                    <button string="Cancelar" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

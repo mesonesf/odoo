@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_asset_ficha" model="ir.actions.report">
+        <field name="name">Ficha de Activo Fijo</field>
+        <field name="model">account.asset.peru.v3</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">l10n_pe_financial_reports.report_asset_ficha_template</field>
+        <field name="report_file">l10n_pe_financial_reports.report_asset_ficha_template</field>
+        <field name="print_report_name">'Ficha_Activo_%s' % (object.name)</field>
+        <field name="binding_model_id" ref="model_account_asset_peru_v3"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_asset_ficha_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page" style="font-family: Arial, sans-serif; font-size: 13px;">
+                        
+                        <div class="text-center" style="border-bottom: 2px solid black; margin-bottom: 20px; padding-bottom: 10px;">
+                            <h2 style="margin: 0;">FICHA DE CONTROL DE ACTIVO FIJO</h2>
+                        </div>
+
+                        <div class="row" style="margin-bottom: 20px;">
+                            <div class="col-6">
+                                <strong>Activo: </strong> <span t-field="o.name"/><br/>
+                                <strong>Proveedor: </strong> 
+                                <span t-if="o.invoice_line_id" t-field="o.invoice_line_id.move_id.partner_id.name"/>
+                                <span t-else="">No vinculado</span><br/>
+                                <strong>Factura: </strong> 
+                                <span t-if="o.invoice_line_id" t-field="o.invoice_line_id.move_id.name"/>
+                                <span t-else="">S/N</span><br/>
+                                <strong>Estado: </strong> <span t-field="o.state"/>
+                            </div>
+                            <div class="col-6">
+                                <strong>Fecha de Compra: </strong> <span t-field="o.purchase_date"/><br/>
+                                <strong>Cantidad: </strong> <span t-field="o.quantity"/> unidades<br/>
+                                <strong>Valor Total Compra: </strong> 
+                                <span t-field="o.purchase_value" t-options='{"widget": "monetary", "display_currency": o.env.company.currency_id}'/><br/>
+                                <strong>Valor Residual: </strong> 
+                                <span t-field="o.salvage_value" t-options='{"widget": "monetary", "display_currency": o.env.company.currency_id}'/>
+                            </div>
+                        </div>
+
+                        <h4 style="margin-top: 30px; border-bottom: 1px solid #CCC; padding-bottom: 5px; color: #333;">Configuración Contable NIIF</h4>
+                        <div class="row mt-2">
+                            <div class="col-6">
+                                <strong>Cuenta Activo (Clase 3):</strong><br/>
+                                <span t-field="o.asset_account_id.display_name"/>
+                            </div>
+                            <div class="col-6">
+                                <strong>Cuenta Gasto (68):</strong><br/>
+                                <span t-field="o.depreciation_account_id.display_name"/>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-6">
+                                <strong>Depreciación Acumulada (39):</strong><br/>
+                                <span t-field="o.accumulated_account_id.display_name"/>
+                            </div>
+                            <div class="col-6">
+                                <strong>Vida Útil Estimada:</strong> <span t-field="o.method_period"/> meses
+                            </div>
+                        </div>
+
+                        <h4 style="margin-top: 35px; color: #333;">Cronograma de Depreciación Mensual</h4>
+                        <table class="table table-sm mt-2" style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="background-color: #f2f2f2; border-bottom: 1px solid black;">
+                                    <th style="padding: 5px;">Fecha</th>
+                                    <th style="padding: 5px;">Referencia de Cuota</th>
+                                    <th style="padding: 5px;" class="text-right">Monto Mensual</th>
+                                    <th style="padding: 5px;" class="text-center">Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="o.depreciation_line_ids" t-as="line">
+                                    <tr style="border-bottom: 1px solid #EEE;">
+                                        <td style="padding: 5px;"><span t-field="line.depreciation_date"/></td>
+                                        <td style="padding: 5px;"><span t-field="line.name"/></td>
+                                        <td style="padding: 5px;" class="text-right">
+                                            <span t-field="line.amount" t-options='{"widget": "float", "precision": 2}'/>
+                                        </td>
+                                        <td style="padding: 5px;" class="text-center">
+                                            <span t-if="line.is_posted" style="color: green; font-weight: bold;">Contabilizado</span>
+                                            <span t-else="" style="color: #666;">Pendiente</span>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                            <tfoot>
+                                <tr style="border-top: 2px solid black; background-color: #f9f9f9;">
+                                    <td colspan="2" class="text-right" style="padding: 5px;"><strong>TOTAL A DEPRECIAR:</strong></td>
+                                    <td class="text-right" style="padding: 5px;">
+                                        <strong>
+                                            <span t-esc="sum(l.amount for l in o.depreciation_line_ids)" t-options='{"widget": "monetary", "display_currency": o.env.company.currency_id}'/>
+                                        </strong>
+                                    </td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+
+                        <div class="row" style="margin-top: 80px;">
+                            <div class="col-6 text-center">
+                                <div style="border-top: 1px solid black; width: 80%; margin: 0 auto;"></div>
+                                <p>Responsable de Activos</p>
+                            </div>
+                            <div class="col-6 text-center">
+                                <div style="border-top: 1px solid black; width: 80%; margin: 0 auto;"></div>
+                                <p>Contabilidad / Finanzas</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

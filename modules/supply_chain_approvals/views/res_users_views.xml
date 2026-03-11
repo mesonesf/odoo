@@ -1,0 +1,25 @@
+<odoo>
+    <record id="view_users_form_supply_approvals" model="ir.ui.view">
+        <field name="name">res.users.form.supply.approvals</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Aprobaciones Supply Chain" groups="supply_chain_approvals.group_approval_config_manager">
+                    <group>
+                        <group string="Configuración de Jefes / Aprobadores">
+                            <field name="purchase_approver_ids" widget="many2many_tags"/>
+                            <field name="stock_approver_ids" widget="many2many_tags"/>
+                            <field name="account_approver_ids" widget="many2many_tags"/>
+                            <field name="payment_approver_ids" widget="many2many_tags"/>
+                        </group>
+                    </group>
+                    <div class="text-muted">
+                        <i class="fa fa-info-circle"/> 
+                        Configuración visible solo para Gestores de Aprobaciones.
+                    </div>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>
