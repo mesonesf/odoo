@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_payslip_peru_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page" style="font-size: 12px; font-family: sans-serif;">
+                        <h2 class="text-center" style="margin-top: 20px;">BOLETA DE PAGO</h2>
+                        <h4 class="text-center">Periodo: <span t-field="o.date_from"/> al <span t-field="o.date_to"/></h4>
+                        
+                        <br/>
+                        <table class="table table-sm table-bordered">
+                            <tr>
+                                <td width="20%"><strong>EMPLEADOR:</strong></td>
+                                <td width="30%"><span t-field="o.company_id.name"/></td>
+                                <td width="20%"><strong>RUC:</strong></td>
+                                <td width="30%"><span t-field="o.company_id.vat"/></td>
+                            </tr>
+                            <tr>
+                                <td><strong>TRABAJADOR:</strong></td>
+                                <td><span t-field="o.employee_id.name"/></td>
+                                <td><strong>DNI/CE:</strong></td>
+                                <td><span t-field="o.employee_id.identification_id"/></td>
+                            </tr>
+                            <tr>
+                                <td><strong>FECHA INGRESO:</strong></td>
+                                <td><span t-field="o.contract_id.date_start"/></td>
+                                <td><strong>CARGO:</strong></td>
+                                <td><span t-field="o.employee_id.job_id.name"/></td>
+                            </tr>
+                        </table>
+
+                        <table class="table table-sm mt-4">
+                            <thead>
+                                <tr style="background-color: #f2f2f2; border-bottom: 2px solid black;">
+                                    <th>CONCEPTO</th>
+                                    <th class="text-end">INGRESOS</th>
+                                    <th class="text-end">DESCUENTOS</th>
+                                    <th class="text-end">APORTES EMPLEADOR</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="o.line_ids" t-as="line">
+                                    <tr t-if="line.total != 0" style="border-bottom: 1px solid #eee;">
+                                        <td><span t-field="line.name"/></td>
+                                        <td class="text-end">
+                                            <span t-if="line.category_id.code in ['BASIC', 'ALW']" t-esc="line.total" t-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>
+                                        </td>
+                                        <td class="text-end">
+                                            <span t-if="line.category_id.code == 'DED'" t-esc="abs(line.total)" t-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>
+                                        </td>
+                                        <td class="text-end">
+                                            <span t-if="line.category_id.code == 'COMP'" t-esc="line.total" t-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+
+                        <div class="row justify-content-end">
+                            <div class="col-4">
+                                <table class="table table-sm">
+                                    <tr class="border-black o_total">
+                                        <td><strong>NETO A PAGAR</strong></td>
+                                        <td class="text-end">
+                                            <t t-foreach="o.line_ids" t-as="line">
+                                                <t t-if="line.code == 'NET'">
+                                                    <strong t-esc="line.total" t-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>
+                                                </t>
+                                            </t>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="row mt-5">
+                            <div class="col-6 text-center">
+                                <br/><br/><br/>
+                                <span>__________________________</span><br/>
+                                <strong>Firma del Empleador</strong>
+                            </div>
+                            <div class="col-6 text-center">
+                                <br/><br/><br/>
+                                <span>__________________________</span><br/>
+                                <strong>Firma del Trabajador</strong>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

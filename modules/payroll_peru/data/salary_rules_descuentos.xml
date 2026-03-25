@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <record id="rule_afp_ao_pe" model="hr.salary.rule">
+            <field name="name">AFP - Aporte Obligatorio</field>
+            <field name="category_id" ref="payroll_peru.DED"/>
+            <field name="code">AFP_AO</field>
+            <field name="sequence">100</field>
+            <field name="condition_select">python</field>
+            <field name="condition_python">result = contract.pension_system_id.type == 'afp'</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+base = (categories.BASIC or 0) + (categories.ALW or 0)
+result = -(base * contract.pension_system_id.ao_percent)
+            </field>
+        </record>
+
+        <record id="rule_afp_com_seg_pe" model="hr.salary.rule">
+            <field name="name">AFP - Comisión y Seguro</field>
+            <field name="category_id" ref="payroll_peru.DED"/>
+            <field name="code">AFP_COM_SEG</field>
+            <field name="sequence">105</field>
+            <field name="condition_select">python</field>
+            <field name="condition_python">result = contract.pension_system_id.type == 'afp'</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+base = (categories.BASIC or 0) + (categories.ALW or 0)
+pension = contract.pension_system_id
+
+# Acceso directo a los campos técnicos confirmados
+# Usamos or 0.0 para evitar errores si el campo está vacío en la base de datos
+comision_flujo = pension.cf_percent or 0.0
+comision_mixta = pension.cm_percent or 0.0
+seguro = pension.ps_percent or 0.0
+
+tasa_total = comision_flujo + comision_mixta + seguro
+result = -(base * tasa_total)
+            </field>
+        </record>
+
+        <record id="rule_quinta_categoria_pe" model="hr.salary.rule">
+            <field name="name">Impuesto a la Renta 5ta Categoría</field>
+            <field name="category_id" ref="payroll_peru.DED"/>
+            <field name="code">QUINTA</field>
+            <field name="sequence">150</field>
+            <field name="condition_select">python</field>
+            <field name="condition_python">
+uit = float(payslip.env['ir.config_parameter'].sudo().get_param('payroll_peru.peru_uit', 5150.0))
+result = ((categories.BASIC or 0) + (categories.ALW or 0)) * 14 > (uit * 7)
+            </field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+uit = float(payslip.env['ir.config_parameter'].sudo().get_param('payroll_peru.peru_uit', 5150.0))
+rem_mensual = (categories.BASIC or 0) + (categories.ALW or 0)
+meses_faltantes = 13 - int(payslip.date_from.strftime('%m'))
+proyeccion_anual = (rem_mensual * meses_faltantes) + (contract.accumulated_remuneration or 0)
+base_imponible = (proyeccion_anual + (rem_mensual * 2)) - (uit * 7)
+impuesto_anual = 0
+if base_imponible > 0:
+    escalas = payslip.env['hr.quinta.escala'].sudo().search([], order='sequence asc')
+    base_restante = base_imponible
+    limite_anterior_soles = 0
+    for escala in escalas:
+        limite_actual_soles = escala.limit_uit * uit
+        tramo_soles = limite_actual_soles - limite_anterior_soles
+        monto_a_gravar = min(base_restante, tramo_soles)
+        impuesto_anual += monto_a_gravar * (escala.rate / 100)
+        base_restante -= monto_a_gravar
+        limite_anterior_soles = limite_actual_soles
+        if base_restante &lt;= 0: break
+result = -(impuesto_anual - (contract.accumulated_retention or 0)) / meses_faltantes
+            </field>
+        </record>
+
+        <record id="rule_essalud_peru_pe" model="hr.salary.rule">
+            <field name="name">Essalud (9%)</field>
+            <field name="category_id" ref="payroll_peru.pe_category_comp_v4"/>
+            <field name="code">ESSALUD</field>
+            <field name="sequence">200</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+rmv = float(payslip.env['ir.config_parameter'].sudo().get_param('payroll_peru.peru_rmv', 1025.0))
+base = (categories.BASIC or 0) + (categories.ALW or 0)
+result = max(base, rmv) * 0.09
+            </field>
+        </record>
+
+        <record id="rule_net_salary_pe" model="hr.salary.rule">
+            <field name="name">Sueldo Neto</field>
+            <field name="category_id" ref="payroll_peru.NET"/>
+            <field name="code">NET</field>
+            <field name="sequence">300</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">result = (categories.BASIC or 0) + (categories.ALW or 0) + (categories.DED or 0)</field>
+        </record>
+
+        <record id="pe_structure_728_v4" model="hr.payroll.structure">
+            <field name="name">Planilla Perú D.L. 728 (OFICIAL)</field>
+            <field name="rule_ids" eval="[(6, 0, [
+                ref('payroll_peru.pe_rule_basic_v4'), 
+                ref('payroll_peru.pe_rule_asig_fam_v4'),
+                ref('payroll_peru.rule_afp_ao_pe'),
+                ref('payroll_peru.rule_afp_com_seg_pe'),
+                ref('payroll_peru.rule_quinta_categoria_pe'),
+                ref('payroll_peru.rule_essalud_peru_pe'),
+                ref('payroll_peru.rule_net_salary_pe')
+            ])]"/>
+        </record>
+    </data>
+</odoo>

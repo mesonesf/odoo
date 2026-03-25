@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="pension_onp" model="hr.pension.system">
+            <field name="name">ONP - Oficina de Normalización Previsional</field>
+            <field name="type">onp</field>
+            <field name="ao_percent">0.13</field>
+        </record>
+
+        <record id="pension_integra" model="hr.pension.system">
+            <field name="name">AFP Integra</field>
+            <field name="type">afp</field>
+            <field name="ao_percent">0.10</field>
+        </record>
+
+        <record id="pension_prima" model="hr.pension.system">
+            <field name="name">AFP Prima</field>
+            <field name="type">afp</field>
+            <field name="ao_percent">0.10</field>
+        </record>
+    </data>
+</odoo>

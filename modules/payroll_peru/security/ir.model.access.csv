@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hr_pension_system,hr.pension.system,model_hr_pension_system,base.group_user,1,1,1,1
+access_hr_quinta_escala,hr.quinta.escala,model_hr_quinta_escala,base.group_user,1,1,1,1
+access_hr_payroll_config_peru,hr.payroll.config.peru,model_hr_payroll_config_peru,base.group_user,1,1,1,1

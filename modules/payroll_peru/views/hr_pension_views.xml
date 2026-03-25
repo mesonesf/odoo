@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_hr_pension_system_tree" model="ir.ui.view">
+        <field name="name">hr.pension.system.tree</field>
+        <field name="model">hr.pension.system</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="type"/>
+                <field name="ao_percent"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_hr_pension_system" model="ir.actions.act_window">
+        <field name="name">Sistemas de Pensiones</field>
+        <field name="res_model">hr.pension.system</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_hr_quinta_escala" model="ir.actions.act_window">
+        <field name="name">Escalas de Quinta Categoría</field>
+        <field name="res_model">hr.quinta.escala</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_payroll_peru_root" 
+              name="Configuración Perú" 
+              parent="hr.menu_human_resources_configuration" 
+              sequence="100"/>
+
+    <menuitem id="menu_hr_pension_system" 
+              name="Pensiones (AFP/ONP)" 
+              parent="menu_payroll_peru_root" 
+              action="action_hr_pension_system" 
+              sequence="10"/>
+
+    <menuitem id="menu_hr_quinta_escala" 
+              name="Escalas de Quinta" 
+              parent="menu_payroll_peru_root" 
+              action="action_hr_quinta_escala" 
+              sequence="20"/>
+</odoo>
