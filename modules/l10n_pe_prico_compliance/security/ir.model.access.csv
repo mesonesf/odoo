@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_l10n_pe_catalog_07,l10n_pe.catalog.07,model_l10n_pe_catalog_07,base.group_user,1,1,1,1
+access_sunat_catalog_ple,sunat.catalog.ple,model_sunat_catalog_ple,base.group_user,1,1,1,1
+access_ple_diario_wizard,ple.diario.wizard,model_ple_diario_wizard,base.group_user,1,1,1,1
+access_ple_activo_wizard,ple.activo.wizard,model_ple_activo_wizard,base.group_user,1,1,1,1
+access_ple_caja_wizard,ple.caja.wizard,model_ple_caja_wizard,base.group_user,1,1,1,1
+access_sire_wizard,sire.wizard,model_sire_wizard,base.group_user,1,1,1,1
+access_sire_concil_wizard,sire.conciliation.wizard,model_sire_conciliation_wizard,base.group_user,1,1,1,1
+access_sire_concil_line,sire.conciliation.line,model_sire_conciliation_line,base.group_user,1,1,1,1

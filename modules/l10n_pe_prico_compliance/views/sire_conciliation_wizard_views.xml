@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_sire_conciliation_wizard_form" model="ir.ui.view">
+        <field name="name">sire.conciliation.wizard.form</field>
+        <field name="model">sire.conciliation.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Auditoría y Conciliación SIRE">
+                
+                <group invisible="state != 'upload'">
+                    <div class="alert alert-info text-center" role="alert" colspan="2">
+                        <strong>Auditoría RCE (Compras)</strong><br/>
+                        Descargue el archivo de "Propuesta RCE" en formato TXT desde el portal de SUNAT y súbalo aquí para compararlo con los registros de Odoo.
+                    </div>
+                    <group>
+                        <field name="date_from"/>
+                        <field name="date_to"/>
+                    </group>
+                    <group>
+                        <field name="proposal_filename" invisible="1"/>
+                        <field name="proposal_file" filename="proposal_filename" widget="binary"/>
+                    </group>
+                </group>
+
+                <group invisible="state != 'results'">
+                    <field name="line_ids" nolabel="1" readonly="1">
+                        <list decoration-success="estado == 'ok'" decoration-warning="estado == 'diff'" decoration-danger="estado == 'missing_odoo'" decoration-info="estado == 'missing_sunat'">
+                            <field name="estado" widget="badge" decoration-success="estado == 'ok'" decoration-warning="estado == 'diff'" decoration-danger="estado == 'missing_odoo'" decoration-info="estado == 'missing_sunat'"/>
+                            <field name="fecha"/>
+                            <field name="key_ref"/>
+                            <field name="proveedor"/>
+                            <field name="sunat_total"/>
+                            <field name="odoo_total"/>
+                            <field name="diferencia" invisible="estado == 'ok'"/>
+                            <field name="move_id" widget="many2one_button"/>
+                        </list>
+                    </field>
+                </group>
+
+                <footer>
+                    <button name="action_compare" string="Cruzar Datos" type="object" class="btn-primary" invisible="state != 'upload'"/>
+                    <button string="Cerrar" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_sire_conciliation_wizard" model="ir.actions.act_window">
+        <field name="name">Auditoría SIRE vs Odoo</field>
+        <field name="res_model">sire.conciliation.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

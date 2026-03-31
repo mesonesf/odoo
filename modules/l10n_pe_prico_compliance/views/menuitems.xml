@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_prico_compliance_root" 
+              name="Cumplimiento PRICO (PLE / SIRE)" 
+              parent="account.menu_finance_reports" 
+              sequence="5"/>
+    <menuitem id="menu_ple_diario" 
+              name="PLE 5.1 y 6.1 (Diario y Mayor)" 
+              parent="menu_prico_compliance_root" 
+              action="action_ple_diario_wizard" 
+              sequence="10"/>
+    <menuitem id="menu_ple_activo" 
+              name="PLE 7.1 - Activos Fijos" 
+              parent="menu_prico_compliance_root" 
+              action="action_ple_activo_wizard" 
+              sequence="20"/>
+    <menuitem id="menu_ple_caja" 
+              name="PLE 1.1 y 1.2 (Caja y Bancos)" 
+              parent="menu_prico_compliance_root" 
+              action="action_ple_caja_wizard" 
+              sequence="15"/>
+    <menuitem id="menu_sire_report" 
+              name="SIRE (Ventas y Compras)" 
+              parent="menu_prico_compliance_root" 
+              action="action_sire_wizard" 
+              sequence="5"/>
+    <menuitem id="menu_sire_conciliation" 
+              name="Auditoría SIRE (Comparador)" 
+              parent="menu_prico_compliance_root" 
+              action="action_sire_conciliation_wizard" 
+              sequence="6"/>
+</odoo>

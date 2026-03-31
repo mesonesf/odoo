@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_ple_diario_wizard_form" model="ir.ui.view">
+        <field name="name">ple.diario.wizard.form</field>
+        <field name="model">ple.diario.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Generar PLE 5.1 y 6.1">
+                
+                <group invisible="state != 'choose'">
+                    <div class="alert alert-info text-center" role="alert" colspan="2">
+                        <strong>Libros Principales (5.1 y 6.1)</strong><br/>
+                        Seleccione el libro que desea exportar para el Validador de SUNAT.
+                    </div>
+                    <group colspan="2">
+                        <field name="book_type" widget="radio" options="{'horizontal': true}"/>
+                    </group>
+                    <group>
+                        <field name="date_from"/>
+                    </group>
+                    <group>
+                        <field name="date_to"/>
+                    </group>
+                </group>
+                
+                <group invisible="state != 'get'">
+                    <div class="alert alert-success text-center" role="alert" colspan="2">
+                        <strong>¡Reporte Generado Exitosamente!</strong>
+                    </div>
+                    <field name="txt_filename" invisible="1"/>
+                    <field name="txt_binary" filename="txt_filename" widget="binary" nolabel="1" class="oe_inline"/>
+                </group>
+
+                <footer>
+                    <button name="action_generate_ple_5_1" string="Generar TXT SUNAT" type="object" class="btn-primary" invisible="state != 'choose'"/>
+                    <button string="Cerrar" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_ple_diario_wizard" model="ir.actions.act_window">
+        <field name="name">PLE 5.1 y 6.1 (Diario y Mayor)</field>
+        <field name="res_model">ple.diario.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_ple_activo_wizard_form" model="ir.ui.view">
+        <field name="name">ple.activo.wizard.form</field>
+        <field name="model">ple.activo.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Generar PLE 7.1 - Activos Fijos">
+                
+                <group invisible="state != 'choose'">
+                    <div class="alert alert-warning text-center" role="alert" colspan="2">
+                        <strong>Registro de Activos Fijos (Libro 7.1)</strong><br/>
+                        Recuerde: Este libro es obligatorio presentarlo anualmente o en el mes de baja/adquisición de un activo importante.
+                    </div>
+                    <group>
+                        <field name="date_from"/>
+                    </group>
+                    <group>
+                        <field name="date_to"/>
+                    </group>
+                </group>
+                
+                <group invisible="state != 'get'">
+                    <div class="alert alert-success text-center" role="alert" colspan="2">
+                        <strong>¡Libro de Activos Generado Exitosamente!</strong>
+                    </div>
+                    <field name="txt_filename" invisible="1"/>
+                    <field name="txt_binary" filename="txt_filename" widget="binary" nolabel="1" class="oe_inline"/>
+                </group>
+
+                <footer>
+                    <button name="action_generate_ple_7_1" string="Generar TXT SUNAT" type="object" class="btn-primary" invisible="state != 'choose'"/>
+                    <button string="Cerrar" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_ple_activo_wizard" model="ir.actions.act_window">
+        <field name="name">PLE 7.1 - Activos Fijos</field>
+        <field name="res_model">ple.activo.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

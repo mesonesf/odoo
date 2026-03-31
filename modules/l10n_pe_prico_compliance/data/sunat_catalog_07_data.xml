@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="cat07_10" model="l10n_pe.catalog.07">
+            <field name="code">10</field>
+            <field name="name">Gravado - Operación Onerosa</field>
+        </record>
+        <record id="cat07_11" model="l10n_pe.catalog.07">
+            <field name="code">11</field>
+            <field name="name">Gravado – Retiro por premio</field>
+        </record>
+        
+        <record id="cat07_20" model="l10n_pe.catalog.07">
+            <field name="code">20</field>
+            <field name="name">Exonerado - Operación Onerosa</field>
+        </record>
+
+        <record id="cat07_30" model="l10n_pe.catalog.07">
+            <field name="code">30</field>
+            <field name="name">Inafecto - Operación Onerosa</field>
+        </record>
+        
+        <record id="cat07_40" model="l10n_pe.catalog.07">
+            <field name="code">40</field>
+            <field name="name">Exportación</field>
+        </record>
+    </data>
+</odoo>
