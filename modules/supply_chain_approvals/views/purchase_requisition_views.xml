@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_purchase_requisition_approval_form" model="ir.ui.view">
+        <field name="name">purchase.requisition.approval.form</field>
+        <field name="model">purchase.requisition</field>
+        <field name="inherit_id" ref="purchase_requisition.view_purchase_requisition_form"/>
+        <field name="arch" type="xml">
+            
+            <xpath expr="//header//button[@name='action_confirm']" position="attributes" failifnotfound="0">
+                <attribute name="invisible">approval_status != 'approved' or state != 'draft'</attribute>
+            </xpath>
+
+            <xpath expr="//header//button[@type='action']" position="attributes" failifnotfound="0">
+                <attribute name="invisible">approval_status != 'approved' or state != 'confirmed'</attribute>
+            </xpath>
+
+            <xpath expr="//header" position="inside">
+                <button name="action_request_approval" string="Solicitar Aprobación" type="object" class="oe_highlight" invisible="approval_status != 'draft'"/>
+                <button name="button_approve_wizard" string="Firmar (Aprobar)" type="object" class="btn-success" invisible="not is_current_user_approver"/>
+                <button name="button_reject_wizard" string="Rechazar" type="object" class="text-danger" invisible="not is_current_user_approver"/>
+            </xpath>
+
+            <xpath expr="//field[@name='vendor_id']" position="attributes">
+                <attribute name="required">0</attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='line_ids']//field[@name='product_id']" position="before">
+                <field name="is_user_quoter" column_invisible="1"/>
+            </xpath>
+
+            <xpath expr="//field[@name='line_ids']//field[@name='price_unit']" position="attributes">
+                <attribute name="readonly">not is_user_quoter or parent.approval_status != 'draft'</attribute>
+                <attribute name="force_save">1</attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='state']" position="before">
+                <field name="approval_status" widget="statusbar" statusbar_visible="draft,to_approve,approved"/>
+            </xpath>
+
+            <xpath expr="//notebook" position="inside">
+                <page string="Ruta de Aprobación">
+                    <group>
+                        <group string="Estado Actual">
+                            <field name="route_id" readonly="1"/>
+                            <field name="current_step_id" readonly="1"/>
+                            <field name="is_current_user_approver" invisible="1"/>
+                        </group>
+                        <group string="Firmas del Paso Actual">
+                            <field name="approver_ids" widget="many2many_tags" readonly="1"/>
+                            <field name="approved_user_ids" widget="many2many_tags" readonly="1"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+
+        </field>
+    </record>
+
+    <record id="purchase_requisition.menu_purchase_requisition_pro_mgt" model="ir.ui.menu">
+        <field name="active" eval="False"/>
+    </record>
+
+    <record id="action_solicitudes_pedido_pro" model="ir.actions.act_window">
+        <field name="name">Solicitudes de Pedido</field>
+        <field name="res_model">purchase.requisition</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_solicitudes_pedido_pro"
+              name="Solicitudes de Pedido"
+              parent="purchase.menu_procurement_management"
+              action="action_solicitudes_pedido_pro"
+              sequence="-10"/>
+</odoo>

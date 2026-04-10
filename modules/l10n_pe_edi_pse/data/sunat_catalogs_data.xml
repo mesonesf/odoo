@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="it_0" model="l10n_pe.catalog.02">
+            <field name="code">0</field>
+            <field name="name">NO DOMICILIADO, SIN RUC</field>
+        </record>
+        <record id="it_1" model="l10n_pe.catalog.02">
+            <field name="code">1</field>
+            <field name="name">DNI</field>
+        </record>
+        <record id="it_6" model="l10n_pe.catalog.02">
+            <field name="code">6</field>
+            <field name="name">RUC</field>
+        </record>
+        <record id="it_4" model="l10n_pe.catalog.02">
+            <field name="code">4</field>
+            <field name="name">CARNET DE EXTRANJERIA</field>
+        </record>
+
+        <record id="cp_01" model="l10n_pe.catalog.10">
+            <field name="code">01</field>
+            <field name="name">FACTURA</field>
+        </record>
+        <record id="cp_03" model="l10n_pe.catalog.10">
+            <field name="code">03</field>
+            <field name="name">BOLETA DE VENTA</field>
+        </record>
+        <record id="cp_07" model="l10n_pe.catalog.10">
+            <field name="code">07</field>
+            <field name="name">NOTA DE CREDITO</field>
+        </record>
+        <record id="cp_08" model="l10n_pe.catalog.10">
+            <field name="code">08</field>
+            <field name="name">NOTA DE DEBITO</field>
+        </record>
+    </data>
+</odoo>

@@ -11,4 +11,15 @@
         <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
     </record>
 
+    <record id="group_approval_config_manager" model="res.groups">
+        <field name="name">Gestor de Configuración (Asigna Aprobadores)</field>
+        <field name="category_id" ref="module_category_sc_approvals"/>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+
+    <record id="group_supply_chain_quoters" model="res.groups">
+        <field name="name">Cotizadores (Permiso para editar precios)</field>
+        <field name="category_id" ref="module_category_sc_approvals"/>
+    </record>
+
 </odoo>

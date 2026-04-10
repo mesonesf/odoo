@@ -1,20 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <record id="view_stock_picking_approval_form" model="ir.ui.view">
+        <field name="name">stock.picking.form.auditoria</field>
         <field name="model">stock.picking</field>
         <field name="inherit_id" ref="stock.view_picking_form"/>
         <field name="arch" type="xml">
+            
             <xpath expr="//header" position="inside">
-                <button name="button_approve_wizard" string="Firmar Aprobación" type="object" class="btn-success" invisible="not is_current_user_approver or approval_status != 'to_approve'"/>
-                <button name="button_reject_wizard" string="Rechazar" type="object" class="btn-danger" invisible="not is_current_user_approver or approval_status != 'to_approve'"/>
+                <button name="action_mark_received"
+                        string="Marcar como Recibido"
+                        type="object"
+                        class="oe_highlight"
+                        invisible="state != 'done' or received_by_id"/>
+                        
+                <button name="action_mark_reviewed"
+                        string="Marcar como Revisado"
+                        type="object"
+                        class="oe_highlight"
+                        invisible="state != 'done' or reviewed_by_id"/>
             </xpath>
-            <xpath expr="//field[@name='origin']" position="after">
-                <group colspan="4" col="4" invisible="approval_status == 'draft'">
-                     <field name="approval_status" widget="badge" decoration-success="approval_status == 'approved'" decoration-warning="approval_status == 'to_approve'"/>
-                    <field name="is_current_user_approver" invisible="1"/>
-                    <field name="approver_ids" widget="many2many_tags" readonly="1"/>
-                    <field name="approved_user_ids" widget="many2many_tags" readonly="1"/>
+
+            <xpath expr="//page[@name='extra']" position="inside">
+                <group string="Auditoría de Recepción">
+                    <field name="received_by_id"/>
+                    <field name="reviewed_by_id"/>
                 </group>
             </xpath>
+            
         </field>
     </record>
 </odoo>

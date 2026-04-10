@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_l10n_pe_catalog_02_tree" model="ir.ui.view">
+        <field name="name">l10n_pe.catalog.02.tree</field>
+        <field name="model">l10n_pe.catalog.02</field>
+        <field name="arch" type="xml">
+            <list string="Catálogo 02: Documentos de Identidad" editable="bottom">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_l10n_pe_catalog_02" model="ir.actions.act_window">
+        <field name="name">Catálogo 02: Doc. Identidad</field>
+        <field name="res_model">l10n_pe.catalog.02</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="view_l10n_pe_catalog_10_tree" model="ir.ui.view">
+        <field name="name">l10n_pe.catalog.10.tree</field>
+        <field name="model">l10n_pe.catalog.10</field>
+        <field name="arch" type="xml">
+            <list string="Catálogo 10: Tipos de Comprobante" editable="bottom">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_l10n_pe_catalog_10" model="ir.actions.act_window">
+        <field name="name">Catálogo 10: Comprobantes</field>
+        <field name="res_model">l10n_pe.catalog.10</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_l10n_pe_sunat_catalogs"
+              name="Catálogos SUNAT"
+              parent="account.menu_finance_configuration"
+              sequence="100"/>
+
+    <menuitem id="menu_action_l10n_pe_catalog_02"
+              name="Tipos de Doc. Identidad"
+              parent="menu_l10n_pe_sunat_catalogs"
+              action="action_l10n_pe_catalog_02"
+              sequence="10"/>
+
+    <menuitem id="menu_action_l10n_pe_catalog_10"
+              name="Tipos de Comprobante"
+              parent="menu_l10n_pe_sunat_catalogs"
+              action="action_l10n_pe_catalog_10"
+              sequence="20"/>
+</odoo>

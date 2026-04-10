@@ -1,15 +1,17 @@
-from odoo import models,fields
+from odoo import models, fields
 
 class StockPicking(models.Model):
-    _name = 'stock.picking'
-    _inherit = ['stock.picking', 'approval.mixin']
-    
-    approver_ids = fields.Many2many('res.users', 'stock_approver_rel', string="Firmas Requeridas")
-    approved_user_ids = fields.Many2many('res.users', 'stock_signed_rel', string="Firmas Recibidas")
+    # Ya no usamos _name, solo _inherit porque no estamos creando un modelo nuevo, solo ampliando el nativo
+    _inherit = 'stock.picking'
 
-    def button_validate(self):
-        if self.approval_status != 'approved':
-            self.action_request_approval()
-            if self.approval_status != 'approved':
-                return False
-        return super(StockPicking, self).button_validate()
+    # Campos para guardar la auditoría visual
+    received_by_id = fields.Many2one('res.users', string="Recibido por (Recepción)", readonly=True, copy=False)
+    reviewed_by_id = fields.Many2one('res.users', string="Revisado por (Calidad)", readonly=True, copy=False)
+
+    def action_mark_received(self):
+        for record in self:
+            record.write({'received_by_id': self.env.user.id})
+
+    def action_mark_reviewed(self):
+        for record in self:
+            record.write({'reviewed_by_id': self.env.user.id})

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_partner_form_l10n_pe_edi" model="ir.ui.view">
+        <field name="name">res.partner.form.l10n.pe.edi</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='category_id']" position="before">
+                <field name="l10n_pe_document_type_id" string="Tipo Doc. SUNAT" options="{'no_create': True}"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="module_category_supply_chain" model="ir.module.category">
+            <field name="name">Supply Chain Approvals</field>
+            <field name="description">Permisos para el flujo de compras y licitaciones.</field>
+            <field name="sequence">10</field>
+        </record>
+
+        <record id="group_supply_chain_quoters" model="res.groups">
+            <field name="name">Fase 1: Cotizadores (Pueden poner precios)</field>
+            <field name="category_id" ref="module_category_supply_chain"/>
+        </record>
+
+        <record id="group_supply_chain_selectors" model="res.groups">
+            <field name="name">Fase 2: Jefatura (Pueden elegir cotización ganadora)</field>
+            <field name="category_id" ref="module_category_supply_chain"/>
+        </record>
+
+        <record id="group_supply_chain_po_confirmers" model="res.groups">
+            <field name="name">Fase 2: Compras (Pueden emitir Orden de Compra final)</field>
+            <field name="category_id" ref="module_category_supply_chain"/>
+        </record>
+    </data>
+</odoo>
