@@ -12,6 +12,7 @@
 
             <xpath expr="//header//button[@type='action']" position="attributes" failifnotfound="0">
                 <attribute name="invisible">approval_status != 'approved' or state != 'confirmed'</attribute>
+                <attribute name="groups">supply_chain_approvals.group_supply_chain_rfq_creators</attribute>
             </xpath>
 
             <xpath expr="//header" position="inside">
@@ -53,6 +54,17 @@
                 </page>
             </xpath>
 
+        </field>
+    </record>
+
+    <record id="view_purchase_requisition_tree_inherit" model="ir.ui.view">
+        <field name="name">purchase.requisition.tree.inherit</field>
+        <field name="model">purchase.requisition</field>
+        <field name="inherit_id" ref="purchase_requisition.view_purchase_requisition_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='state']" position="before">
+                <field name="approval_status" widget="badge" decoration-info="approval_status == 'draft'" decoration-warning="approval_status == 'to_approve'" decoration-success="approval_status == 'approved'"/>
+            </xpath>
         </field>
     </record>
 

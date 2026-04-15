@@ -14,7 +14,8 @@
                 <field name="is_winning_quote" invisible="1"/>
 
                 <button name="action_select_winner" string="🌟 Seleccionar como Ganadora" type="object" class="btn-warning" invisible="is_winning_quote or requisition_has_winner or state != 'draft' or not is_user_selector"/>
-                <button name="action_undo_winner" string="❌ Quitar Medalla" type="object" class="btn-secondary" invisible="not is_winning_quote or state != 'draft' or not is_current_user_the_selector"/>
+                
+                <button name="action_undo_winner" string="❌ Quitar Medalla" type="object" class="btn-secondary" invisible="not is_winning_quote or approval_status != 'draft' or not is_current_user_the_selector"/>
                 
                 <button name="action_request_approval" string="Solicitar Aprobación" type="object" class="oe_highlight" invisible="approval_status != 'draft' or not is_winning_quote"/>
                 
@@ -58,12 +59,46 @@
         </field>
     </record>
 
+    <record id="view_purchase_order_tree_inherit" model="ir.ui.view">
+        <field name="name">purchase.order.tree.inherit</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_kpis_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='state']" position="before">
+                <field name="approval_status" widget="badge" decoration-info="approval_status == 'draft'" decoration-warning="approval_status == 'to_approve'" decoration-success="approval_status == 'approved'"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_purchase_order_aprobacion_list" model="ir.ui.view">
+        <field name="name">purchase.order.aprobacion.list</field>
+        <field name="model">purchase.order</field>
+        <field name="arch" type="xml">
+            <list string="Cotizaciones">
+                <field name="requisition_id" string="Solicitud Base"/>
+                <field name="name" string="Cotización"/>
+                <field name="partner_id" string="Proveedor"/>
+                <field name="amount_total" string="Total"/>
+                <field name="quote_result_status" string="Resultado" widget="badge" decoration-success="is_winning_quote == True" decoration-danger="quote_result_status == '❌ Perdida'"/>
+                <field name="is_winning_quote" column_invisible="1"/>
+                <field name="approval_status" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
     <record id="action_aprobacion_cotizaciones" model="ir.actions.act_window">
         <field name="name">Aprobación de Cotizaciones</field>
         <field name="res_model">purchase.order</field>
         <field name="view_mode">list,form</field>
         <field name="domain">[('requisition_id', '!=', False)]</field>
-        <field name="context">{'search_default_requisition_id': 1}</field>
+        <field name="context">{'search_default_requisition_id': 1, 'group_by': 'requisition_id'}</field>
+    </record>
+
+    <record id="action_aprobacion_cotizaciones_view_list" model="ir.actions.act_window.view">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">list</field>
+        <field name="view_id" ref="view_purchase_order_aprobacion_list"/>
+        <field name="act_window_id" ref="action_aprobacion_cotizaciones"/>
     </record>
 
     <menuitem id="menu_aprobacion_cotizaciones"
