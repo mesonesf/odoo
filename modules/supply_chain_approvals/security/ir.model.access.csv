@@ -2,3 +2,4 @@ id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_approval_wizard,approval.wizard,model_approval_wizard,,1,1,1,1
 access_approval_route,approval.route,model_approval_route,,1,1,1,1
 access_approval_step,approval.step,model_approval_step,,1,1,1,1
+access_requisition_import_wizard,access.requisition.import.wizard,model_requisition_import_wizard,supply_chain_approvals.group_supply_chain_quoters,1,1,1,1

@@ -1,5 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <record id="view_requisition_import_wizard_form" model="ir.ui.view">
+        <field name="name">requisition.import.wizard.form</field>
+        <field name="model">requisition.import.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Importador de Precios Referenciales">
+                <p class="text-muted">
+                    Para actualizar los precios masivamente: <br/>
+                    1. Descargue la plantilla generada para esta solicitud. <br/>
+                    2. Llene la columna "precio_referencial" (no modifique el line_id). <br/>
+                    3. Suba el archivo y presione Procesar.
+                </p>
+                <group>
+                    <group string="1. Obtener Formato">
+                        <button name="action_download_template" string="Descargar Plantilla CSV" type="object" class="btn-info" icon="fa-download"/>
+                    </group>
+                    <group string="2. Subir Archivo Lleno">
+                        <field name="file_name" invisible="1"/>
+                        <field name="file" filename="file_name" widget="binary" string="Archivo CSV"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="action_import_prices" string="Procesar e Importar" type="object" class="btn-success"/>
+                    <button string="Cancelar" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
     <record id="view_purchase_requisition_approval_form" model="ir.ui.view">
         <field name="name">purchase.requisition.approval.form</field>
         <field name="model">purchase.requisition</field>
@@ -16,6 +44,13 @@
             </xpath>
 
             <xpath expr="//header" position="inside">
+                <button name="action_open_import_wizard" 
+                        string="Importar Precios (CSV)" 
+                        type="object" 
+                        class="btn-info" 
+                        invisible="approval_status != 'draft'"
+                        groups="supply_chain_approvals.group_supply_chain_quoters"/>
+
                 <button name="action_request_approval" string="Solicitar Aprobación" type="object" class="oe_highlight" invisible="approval_status != 'draft'"/>
                 <button name="button_approve_wizard" string="Firmar (Aprobar)" type="object" class="btn-success" invisible="not is_current_user_approver"/>
                 <button name="button_reject_wizard" string="Rechazar" type="object" class="text-danger" invisible="not is_current_user_approver"/>
@@ -32,6 +67,10 @@
             <xpath expr="//field[@name='line_ids']//field[@name='price_unit']" position="attributes">
                 <attribute name="readonly">not is_user_quoter or parent.approval_status != 'draft'</attribute>
                 <attribute name="force_save">1</attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='line_ids']//list" position="inside">
+                <field name="id" string="ID Línea" optional="show" readonly="1"/>
             </xpath>
 
             <xpath expr="//field[@name='state']" position="before">
