@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_education_section_form" model="ir.ui.view">
+        <field name="name">education.section.form</field>
+        <field name="model">education.section</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Ej. Grupo A / 5to Secundaria"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="course_id"/>
+                            <field name="period_id"/>
+                            <field name="teacher_id"/>
+                        </group>
+                        <group>
+                            <field name="max_capacity"/>
+                            <field name="enrolled_count"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Horario Semanal" name="schedule">
+                            <field name="schedule_line_ids">
+                                <list editable="bottom">
+                                    <field name="day_of_week"/>
+                                    <field name="start_time" widget="float_time"/>
+                                    <field name="end_time" widget="float_time"/>
+                                    <field name="classroom_id"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Alumnos Matriculados" name="enrollments">
+                            <field name="enrollment_ids">
+                                <list editable="bottom">
+                                    <field name="student_id"/>
+                                    <field name="enrollment_date"/>
+                                    <field name="state"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_education_section_list" model="ir.ui.view">
+        <field name="name">education.section.list</field>
+        <field name="model">education.section</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="course_id"/>
+                <field name="period_id"/>
+                <field name="teacher_id"/>
+                <field name="enrolled_count"/>
+                <field name="max_capacity"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_education_section" model="ir.actions.act_window">
+        <field name="name">Secciones y Grupos</field>
+        <field name="res_model">education.section</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

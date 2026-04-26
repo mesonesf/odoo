@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_education_root" 
+              name="Educación" 
+              sequence="10" 
+              web_icon="education_core,static/description/icon.png"/>
+
+    <menuitem id="menu_education_academic" 
+              name="Académico" 
+              parent="menu_education_root" 
+              sequence="10"/>
+
+    <menuitem id="menu_education_catalog" 
+              name="Catálogo" 
+              parent="menu_education_root" 
+              sequence="20"/>
+
+    <menuitem id="menu_education_people" 
+              name="Personas" 
+              parent="menu_education_root" 
+              sequence="30"/>
+
+    <menuitem id="menu_education_analysis" 
+              name="Reportes y Analítica" 
+              parent="menu_education_root" 
+              sequence="40"/>
+
+    <menuitem id="menu_action_section" 
+              name="Secciones y Grupos" 
+              parent="menu_education_academic" 
+              action="action_education_section" 
+              sequence="10"/>
+
+    <menuitem id="menu_action_course" 
+              name="Cursos y Materias" 
+              parent="menu_education_catalog" 
+              action="action_education_course" 
+              sequence="10"/>
+
+    <menuitem id="menu_action_period" 
+              name="Periodos Académicos" 
+              parent="menu_education_catalog" 
+              action="action_education_period" 
+              sequence="20"/>
+
+    <menuitem id="menu_action_classroom" 
+              name="Aulas" 
+              parent="menu_education_catalog" 
+              action="action_education_classroom" 
+              sequence="30"/>
+
+    <menuitem id="menu_action_student" 
+              name="Alumnos" 
+              parent="menu_education_people" 
+              action="action_education_student" 
+              sequence="10"/>
+
+    <menuitem id="menu_action_teacher" 
+              name="Docentes" 
+              parent="menu_education_people" 
+              action="action_education_teacher" 
+              sequence="20"/>
+
+    <menuitem id="menu_action_enrollment_analysis" 
+              name="Analítica de Matrículas" 
+              parent="menu_education_analysis" 
+              action="action_education_enrollment_analysis" 
+              sequence="10"/>
+</odoo>

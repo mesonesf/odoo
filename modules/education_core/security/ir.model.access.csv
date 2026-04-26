@@ -1,0 +1,13 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_edu_period_mgr,education.academic.period,model_education_academic_period,group_education_manager,1,1,1,1
+access_edu_classrm_mgr,education.classroom,model_education_classroom,group_education_manager,1,1,1,1
+access_edu_course_mgr,education.course,model_education_course,group_education_manager,1,1,1,1
+access_edu_section_mgr,education.section,model_education_section,group_education_manager,1,1,1,1
+access_edu_enroll_mgr,education.enrollment,model_education_enrollment,group_education_manager,1,1,1,1
+access_edu_sched_mgr,education.schedule.line,model_education_schedule_line,group_education_manager,1,1,1,1
+access_edu_period_usr,education.academic.period,model_education_academic_period,group_education_user,1,0,0,0
+access_edu_classrm_usr,education.classroom,model_education_classroom,group_education_user,1,0,0,0
+access_edu_course_usr,education.course,model_education_course,group_education_user,1,0,0,0
+access_edu_section_usr,education.section,model_education_section,group_education_user,1,1,0,0
+access_edu_enroll_usr,education.enrollment,model_education_enrollment,group_education_user,1,0,0,0
+access_edu_sched_usr,education.schedule.line,model_education_schedule_line,group_education_user,1,0,0,0

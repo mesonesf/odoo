@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_partner_form_education" model="ir.ui.view">
+        <field name="name">res.partner.education.form</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Educación" name="education_info">
+                    <group>
+                        <group>
+                            <field name="is_student"/>
+                            <field name="student_code" invisible="not is_student"/>
+                            <field name="date_of_birth" invisible="not is_student"/>
+                            <field name="age" invisible="not is_student"/>
+                        </group>
+                        <group>
+                            <field name="is_parent"/>
+                            <field name="parent_id" invisible="not is_student"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_education_student" model="ir.actions.act_window">
+        <field name="name">Alumnos</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="domain">[('is_student', '=', True)]</field>
+        <field name="context">{'default_is_student': True}</field>
+    </record>
+</odoo>

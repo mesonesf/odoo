@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_education_enrollment_pivot" model="ir.ui.view">
+        <field name="name">education.enrollment.pivot</field>
+        <field name="model">education.enrollment</field>
+        <field name="arch" type="xml">
+            <pivot string="Análisis de Matrículas" sample="1">
+                <field name="section_id" type="row"/>
+                <field name="state" type="col"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_education_enrollment_graph" model="ir.ui.view">
+        <field name="name">education.enrollment.graph</field>
+        <field name="model">education.enrollment</field>
+        <field name="arch" type="xml">
+            <graph string="Matrículas por Sección" type="bar" sample="1">
+                <field name="section_id"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="action_education_enrollment_analysis" model="ir.actions.act_window">
+        <field name="name">Análisis de Matrículas</field>
+        <field name="res_model">education.enrollment</field>
+        <field name="view_mode">graph,pivot,list,form</field>
+    </record>
+
+</odoo>

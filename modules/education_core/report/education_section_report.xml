@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_section_roster" model="ir.actions.report">
+        <field name="name">Imprimir Lista Asistencia</field>
+        <field name="model">education.section</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">education_core.report_section_roster</field>
+        <field name="report_file">education_core.report_section_roster</field>
+        <field name="binding_model_id" ref="model_education_section"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_section_roster">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2 class="text-center mb-4">Lista Oficial de Asistencia</h2>
+                        
+                        <div class="row mb-4" style="font-size: 14px; border: 1px solid #ccc; padding: 10px; border-radius: 5px;">
+                            <div class="col-6">
+                                <strong>Sección / Grupo:</strong> <span t-field="doc.name"/><br/>
+                                <strong>Curso:</strong> <span t-field="doc.course_id.name"/><br/>
+                                <strong>Docente:</strong> <span t-field="doc.teacher_id.name"/>
+                            </div>
+                            <div class="col-6">
+                                <strong>Periodo:</strong> <span t-field="doc.period_id.name"/><br/>
+                                <strong>Aulas Asignadas:</strong> <span t-esc="', '.join(doc.schedule_line_ids.mapped('classroom_id.name'))"/><br/>
+                                <strong>Alumnos Matriculados:</strong> <span t-field="doc.enrolled_count"/> / <span t-field="doc.max_capacity"/>
+                            </div>
+                        </div>
+
+                        <table class="table table-sm table-bordered mt-4">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th class="text-center" style="width: 5%">Nº</th>
+                                    <th class="text-center" style="width: 15%">Código</th>
+                                    <th style="width: 50%">Apellidos y Nombres</th>
+                                    <th class="text-center" style="width: 30%">Firma / Asistencia</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-set="contador" t-value="1"/>
+                                <tr t-foreach="doc.enrollment_ids.filtered(lambda e: e.state == 'active')" t-as="enrollment">
+                                    <td class="text-center"><t t-esc="contador"/></td>
+                                    <td class="text-center"><span t-field="enrollment.student_id.student_code"/></td>
+                                    <td><span t-field="enrollment.student_id.name"/></td>
+                                    <td></td> <t t-set="contador" t-value="contador + 1"/>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>
