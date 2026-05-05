@@ -68,6 +68,10 @@
                     <field name="specialty_id"/>
                     <field name="treatment_type"/>
                     <field name="session_count"/>
+                    
+                    <!-- CAMBIO AQUÍ: Se agregó la Fecha de Creación -->
+                    <field name="create_date" string="Fecha de Creación" widget="date"/>
+                    
                     <field name="state" widget="badge" decoration-info="state == 'confirmed'" decoration-success="state == 'done'"/>
                 </list>
             </field>
