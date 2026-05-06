@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <!-- 1. JORNAL BÁSICO CC -->
+        <record id="rule_pe_cc_jornal" model="hr.salary.rule">
+            <field name="name">CC - Jornal Básico (Dias Laborados)</field>
+            <field name="category_id" ref="payroll_peru.BASIC"/>
+            <field name="code">JB_CC</field>
+            <field name="sequence">10</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+dias = payslip.worked_days_line_ids.filtered(lambda x: x.code == 'WORK100').number_of_days or 0
+result = contract.wage * dias
+            </field>
+        </record>
+
+        <!-- 2. DOMINICAL -->
+        <record id="rule_pe_cc_dominical" model="hr.salary.rule">
+            <field name="name">CC - Dominical Proporcional</field>
+            <field name="category_id" ref="payroll_peru.ALW"/>
+            <field name="code">DOM_CC</field>
+            <field name="sequence">15</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+dias = payslip.worked_days_line_ids.filtered(lambda x: x.code == 'WORK100').number_of_days or 0
+result = (contract.wage / 6.0) * dias
+            </field>
+        </record>
+
+        <!-- 3. BUC -->
+        <record id="rule_pe_cc_buc" model="hr.salary.rule">
+            <field name="name">CC - BUC</field>
+            <field name="category_id" ref="payroll_peru.ALW"/>
+            <field name="code">BUC_CC</field>
+            <field name="sequence">20</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+dias = payslip.worked_days_line_ids.filtered(lambda x: x.code == 'WORK100').number_of_days or 0
+porcentaje = 0.32 if contract.pe_worker_category == 'operario' else 0.30
+result = (contract.wage * porcentaje) * dias
+            </field>
+        </record>
+
+        <!-- 4. BAE -->
+        <record id="rule_pe_cc_bae" model="hr.salary.rule">
+            <field name="name">CC - BAE (Alta Especialización)</field>
+            <field name="category_id" ref="payroll_peru.ALW"/>
+            <field name="code">BAE_CC</field>
+            <field name="sequence">22</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+dias = payslip.worked_days_line_ids.filtered(lambda x: x.code == 'WORK100').number_of_days or 0
+tasa_bae = (contract.pe_bae_percentage or 0.0) / 100.0
+result = (contract.wage * tasa_bae) * dias
+            </field>
+        </record>
+
+        <!-- 5. BONIFICACIÓN POR ALTURA/RIESGO -->
+        <record id="rule_pe_cc_altura" model="hr.salary.rule">
+            <field name="name">CC - Bonificación por Altura (7%)</field>
+            <field name="category_id" ref="payroll_peru.ALW"/>
+            <field name="code">ALT_CC</field>
+            <field name="sequence">23</field>
+            <field name="condition_select">python</field>
+            <field name="condition_python">result = contract.pe_height_work</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+jb_rule = result_rules.dict.get('JB_CC')
+jornal = jb_rule.total if jb_rule else 0.0
+result = jornal * 0.07
+            </field>
+        </record>
+
+        <!-- 6. MOVILIDAD -->
+        <record id="rule_pe_cc_movilidad" model="hr.salary.rule">
+            <field name="name">CC - Movilidad Diaria</field>
+            <field name="category_id" ref="payroll_peru.ALW"/>
+            <field name="code">MOV_CC</field>
+            <field name="sequence">25</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+dias = payslip.worked_days_line_ids.filtered(lambda x: x.code == 'WORK100').number_of_days or 0
+result = 8.60 * dias
+            </field>
+        </record>
+
+        <!-- 7. CTS CC -->
+        <record id="rule_pe_cc_cts" model="hr.salary.rule">
+            <field name="name">CC - Indemnización / CTS (15%)</field>
+            <field name="category_id" ref="payroll_peru.ALW"/>
+            <field name="code">CTS_CC</field>
+            <field name="sequence">30</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+dias = payslip.worked_days_line_ids.filtered(lambda x: x.code == 'WORK100').number_of_days or 0
+result = (contract.wage * 0.15) * dias
+            </field>
+        </record>
+
+        <!-- 8. VACACIONES CC -->
+        <record id="rule_pe_cc_vacaciones" model="hr.salary.rule">
+            <field name="name">CC - Vacaciones Proporcionales (10%)</field>
+            <field name="category_id" ref="payroll_peru.ALW"/>
+            <field name="code">VAC_CC</field>
+            <field name="sequence">35</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+dias = payslip.worked_days_line_ids.filtered(lambda x: x.code == 'WORK100').number_of_days or 0
+result = (contract.wage * 0.10) * dias
+            </field>
+        </record>
+
+        <!-- 9. CONAFOVICER -->
+        <record id="rule_pe_cc_conafovicer" model="hr.salary.rule">
+            <field name="name">CC - CONAFOVICER (2%)</field>
+            <field name="category_id" ref="payroll_peru.DED"/>
+            <field name="code">CONAFO</field>
+            <field name="sequence">110</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+jb = result_rules.dict.get('JB_CC')
+dom = result_rules.dict.get('DOM_CC')
+base_total = (jb.total if jb else 0.0) + (dom.total if dom else 0.0)
+result = -(base_total * 0.02)
+            </field>
+        </record>
+
+        <!-- 10. SCTR (Patronal) -->
+        <record id="rule_pe_cc_sctr" model="hr.salary.rule">
+            <field name="name">CC - SCTR (Aporte Empleador)</field>
+            <field name="category_id" ref="payroll_peru.pe_category_comp_v4"/>
+            <field name="code">SCTR_CC</field>
+            <field name="sequence">210</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">
+base = (categories.BASIC or 0) + (categories.ALW or 0)
+tasa = (contract.pe_sctr_rate or 0.0) / 100.0
+result = base * tasa
+            </field>
+        </record>
+
+        <!-- ESTRUCTURA CC COMPLETA -->
+        <record id="structure_pe_cc_obrero" model="hr.payroll.structure">
+            <field name="name">Planilla Perú - Construcción Civil (Semanal)</field>
+            <field name="rule_ids" eval="[(6, 0, [
+                ref('rule_pe_cc_jornal'),
+                ref('rule_pe_cc_dominical'),
+                ref('rule_pe_cc_buc'),
+                ref('rule_pe_cc_bae'),
+                ref('rule_pe_cc_altura'),
+                ref('rule_pe_cc_movilidad'),
+                ref('rule_pe_cc_cts'),
+                ref('rule_pe_cc_vacaciones'),
+                ref('payroll_peru.rule_afp_ao_pe'),
+                ref('payroll_peru.rule_afp_com_seg_pe'),
+                ref('rule_pe_cc_conafovicer'),
+                ref('payroll_peru.rule_essalud_peru_pe'),
+                ref('rule_pe_cc_sctr'),
+                ref('payroll_peru.rule_net_salary_pe')
+            ])]"/>
+        </record>
+    </data>
+</odoo>

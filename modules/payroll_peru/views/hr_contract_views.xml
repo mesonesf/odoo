@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="hr_contract_view_form_peru" model="ir.ui.view">
-        <field name="name">hr.contract.form.peru</field>
+    <record id="hr_contract_view_form_peru_final" model="ir.ui.view">
+        <field name="name">hr.contract.form.peru.final</field>
         <field name="model">hr.contract</field>
         <field name="inherit_id" ref="hr_contract.hr_contract_view_form"/>
         <field name="arch" type="xml">
@@ -9,11 +9,19 @@
                 <group name="peru_info" string="Localización Perú">
                     <group>
                         <field name="labor_regime"/>
-                        <field name="has_family_allowance"/>
+                        <field name="has_family_allowance" invisible="labor_regime == 'construccion'"/>
                         <field name="pension_system_id" options="{'no_create': True}"/>
                         <field name="cuspp"/>
                     </group>
-                    <group string="Datos Quinta Categoría">
+                    <group string="Construcción Civil" invisible="labor_regime != 'construccion'">
+                        <field name="pe_worker_category" required="labor_regime == 'construccion'"/>
+                        <field name="pe_bae_percentage" widget="percentage"/>
+                        <field name="pe_height_work"/>
+                        <field name="pe_sctr_rate"/>
+                    </group>
+                </group>
+                <group name="quinta_info" string="Retenciones y Acumulados" invisible="labor_regime == 'construccion'">
+                    <group>
                         <field name="other_incomes"/>
                         <field name="accumulated_retention"/>
                         <field name="accumulated_remuneration"/>

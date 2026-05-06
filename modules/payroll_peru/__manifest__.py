@@ -19,6 +19,7 @@
         'data/l10n_pe_payroll_data.xml',
         'data/salary_rules_ingresos.xml',
         'data/salary_rules_descuentos.xml',
+        'data/salary_rules_construccion.xml',
         'views/hr_contract_views.xml',
         'views/hr_pension_views.xml',
         'views/res_config_settings_views.xml', # Nueva vista

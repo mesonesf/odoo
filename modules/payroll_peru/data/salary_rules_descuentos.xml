@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data noupdate="0">
+        <!-- AFP - Aporte Obligatorio -->
         <record id="rule_afp_ao_pe" model="hr.salary.rule">
             <field name="name">AFP - Aporte Obligatorio</field>
             <field name="category_id" ref="payroll_peru.DED"/>
@@ -11,10 +12,15 @@
             <field name="amount_select">code</field>
             <field name="amount_python_compute">
 base = (categories.BASIC or 0) + (categories.ALW or 0)
+# Si es Construcción Civil, restamos la movilidad porque no es pensionable
+if contract.labor_regime == 'construccion':
+    movilidad = result_rules.get('MOV_CC', {}).get('total', 0)
+    base -= movilidad
 result = -(base * contract.pension_system_id.ao_percent)
             </field>
         </record>
 
+        <!-- AFP - Comisión y Seguro -->
         <record id="rule_afp_com_seg_pe" model="hr.salary.rule">
             <field name="name">AFP - Comisión y Seguro</field>
             <field name="category_id" ref="payroll_peru.DED"/>
@@ -25,19 +31,18 @@ result = -(base * contract.pension_system_id.ao_percent)
             <field name="amount_select">code</field>
             <field name="amount_python_compute">
 base = (categories.BASIC or 0) + (categories.ALW or 0)
+if contract.labor_regime == 'construccion':
+    movilidad = result_rules.get('MOV_CC', {}).get('total', 0)
+    base -= movilidad
+
 pension = contract.pension_system_id
-
-# Acceso directo a los campos técnicos confirmados
-# Usamos or 0.0 para evitar errores si el campo está vacío en la base de datos
-comision_flujo = pension.cf_percent or 0.0
-comision_mixta = pension.cm_percent or 0.0
-seguro = pension.ps_percent or 0.0
-
-tasa_total = comision_flujo + comision_mixta + seguro
+# Usamos tus campos técnicos cf, cm y ps
+tasa_total = (pension.cf_percent or 0.0) + (pension.cm_percent or 0.0) + (pension.ps_percent or 0.0)
 result = -(base * tasa_total)
             </field>
         </record>
 
+        <!-- Impuesto a la Renta 5ta Categoría -->
         <record id="rule_quinta_categoria_pe" model="hr.salary.rule">
             <field name="name">Impuesto a la Renta 5ta Categoría</field>
             <field name="category_id" ref="payroll_peru.DED"/>
@@ -45,8 +50,11 @@ result = -(base * tasa_total)
             <field name="sequence">150</field>
             <field name="condition_select">python</field>
             <field name="condition_python">
-uit = float(payslip.env['ir.config_parameter'].sudo().get_param('payroll_peru.peru_uit', 5150.0))
-result = ((categories.BASIC or 0) + (categories.ALW or 0)) * 14 > (uit * 7)
+if contract.labor_regime == 'construccion':
+    result = False
+else:
+    uit = float(payslip.env['ir.config_parameter'].sudo().get_param('payroll_peru.peru_uit', 5150.0))
+    result = ((categories.BASIC or 0) + (categories.ALW or 0)) * 14 > (uit * 7)
             </field>
             <field name="amount_select">code</field>
             <field name="amount_python_compute">
@@ -72,6 +80,7 @@ result = -(impuesto_anual - (contract.accumulated_retention or 0)) / meses_falta
             </field>
         </record>
 
+        <!-- Essalud -->
         <record id="rule_essalud_peru_pe" model="hr.salary.rule">
             <field name="name">Essalud (9%)</field>
             <field name="category_id" ref="payroll_peru.pe_category_comp_v4"/>
@@ -85,6 +94,7 @@ result = max(base, rmv) * 0.09
             </field>
         </record>
 
+        <!-- Sueldo Neto -->
         <record id="rule_net_salary_pe" model="hr.salary.rule">
             <field name="name">Sueldo Neto</field>
             <field name="category_id" ref="payroll_peru.NET"/>
@@ -94,6 +104,7 @@ result = max(base, rmv) * 0.09
             <field name="amount_python_compute">result = (categories.BASIC or 0) + (categories.ALW or 0) + (categories.DED or 0)</field>
         </record>
 
+        <!-- Tu estructura 728 Original -->
         <record id="pe_structure_728_v4" model="hr.payroll.structure">
             <field name="name">Planilla Perú D.L. 728 (OFICIAL)</field>
             <field name="rule_ids" eval="[(6, 0, [
