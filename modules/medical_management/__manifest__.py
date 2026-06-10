@@ -19,6 +19,7 @@
          'views/evaluation_views.xml',       
          'views/treatment_views.xml',
          'views/medical_menus.xml',
+         'views/partner_views.xml',
      ],
      'installable': True,
      'application': True,

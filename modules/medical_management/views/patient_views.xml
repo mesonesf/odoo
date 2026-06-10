@@ -10,7 +10,7 @@
                     <field name="name"/>
                     <field name="partner_id" invisible="1"/>
                     <field name="gender"/>
-                    <field name="birth_date"/>
+                    <field name="birth_date" readonly="1" force_save="1"/>
                     <field name="blood_type"/>
                 </list>
             </field>
