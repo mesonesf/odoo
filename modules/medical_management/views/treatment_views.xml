@@ -106,7 +106,7 @@
                                 <field name="treatment_type" widget="radio" readonly="state != 'draft'"/>
                             </group>
                             <group>
-                                <field name="date" readonly="1"/>
+                                <field name="date" readonly="state != 'draft'"/>
                                 <field name="practitioner_id"/>
                                 <field name="evaluation_id"/>
                             </group>

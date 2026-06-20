@@ -5,3 +5,4 @@ from . import clinical_records
 from . import evaluations
 from . import medical_treatment
 from . import res_partner
+from . import account_move

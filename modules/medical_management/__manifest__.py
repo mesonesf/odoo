@@ -20,6 +20,7 @@
          'views/treatment_views.xml',
          'views/medical_menus.xml',
          'views/partner_views.xml',
+         'views/account_move_views.xml',
      ],
      'installable': True,
      'application': True,
