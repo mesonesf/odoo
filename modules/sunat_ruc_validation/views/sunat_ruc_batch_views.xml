@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Action for Batch -->
+    <record id="action_sunat_ruc_batch" model="ir.actions.act_window">
+        <field name="name">Lotes de Consulta SUNAT</field>
+        <field name="res_model">sunat.ruc.batch</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Tree View for Batch -->
+    <record id="view_sunat_ruc_batch_tree" model="ir.ui.view">
+        <field name="name">sunat.ruc.batch.list</field>
+        <field name="model">sunat.ruc.batch</field>
+        <field name="arch" type="xml">
+            <list string="Lotes de Consulta">
+                <field name="name"/>
+                <field name="create_date"/>
+                <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-warning="state == 'processing'" decoration-success="state == 'completed'" decoration-danger="state == 'error'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View for Batch -->
+    <record id="view_sunat_ruc_batch_form" model="ir.ui.view">
+        <field name="name">sunat.ruc.batch.form</field>
+        <field name="model">sunat.ruc.batch</field>
+        <field name="arch" type="xml">
+            <form string="Lote de Consulta">
+                <header>
+                    <button name="action_confirm" string="Confirmar y Procesar" type="object" class="oe_highlight" invisible="state != 'draft'"/>
+                    <button name="action_generate_excel" string="Generar Excel" type="object" invisible="state not in ('completed', 'error')"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,processing,completed,error"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="txt_file" filename="txt_filename" invisible="state != 'draft'"/>
+                        </group>
+                        <group>
+                            <field name="create_date" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Líneas de Resultado">
+                            <field name="line_ids" readonly="1">
+                                <list string="Resultados" decoration-success="status == 'success'" decoration-danger="status == 'failed'" decoration-info="status == 'pending'">
+                                    <field name="ruc"/>
+                                    <field name="nombre_o_razon_social"/>
+                                    <field name="estado"/>
+                                    <field name="condicion"/>
+                                    <field name="tipo_contribuyente"/>
+                                    <field name="status" widget="badge" decoration-success="status == 'success'" decoration-danger="status == 'failed'" decoration-info="status == 'pending'"/>
+                                    <field name="error_message" optional="hide"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    
+    <!-- Tree View standalone for Lines (Used in action_generate_excel export) -->
+    <record id="view_sunat_ruc_line_tree" model="ir.ui.view">
+        <field name="name">sunat.ruc.line.list</field>
+        <field name="model">sunat.ruc.line</field>
+        <field name="arch" type="xml">
+            <list string="Líneas de RUC">
+                <field name="batch_id"/>
+                <field name="ruc"/>
+                <field name="nombre_o_razon_social"/>
+                <field name="estado"/>
+                <field name="condicion"/>
+                <field name="direccion_completa"/>
+                <field name="tipo_contribuyente"/>
+                <field name="fecha_inscripcion"/>
+                <field name="actividades_economicas"/>
+                <field name="status"/>
+                <field name="error_message"/>
+            </list>
+        </field>
+    </record>
+
+</odoo>

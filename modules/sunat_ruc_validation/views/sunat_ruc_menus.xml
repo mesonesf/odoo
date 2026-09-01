@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Top Level Menu -->
+    <menuitem id="menu_sunat_ruc_root"
+              name="Consulta SUNAT"
+              sequence="10"
+              web_icon="sunat_ruc_validation,static/description/icon.png"/>
+
+    <!-- Batch Menu -->
+    <menuitem id="menu_sunat_ruc_batch"
+              name="Lotes de Consulta"
+              parent="menu_sunat_ruc_root"
+              action="action_sunat_ruc_batch"
+              sequence="10"/>
+</odoo>
