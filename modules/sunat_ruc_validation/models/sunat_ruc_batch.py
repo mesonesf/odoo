@@ -1,5 +1,7 @@
+import io
 import base64
 import re
+import xlsxwriter
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
 
@@ -30,17 +32,15 @@ class SunatRucBatch(models.Model):
         if not self.txt_file:
             raise UserError(_('Debe cargar un archivo TXT.'))
         
+        # 1. Decodificación y extracción con Expresiones Regulares
         file_content = base64.b64decode(self.txt_file).decode('utf-8')
-        rucs = set()
-        
-        for line in file_content.splitlines():
-            ruc = line.strip()
-            if re.fullmatch(r'\d{11}', ruc):
-                rucs.add(ruc)
+        ruc_list = re.findall(r'\b\d{11}\b', file_content)
+        rucs = set(ruc_list)
         
         if not rucs:
             raise UserError(_('El archivo no contiene RUCs válidos (11 dígitos numéricos).'))
 
+        # 2. Creación optimizada en lote
         lines_to_create = []
         for ruc in rucs:
             lines_to_create.append({
@@ -58,10 +58,7 @@ class SunatRucBatch(models.Model):
         self.ensure_one()
         pending_lines = self.line_ids.filtered(lambda l: l.status == 'pending')
         
-        # El límite de la API es 240 consultas por minuto -> 4 por segundo -> 1 cada 0.25s.
-        # Para ser seguros, lo espaciaremos con datetime y timedelta
-        from datetime import datetime, timedelta
-        
+        from datetime import timedelta
         current_time = fields.Datetime.now()
         delay_seconds = 0.25  # 60s / 240 = 0.25s per request
         
@@ -71,8 +68,43 @@ class SunatRucBatch(models.Model):
 
     def action_generate_excel(self):
         self.ensure_one()
+        
+        # 1. Crear el archivo Excel en memoria
+        output = io.BytesIO()
+        workbook = xlsxwriter.Workbook(output, {'in_memory': True})
+        sheet = workbook.add_worksheet('Resultados SUNAT')
+        
+        # 2. Escribir Cabeceras
+        headers = ['RUC', 'Razón Social', 'Estado', 'Condición', 'Dirección', 'Tipo Contribuyente']
+        bold = workbook.add_format({'bold': True})
+        for col, text in enumerate(headers):
+            sheet.write(0, col, text, bold)
+            
+        # 3. Iterar las líneas y escribir datos
+        for row, line in enumerate(self.line_ids, start=1):
+            sheet.write(row, 0, line.ruc or '')
+            sheet.write(row, 1, line.nombre_o_razon_social or '')
+            sheet.write(row, 2, line.estado or '')
+            sheet.write(row, 3, line.condicion or '')
+            sheet.write(row, 4, line.direccion_completa or '')
+            sheet.write(row, 5, line.tipo_contribuyente or '')
+            
+        workbook.close()
+        output.seek(0)
+        
+        # 4. Crear el archivo adjunto en la base de datos de Odoo
+        attachment = self.env['ir.attachment'].create({
+            'name': f'Consulta_RUC_{self.name}.xlsx',
+            'type': 'binary',
+            'datas': base64.b64encode(output.read()),
+            'res_model': self._name,
+            'res_id': self.id,
+            'mimetype': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        })
+        
+        # 5. Forzar la descarga en el navegador
         return {
             'type': 'ir.actions.act_url',
-            'url': '/web/export/xlsx?model=sunat.ruc.line&domain=[("batch_id", "=", %s)]' % self.id,
-            'target': 'new',
+            'url': f'/web/content/{attachment.id}?download=true',
+            'target': 'self',
         }
