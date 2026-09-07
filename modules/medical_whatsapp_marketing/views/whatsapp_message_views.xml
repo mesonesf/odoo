@@ -13,7 +13,6 @@
                     <field name="state" widget="badge"/>
                 </list>
             </field>
-        </list>
         </record>
 
         <!-- Vista Form -->
