@@ -14,7 +14,7 @@ except ImportError:
 class SunatRucLine(models.Model):
     _name = 'sunat.ruc.line'
     _description = 'Línea de Resultado de SUNAT'
-
+    
     batch_id = fields.Many2one('sunat.ruc.batch', string='Lote', ondelete='cascade', required=True)
     ruc = fields.Char(string='RUC', size=11, required=True)
     nombre_o_razon_social = fields.Char(string='Razón Social')
@@ -33,12 +33,7 @@ class SunatRucLine(models.Model):
     error_message = fields.Text(string='Mensaje de Error')
 
     def process_api(self):
-        """Método principal para consumir la API. Este método debe ser ejecutado vía queue_job."""
         self.ensure_one()
-        
-        # En un escenario real, el token debería venir de res.config.settings o res.company
-        # Aquí lo dejamos como placeholder o variable de entorno/configuración.
-        # Para el propósito de este ejercicio, asumimos que se tiene el token.
         token = self.env['ir.config_parameter'].sudo().get_param('apiperu.dev.token', '49523193e61a980b7af0fa009d4e71cbf1b8e45b8ba58d481ba71d104bd1b6c1')
         
         url = "https://api.apiperu.dev/ruc-sunat"
@@ -47,9 +42,7 @@ class SunatRucLine(models.Model):
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         }
-        payload = {
-            "ruc": self.ruc
-        }
+        payload = {"ruc": self.ruc}
         
         try:
             response = requests.post(url, json=payload, headers=headers, timeout=10)
@@ -78,25 +71,15 @@ class SunatRucLine(models.Model):
                     'error_message': res_json.get('message', 'Respuesta no exitosa')
                 })
         elif response.status_code == 400:
-            self.write({
-                'status': 'failed',
-                'error_message': 'El RUC es incorrecto'
-            })
+            self.write({'status': 'failed', 'error_message': 'El RUC es incorrecto'})
         elif response.status_code == 404:
-            self.write({
-                'status': 'failed',
-                'error_message': 'El RUC no existe'
-            })
+            self.write({'status': 'failed', 'error_message': 'El RUC no existe'})
         elif response.status_code == 503:
             self.error_message = 'Servicio no disponible, reintentando...'
             raise RetryableJobError("Servicio no disponible en apiperu.dev (503)", ignore_retry=False)
         else:
-            self.write({
-                'status': 'failed',
-                'error_message': f'Error HTTP {response.status_code}: {response.text}'
-            })
-            
-        # Verificar si el lote ya completó todas sus líneas
+            self.write({'status': 'failed', 'error_message': f'Error HTTP {response.status_code}: {response.text}'})
+        
         self._check_batch_completion()
 
     def _check_batch_completion(self):

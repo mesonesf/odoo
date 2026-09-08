@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Action for Batch -->
     <record id="action_sunat_ruc_batch" model="ir.actions.act_window">
         <field name="name">Lotes de Consulta SUNAT</field>
         <field name="res_model">sunat.ruc.batch</field>
         <field name="view_mode">list,form</field>
     </record>
 
-    <!-- Tree View for Batch -->
     <record id="view_sunat_ruc_batch_tree" model="ir.ui.view">
         <field name="name">sunat.ruc.batch.list</field>
         <field name="model">sunat.ruc.batch</field>
@@ -20,7 +18,6 @@
         </field>
     </record>
 
-    <!-- Form View for Batch -->
     <record id="view_sunat_ruc_batch_form" model="ir.ui.view">
         <field name="name">sunat.ruc.batch.form</field>
         <field name="model">sunat.ruc.batch</field>
@@ -28,7 +25,8 @@
             <form string="Lote de Consulta">
                 <header>
                     <button name="action_confirm" string="Confirmar y Procesar" type="object" class="oe_highlight" invisible="state != 'draft'"/>
-                    <button name="action_generate_excel" string="Generar Excel" type="object" invisible="state not in ('completed', 'error')"/>
+                    <button name="action_force_complete" string="Forzar Cierre" type="object" class="btn-secondary" invisible="state != 'processing'"/>
+                    <button name="action_generate_excel" string="Generar Excel" type="object" invisible="state == 'draft'"/>
                     <field name="state" widget="statusbar" statusbar_visible="draft,processing,completed,error"/>
                 </header>
                 <sheet>
@@ -64,8 +62,7 @@
             </form>
         </field>
     </record>
-    
-    <!-- Tree View standalone for Lines (Used in action_generate_excel export) -->
+
     <record id="view_sunat_ruc_line_tree" model="ir.ui.view">
         <field name="name">sunat.ruc.line.list</field>
         <field name="model">sunat.ruc.line</field>
@@ -85,5 +82,4 @@
             </list>
         </field>
     </record>
-
 </odoo>
