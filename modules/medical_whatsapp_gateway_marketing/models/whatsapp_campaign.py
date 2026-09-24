@@ -20,7 +20,6 @@ class MedicalWhatsappCampaign(models.Model):
         tracking=True
     )
     
-    # Selector de Plantilla oficial sincronizada de Meta
     template_id = fields.Many2one(
         'mail.whatsapp.template', 
         string='Plantilla de WhatsApp',
@@ -57,8 +56,6 @@ class MedicalWhatsappCampaign(models.Model):
         
         if self.image_attachment and self.image_filename:
             attachments.append((self.image_filename, self.image_attachment))
-            
-        body_content = markupsafe.Markup(self.message_body) if self.message_body else markupsafe.Markup('')
 
         for partner in self.partner_ids:
             phone_field = 'mobile' if partner.mobile else ('phone' if partner.phone else False)
@@ -73,6 +70,16 @@ class MedicalWhatsappCampaign(models.Model):
                     _logger.error("No se pudo obtener el canal de WhatsApp para el paciente: %s", partner.name)
                     error_count += 1
                     continue
+
+                # MODIFICACIÓN CRÍTICA: Renderizar el texto de la plantilla para que el body no esté vacío
+                if self.template_id:
+                    # Inyectamos el ID del paciente para que Odoo sepa de quién sacar las variables
+                    template_ctx = self.template_id.with_context(default_res_id=partner.id)
+                    body_text = template_ctx.render_body_message()
+                else:
+                    body_text = self.message_body
+
+                body_content = markupsafe.Markup(body_text) if body_text else markupsafe.Markup('')
                 
                 kwargs = {
                     'body': body_content,
@@ -81,9 +88,12 @@ class MedicalWhatsappCampaign(models.Model):
                     'attachments': attachments if attachments else None
                 }
                 
-                # Inyección limpia del ID de plantilla mediante el contexto para Odoo 18
                 if self.template_id:
-                    channel = channel.with_context(whatsapp_template_id=self.template_id.id)
+                    # Agregamos default_res_id al contexto del canal para que el webhook hacia Meta arme el JSON correctamente
+                    channel = channel.with_context(
+                        whatsapp_template_id=self.template_id.id,
+                        default_res_id=partner.id
+                    )
                 
                 channel.message_post(**kwargs)
                 success_count += 1
