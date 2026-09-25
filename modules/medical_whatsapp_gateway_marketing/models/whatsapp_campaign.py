@@ -23,14 +23,11 @@ class MedicalWhatsappCampaign(models.Model):
     template_id = fields.Many2one(
         'mail.whatsapp.template', 
         string='Plantilla de WhatsApp',
-        help="Selecciona la plantilla oficial sincronizada."
+        required=True,
+        help="Selecciona la plantilla oficial sincronizada desde Meta."
     )
     
     partner_ids = fields.Many2many('res.partner', string='Destinatarios (Pacientes)', required=True)
-    message_body = fields.Text(string='Mensaje de Texto Adicional / Variables', required=False)
-    
-    image_attachment = fields.Binary(string='Imagen Adjunta', attachment=True)
-    image_filename = fields.Char(string='Nombre de Archivo')
     
     state = fields.Selection([
         ('draft', 'Borrador'),
@@ -46,16 +43,11 @@ class MedicalWhatsappCampaign(models.Model):
             raise UserError('Debe seleccionar al menos un destinatario.')
         if not self.gateway_id:
             raise UserError('Debe seleccionar una pasarela de WhatsApp configurada.')
-        
-        if not self.template_id and not self.message_body:
-            raise UserError('Debe seleccionar una Plantilla de WhatsApp o escribir un mensaje de texto.')
+        if not self.template_id:
+            raise UserError('Debe seleccionar una Plantilla de WhatsApp aprobada.')
 
         success_count = 0
         error_count = 0
-        attachments = []
-        
-        if self.image_attachment and self.image_filename:
-            attachments.append((self.image_filename, self.image_attachment))
 
         for partner in self.partner_ids:
             phone_field = 'mobile' if partner.mobile else ('phone' if partner.phone else False)
@@ -71,29 +63,22 @@ class MedicalWhatsappCampaign(models.Model):
                     error_count += 1
                     continue
 
-                # MODIFICACIÓN CRÍTICA: Renderizar el texto de la plantilla para que el body no esté vacío
-                if self.template_id:
-                    # Inyectamos el ID del paciente para que Odoo sepa de quién sacar las variables
-                    template_ctx = self.template_id.with_context(default_res_id=partner.id)
-                    body_text = template_ctx.render_body_message()
-                else:
-                    body_text = self.message_body
-
+                # Renderizar texto de la plantilla inyectando el paciente para resolución de variables
+                template_ctx = self.template_id.with_context(default_res_id=partner.id)
+                body_text = template_ctx.render_body_message()
                 body_content = markupsafe.Markup(body_text) if body_text else markupsafe.Markup('')
                 
                 kwargs = {
                     'body': body_content,
                     'subtype_xmlid': "mail.mt_comment",
                     'message_type': "comment",
-                    'attachments': attachments if attachments else None
                 }
                 
-                if self.template_id:
-                    # Agregamos default_res_id al contexto del canal para que el webhook hacia Meta arme el JSON correctamente
-                    channel = channel.with_context(
-                        whatsapp_template_id=self.template_id.id,
-                        default_res_id=partner.id
-                    )
+                # Pasar contexto crítico a la pasarela para estructura JSON de Meta
+                channel = channel.with_context(
+                    whatsapp_template_id=self.template_id.id,
+                    default_res_id=partner.id
+                )
                 
                 channel.message_post(**kwargs)
                 success_count += 1

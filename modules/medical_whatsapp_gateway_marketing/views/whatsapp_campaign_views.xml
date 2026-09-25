@@ -45,15 +45,6 @@
                                     </list>
                                 </field>
                             </page>
-                            <page string="Contenido Multimedia y Mensaje">
-                                <group>
-                                    <field name="message_body" placeholder="Escribe información adicional o variables de la plantilla..." nolabel="1" colspan="2"/>
-                                </group>
-                                <group string="Imagen Adjunta (Opcional)">
-                                    <field name="image_attachment" filename="image_filename" widget="image" class="oe_avatar"/>
-                                    <field name="image_filename" invisible="1"/>
-                                </group>
-                            </page>
                         </notebook>
                     </sheet>
                 </form>
