@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_move_form_apiperu" model="ir.ui.view">
+        <field name="name">account.move.form.apiperu</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="APIsPerú / SUNAT" name="apiperu_info" invisible="country_code != 'PE'">
+                    <group>
+                        <group>
+                            <field name="apiperu_estado_sunat" widget="badge" 
+                                   decoration-success="apiperu_estado_sunat == 'aceptado'" 
+                                   decoration-danger="apiperu_estado_sunat == 'rechazado'" 
+                                   decoration-warning="apiperu_estado_sunat == 'excepcion'"/>
+                            <field name="apiperu_hash_cpe"/>
+                        </group>
+                        <group>
+                            <field name="apiperu_enlace_pdf" widget="url" text="Descargar PDF"/>
+                            <field name="apiperu_enlace_xml" widget="url" text="Descargar XML"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>
