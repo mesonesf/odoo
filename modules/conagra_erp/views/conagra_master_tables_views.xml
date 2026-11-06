@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- 1. Zonas Agrícolas y Geocercas -->
+    <record id="view_conagra_master_zona_list" model="ir.ui.view">
+        <field name="name">conagra.master.zona.list</field>
+        <field name="model">conagra.master.zona</field>
+        <field name="arch" type="xml">
+            <list string="Zonas Agrícolas y Geocercas" editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="keywords"/>
+                <field name="salesperson_id" widget="many2one_avatar_user"/>
+                <field name="team_id"/>
+                <field name="default_freight_surcharge"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_conagra_master_zona" model="ir.actions.act_window">
+        <field name="name">Zonas Agrícolas y Geocercas</field>
+        <field name="res_model">conagra.master.zona</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- 2. Cultivos e Intereses -->
+    <record id="view_conagra_master_cultivo_list" model="ir.ui.view">
+        <field name="name">conagra.master.cultivo.list</field>
+        <field name="model">conagra.master.cultivo</field>
+        <field name="arch" type="xml">
+            <list string="Cultivos e Intereses (WhatsApp / CRM)" editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="keywords"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_conagra_master_cultivo" model="ir.actions.act_window">
+        <field name="name">Cultivos e Intereses</field>
+        <field name="res_model">conagra.master.cultivo</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- 3. Líneas de Negocio CONAGRA -->
+    <record id="view_conagra_master_business_line_list" model="ir.ui.view">
+        <field name="name">conagra.master.business.line.list</field>
+        <field name="model">conagra.master.business.line</field>
+        <field name="arch" type="xml">
+            <list string="Líneas de Negocio CONAGRA" editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="default_commission_pct"/>
+                <field name="default_max_discount_pct"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_conagra_master_business_line" model="ir.actions.act_window">
+        <field name="name">Líneas de Negocio</field>
+        <field name="res_model">conagra.master.business.line</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- 4. Presentaciones de Producto y Empaque -->
+    <record id="view_conagra_master_presentation_list" model="ir.ui.view">
+        <field name="name">conagra.master.presentation.list</field>
+        <field name="model">conagra.master.presentation</field>
+        <field name="arch" type="xml">
+            <list string="Tipos de Presentación y Empaque" editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="pack_units_factor"/>
+                <field name="equity_factor_t_equit"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_conagra_master_presentation" model="ir.actions.act_window">
+        <field name="name">Presentaciones de Producto (Empaque)</field>
+        <field name="res_model">conagra.master.presentation</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- 5. Zonas / Cercanía de Agencias de Transporte -->
+    <record id="view_conagra_master_agency_zone_list" model="ir.ui.view">
+        <field name="name">conagra.master.agency.zone.list</field>
+        <field name="model">conagra.master.agency.zone</field>
+        <field name="arch" type="xml">
+            <list string="Zonas y Cercanía de Agencias de Transporte" editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="is_distant_alert"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_conagra_master_agency_zone" model="ir.actions.act_window">
+        <field name="name">Zonas de Agencias de Transporte</field>
+        <field name="res_model">conagra.master.agency.zone</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- 6. Plazos Máximos de Crédito -->
+    <record id="view_conagra_master_credit_term_list" model="ir.ui.view">
+        <field name="name">conagra.master.credit.term.list</field>
+        <field name="model">conagra.master.credit.term</field>
+        <field name="arch" type="xml">
+            <list string="Plazos de Crédito Autorizados" editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="days"/>
+                <field name="allows_letras"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_conagra_master_credit_term" model="ir.actions.act_window">
+        <field name="name">Plazos de Crédito Autorizados</field>
+        <field name="res_model">conagra.master.credit.term</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- 7. Estados de Letra de Cambio -->
+    <record id="view_conagra_master_letra_status_list" model="ir.ui.view">
+        <field name="name">conagra.master.letra.status.list</field>
+        <field name="model">conagra.master.letra.status</field>
+        <field name="arch" type="xml">
+            <list string="Estados de Letras de Cambio" editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="is_overdue_alert"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_conagra_master_letra_status" model="ir.actions.act_window">
+        <field name="name">Estados de Letras de Cambio</field>
+        <field name="res_model">conagra.master.letra.status</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- 8. Sedes, Tiendas y Reloj Biométrico -->
+    <record id="view_conagra_master_store_location_list" model="ir.ui.view">
+        <field name="name">conagra.master.store.location.list</field>
+        <field name="model">conagra.master.store.location</field>
+        <field name="arch" type="xml">
+            <list string="Sedes, Tiendas y Reloj Biométrico" editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="zona_id"/>
+                <field name="freight_surcharge_pen"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_conagra_master_store_location" model="ir.actions.act_window">
+        <field name="name">Sedes, Tiendas y Reloj Biométrico</field>
+        <field name="res_model">conagra.master.store.location</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- 9. Reglas y Tramos de Comisión (Karina) -->
+    <record id="view_conagra_master_commission_rule_list" model="ir.ui.view">
+        <field name="name">conagra.master.commission.rule.list</field>
+        <field name="model">conagra.master.commission.rule</field>
+        <field name="arch" type="xml">
+            <list string="Reglas y Tramos de Comisión (7 Reglas)" editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="rule_type"/>
+                <field name="threshold_value"/>
+                <field name="multiplier_or_bonus"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_conagra_master_commission_rule" model="ir.actions.act_window">
+        <field name="name">Reglas y Tramos de Comisión</field>
+        <field name="res_model">conagra.master.commission.rule</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- =================================================================== -->
+    <!-- MENÚ PRINCIPAL Y SUBMENÚ: TABLAS MAESTRAS CONAGRA                   -->
+    <!-- =================================================================== -->
+    <menuitem id="menu_conagra_master_root"
+              name="Tablas Maestras CONAGRA"
+              parent="crm.crm_menu_config"
+              sequence="50"/>
+
+    <!-- También visible directamente en el menú superior de Ventas y Ajustes para acceso inmediato -->
+    <menuitem id="menu_conagra_master_sales_root"
+              name="Tablas Maestras CONAGRA"
+              parent="sale.menu_sale_config"
+              sequence="50"/>
+
+    <menuitem id="menu_conagra_master_zona_item"
+              name="1. Zonas Agrícolas y Geocercas"
+              parent="menu_conagra_master_root"
+              action="action_conagra_master_zona"
+              sequence="10"/>
+    <menuitem id="menu_conagra_master_cultivo_item"
+              name="2. Cultivos e Intereses (WhatsApp)"
+              parent="menu_conagra_master_root"
+              action="action_conagra_master_cultivo"
+              sequence="20"/>
+    <menuitem id="menu_conagra_master_business_line_item"
+              name="3. Líneas de Negocio"
+              parent="menu_conagra_master_root"
+              action="action_conagra_master_business_line"
+              sequence="30"/>
+    <menuitem id="menu_conagra_master_presentation_item"
+              name="4. Presentaciones de Producto (Empaque)"
+              parent="menu_conagra_master_root"
+              action="action_conagra_master_presentation"
+              sequence="40"/>
+    <menuitem id="menu_conagra_master_agency_zone_item"
+              name="5. Zonas de Agencias de Transporte"
+              parent="menu_conagra_master_root"
+              action="action_conagra_master_agency_zone"
+              sequence="50"/>
+    <menuitem id="menu_conagra_master_credit_term_item"
+              name="6. Plazos de Crédito Autorizados"
+              parent="menu_conagra_master_root"
+              action="action_conagra_master_credit_term"
+              sequence="60"/>
+    <menuitem id="menu_conagra_master_letra_status_item"
+              name="7. Estados de Letras de Cambio"
+              parent="menu_conagra_master_root"
+              action="action_conagra_master_letra_status"
+              sequence="70"/>
+    <menuitem id="menu_conagra_master_store_location_item"
+              name="8. Sedes, Tiendas y Biométrico"
+              parent="menu_conagra_master_root"
+              action="action_conagra_master_store_location"
+              sequence="80"/>
+    <menuitem id="menu_conagra_master_commission_rule_item"
+              name="9. Reglas y Tramos de Comisión"
+              parent="menu_conagra_master_root"
+              action="action_conagra_master_commission_rule"
+              sequence="90"/>
+
+    <!-- Espejo bajo Ventas -> Configuración -> Tablas Maestras CONAGRA -->
+    <menuitem id="menu_sale_conagra_zona" name="1. Zonas Agrícolas y Geocercas" parent="menu_conagra_master_sales_root" action="action_conagra_master_zona" sequence="10"/>
+    <menuitem id="menu_sale_conagra_cultivo" name="2. Cultivos e Intereses" parent="menu_conagra_master_sales_root" action="action_conagra_master_cultivo" sequence="20"/>
+    <menuitem id="menu_sale_conagra_bline" name="3. Líneas de Negocio" parent="menu_conagra_master_sales_root" action="action_conagra_master_business_line" sequence="30"/>
+    <menuitem id="menu_sale_conagra_pres" name="4. Presentaciones de Producto" parent="menu_conagra_master_sales_root" action="action_conagra_master_presentation" sequence="40"/>
+    <menuitem id="menu_sale_conagra_agzone" name="5. Zonas de Agencias" parent="menu_conagra_master_sales_root" action="action_conagra_master_agency_zone" sequence="50"/>
+    <menuitem id="menu_sale_conagra_cred" name="6. Plazos de Crédito" parent="menu_conagra_master_sales_root" action="action_conagra_master_credit_term" sequence="60"/>
+    <menuitem id="menu_sale_conagra_letra" name="7. Estados de Letras" parent="menu_conagra_master_sales_root" action="action_conagra_master_letra_status" sequence="70"/>
+    <menuitem id="menu_sale_conagra_store" name="8. Sedes, Tiendas y Biométrico" parent="menu_conagra_master_sales_root" action="action_conagra_master_store_location" sequence="80"/>
+    <menuitem id="menu_sale_conagra_comm" name="9. Reglas y Tramos de Comisión" parent="menu_conagra_master_sales_root" action="action_conagra_master_commission_rule" sequence="90"/>
+</odoo>

@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- 1. Herencia de Albarán / Despacho (stock.picking): Agencias, Capacidad Camioneta, Foto Guía y Confirmación Vendedor -->
+    <record id="view_picking_form_conagra_dispatch_gps" model="ir.ui.view">
+        <field name="name">stock.picking.form.conagra.dispatch.gps</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_driver_notify_stamped_guide"
+                        string="Chofer: Notificar Guía Sellada en Agencia"
+                        type="object"
+                        class="btn-primary"
+                        invisible="not agency_stamped_guide_photo"/>
+                <button name="action_salesperson_confirm_delivery"
+                        string="Vendedor: Confirmar Recepción Cliente"
+                        type="object"
+                        class="btn-success"
+                        invisible="salesperson_delivery_confirmed"/>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="CONAGRA: Despacho Agencia, Chofer &amp; GPS" name="conagra_dispatch_page">
+                    <group>
+                        <group string="Transporte, Agencia y Capacidad de Cajas">
+                            <field name="transport_agency_id"/>
+                            <field name="vehicle_id"/>
+                            <field name="driver_employee_id"/>
+                            <field name="boxes_count"/>
+                            <field name="vehicle_capacity_warning" readonly="1"
+                                   invisible="not vehicle_capacity_warning"
+                                   decoration-danger="1"/>
+                        </group>
+                        <group string="Evidencia Guía Sellada, Rastreo GPS y Confirmación">
+                            <field name="agency_stamped_guide_photo" filename="agency_stamped_guide_filename" widget="image"/>
+                            <field name="agency_stamped_guide_filename" invisible="1"/>
+                            <field name="gps_agency_visit_detected"/>
+                            <field name="gps_agency_visit_datetime"/>
+                            <field name="salesperson_delivery_confirmed"/>
+                            <field name="salesperson_confirmation_date"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- 2. Herencia de Vehículo de Flota (fleet.vehicle): API GPS (Pamela), Geocercas, SOAT, Revisión Técnica y Brevete -->
+    <record id="fleet_vehicle_view_form_conagra_gps" model="ir.ui.view">
+        <field name="name">fleet.vehicle.form.conagra.gps</field>
+        <field name="model">fleet.vehicle</field>
+        <field name="inherit_id" ref="fleet.fleet_vehicle_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_sync_gps_from_provider"
+                        string="Sincronizar Ubicación API GPS"
+                        type="object"
+                        class="btn-primary"
+                        icon="fa-map-marker"/>
+            </xpath>
+            <xpath expr="//sheet/notebook" position="inside">
+                <page string="CONAGRA: Telemetría GPS, Geocercas y Vencimientos" name="conagra_fleet_gps_page">
+                    <group>
+                        <group string="API GPS Proveedor (Pamela) &amp; Geocerca Zonal">
+                            <field name="gps_device_imei"/>
+                            <field name="gps_assigned_zone_id"/>
+                            <field name="gps_latitude"/>
+                            <field name="gps_longitude"/>
+                            <field name="gps_speed_kmh"/>
+                            <field name="gps_last_address"/>
+                            <field name="gps_last_sync"/>
+                            <field name="gps_out_of_zone_alert" decoration-danger="gps_out_of_zone_alert"/>
+                            <field name="gps_google_maps_url" widget="url"/>
+                        </group>
+                        <group string="Capacidad de Reparto y Alertas Legales (SOAT / Rev. Técnica / Brevete)">
+                            <field name="max_box_capacity"/>
+                            <field name="soat_due_date"/>
+                            <field name="technical_review_due_date"/>
+                            <field name="insurance_policy_due_date"/>
+                            <field name="driver_license_number"/>
+                            <field name="driver_license_due_date"/>
+                            <field name="next_maintenance_odometer"/>
+                            <field name="compliance_alert_status" widget="badge"
+                                   decoration-success="compliance_alert_status == 'ok'"
+                                   decoration-warning="compliance_alert_status == 'warning'"
+                                   decoration-danger="compliance_alert_status == 'expired'"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- 3. Herencia de Servicios de Taller (fleet.vehicle.log.services): Alerta Reparación Duplicada -->
+    <record id="fleet_vehicle_log_services_view_form_conagra" model="ir.ui.view">
+        <field name="name">fleet.vehicle.log.services.form.conagra</field>
+        <field name="model">fleet.vehicle.log.services</field>
+        <field name="inherit_id" ref="fleet.fleet_vehicle_log_services_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet/group" position="before">
+                <div class="alert alert-danger" role="alert" invisible="not duplicate_repair_warning">
+                    <field name="duplicate_repair_warning" readonly="1"/>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- 4. Herencia de Empleado (hr.employee) y Asistencia (hr.attendance): SCTR y Reloj Biométrico -->
+    <record id="view_employee_form_conagra_sctr_biometric" model="ir.ui.view">
+        <field name="name">hr.employee.form.conagra.sctr.biometric</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='hr_settings']/group" position="inside">
+                <group string="CONAGRA: Seguro SCTR y Reloj Biométrico">
+                    <field name="requires_sctr"/>
+                    <field name="sctr_policy_number" invisible="not requires_sctr"/>
+                    <field name="sctr_due_date" invisible="not requires_sctr"/>
+                    <field name="is_sctr_expired" decoration-danger="is_sctr_expired"/>
+                    <field name="biometric_store_id"/>
+                    <field name="biometric_device_pin"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="hr_attendance_view_form_conagra_biometric" model="ir.ui.view">
+        <field name="name">hr.attendance.form.conagra.biometric</field>
+        <field name="model">hr.attendance</field>
+        <field name="inherit_id" ref="hr_attendance.hr_attendance_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet/group" position="inside">
+                <group string="Origen Biométrico CONAGRA">
+                    <field name="biometric_store_id"/>
+                    <field name="biometric_raw_log_id"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

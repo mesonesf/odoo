@@ -1,0 +1,410 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!-- 1. Zonas Agrícolas y Geocercas (conagra.master.zona) -->
+    <record id="zona_piura" model="conagra.master.zona">
+        <field name="sequence">10</field>
+        <field name="name">Piura / Sullana / Tambo Grande</field>
+        <field name="code">PIU</field>
+        <field name="keywords">piura, sullana, tambo grande, chulucanas, sechura, paita</field>
+        <field name="default_freight_surcharge">5.0</field>
+    </record>
+    <record id="zona_huaura" model="conagra.master.zona">
+        <field name="sequence">20</field>
+        <field name="name">Norte Chico (Huaura / Huacho / Barranca / Huaral)</field>
+        <field name="code">HUA</field>
+        <field name="keywords">huaura, huacho, barranca, huaral, sayan, supe, chancay, ancon</field>
+        <field name="default_freight_surcharge">2.5</field>
+    </record>
+    <record id="zona_casma" model="conagra.master.zona">
+        <field name="sequence">30</field>
+        <field name="name">Ancash / Casma / Chimbote</field>
+        <field name="code">CAS</field>
+        <field name="keywords">casma, ancash, chimbote, huarmey, nepeña, santa</field>
+        <field name="default_freight_surcharge">3.5</field>
+    </record>
+    <record id="zona_canete" model="conagra.master.zona">
+        <field name="sequence">40</field>
+        <field name="name">Sur Chico (Cañete / Imperial / Chincha)</field>
+        <field name="code">CAN</field>
+        <field name="keywords">cañete, canete, imperial, mala, chincha, quilmana</field>
+        <field name="default_freight_surcharge">2.0</field>
+    </record>
+    <record id="zona_ica" model="conagra.master.zona">
+        <field name="sequence">50</field>
+        <field name="name">Ica / Pisco / Nazca</field>
+        <field name="code">ICA</field>
+        <field name="keywords">ica, pisco, villacuri, nazca, palpa</field>
+        <field name="default_freight_surcharge">3.0</field>
+    </record>
+    <record id="zona_huancayo" model="conagra.master.zona">
+        <field name="sequence">60</field>
+        <field name="name">Sierra Central (Huancayo / Junín / Tarma)</field>
+        <field name="code">HYO</field>
+        <field name="keywords">huancayo, junin, tarma, jauja, chanchamayo, satipo</field>
+        <field name="default_freight_surcharge">4.0</field>
+    </record>
+    <record id="zona_arequipa" model="conagra.master.zona">
+        <field name="sequence">70</field>
+        <field name="name">Sur (Arequipa / Majes / Moquegua / Tacna)</field>
+        <field name="code">AQP</field>
+        <field name="keywords">arequipa, majes, pedregal, la joya, moquegua, tacna</field>
+        <field name="default_freight_surcharge">6.0</field>
+    </record>
+    <record id="zona_lima" model="conagra.master.zona">
+        <field name="sequence">80</field>
+        <field name="name">Lima Metropolitana (Oficina Principal / Reparto Agencias)</field>
+        <field name="code">LIM</field>
+        <field name="keywords">lima, lurigancho, ate, la victoria, lurin, pachacamac</field>
+        <field name="default_freight_surcharge">0.0</field>
+    </record>
+
+    <!-- 2. Cultivos e Intereses (conagra.master.cultivo) -->
+    <record id="cultivo_palto" model="conagra.master.cultivo">
+        <field name="sequence">10</field>
+        <field name="name">Palto (Hass / Fuerte)</field>
+        <field name="code">PAL</field>
+        <field name="keywords">palto, palta, hass, fuerte</field>
+    </record>
+    <record id="cultivo_mango" model="conagra.master.cultivo">
+        <field name="sequence">20</field>
+        <field name="name">Mango (Kent / Edward)</field>
+        <field name="code">MAN</field>
+        <field name="keywords">mango, kent, edward</field>
+    </record>
+    <record id="cultivo_citricos" model="conagra.master.cultivo">
+        <field name="sequence">30</field>
+        <field name="name">Cítricos (Mandarina / Limón / Naranja)</field>
+        <field name="code">CIT</field>
+        <field name="keywords">citricos, citrico, mandarina, limon, naranja, tangelo</field>
+    </record>
+    <record id="cultivo_uva" model="conagra.master.cultivo">
+        <field name="sequence">40</field>
+        <field name="name">Uva de Mesa / Vid</field>
+        <field name="code">UVA</field>
+        <field name="keywords">uva, vid, parron, red globe, sweet globe</field>
+    </record>
+    <record id="cultivo_papa_hortalizas" model="conagra.master.cultivo">
+        <field name="sequence">50</field>
+        <field name="name">Papa, Tomate y Hortalizas</field>
+        <field name="code">HOR</field>
+        <field name="keywords">papa, tomate, cebolla, aji, esparrago, alcachofa, maiz</field>
+    </record>
+    <record id="cultivo_arandano" model="conagra.master.cultivo">
+        <field name="sequence">60</field>
+        <field name="name">Arándano / Berries</field>
+        <field name="code">ARA</field>
+        <field name="keywords">arandano, fresa, frambuesa, berries</field>
+    </record>
+    <record id="cultivo_makita" model="conagra.master.cultivo">
+        <field name="sequence">70</field>
+        <field name="name">Herramientas y Maquinaria Makita (OPE)</field>
+        <field name="code">MAK</field>
+        <field name="keywords">makita, hoyadora, motosierra, tijera, podadora, sopladora, bateria</field>
+    </record>
+
+    <!-- 3. Líneas de Negocio CONAGRA (conagra.master.business.line) -->
+    <record id="bline_foliar" model="conagra.master.business.line">
+        <field name="sequence">10</field>
+        <field name="name">Nutrición Vegetal / Foliares y Bioestimulantes (CONAGRA)</field>
+        <field name="code">FOLIAR</field>
+        <field name="default_commission_pct">3.5</field>
+        <field name="default_max_discount_pct">10.0</field>
+    </record>
+    <record id="bline_makita" model="conagra.master.business.line">
+        <field name="sequence">20</field>
+        <field name="name">Maquinaria y Herramientas Makita (OPE)</field>
+        <field name="code">MAKITA</field>
+        <field name="default_commission_pct">2.5</field>
+        <field name="default_max_discount_pct">8.0</field>
+    </record>
+    <record id="bline_riego" model="conagra.master.business.line">
+        <field name="sequence">30</field>
+        <field name="name">Sistemas de Riego Tecnificado</field>
+        <field name="code">RIEGO</field>
+        <field name="default_commission_pct">3.0</field>
+        <field name="default_max_discount_pct">10.0</field>
+    </record>
+    <record id="bline_suministro" model="conagra.master.business.line">
+        <field name="sequence">40</field>
+        <field name="name">Suministros de Envase y Empaque (Frasco, Tapa, Etiqueta, Laina, Caja)</field>
+        <field name="code">SUMINISTRO</field>
+        <field name="default_commission_pct">0.0</field>
+        <field name="default_max_discount_pct">0.0</field>
+    </record>
+    <record id="bline_mp" model="conagra.master.business.line">
+        <field name="sequence">50</field>
+        <field name="name">Materia Prima a Granel (Bulky 1000L / Saco Madre Importado)</field>
+        <field name="code">MP_GRANEL</field>
+        <field name="default_commission_pct">0.0</field>
+        <field name="default_max_discount_pct">0.0</field>
+    </record>
+
+    <!-- 4. las 12 Presentaciones de Producto (conagra.master.presentation) -->
+    <record id="pres_caja_12_1l" model="conagra.master.presentation">
+        <field name="sequence">10</field>
+        <field name="name">CAJA X 12 X 1 LT / KG</field>
+        <field name="code">CJ12X1L</field>
+        <field name="pack_units_factor">12</field>
+        <field name="equity_factor_t_equit">1.0000</field>
+    </record>
+    <record id="pres_caja_24_500ml" model="conagra.master.presentation">
+        <field name="sequence">20</field>
+        <field name="name">CAJA X 24 X 1/2 LT / KG (500 ML)</field>
+        <field name="code">CJ24X500</field>
+        <field name="pack_units_factor">24</field>
+        <field name="equity_factor_t_equit">1.0500</field>
+    </record>
+    <record id="pres_caja_24_250ml" model="conagra.master.presentation">
+        <field name="sequence">30</field>
+        <field name="name">CAJA X 24 X 1/4 LT / KG (250 ML)</field>
+        <field name="code">CJ24X250</field>
+        <field name="pack_units_factor">24</field>
+        <field name="equity_factor_t_equit">1.1000</field>
+    </record>
+    <record id="pres_caja_24_100ml" model="conagra.master.presentation">
+        <field name="sequence">40</field>
+        <field name="name">CAJA X 24 X 100 ML / GR</field>
+        <field name="code">CJ24X100</field>
+        <field name="pack_units_factor">24</field>
+        <field name="equity_factor_t_equit">1.1500</field>
+    </record>
+    <record id="pres_caja_4_gal" model="conagra.master.presentation">
+        <field name="sequence">50</field>
+        <field name="name">CAJA X 4 GAL / 4 BOLSAS</field>
+        <field name="code">CJ4GAL</field>
+        <field name="pack_units_factor">4</field>
+        <field name="equity_factor_t_equit">0.9800</field>
+    </record>
+    <record id="pres_cilindro_55gal" model="conagra.master.presentation">
+        <field name="sequence">60</field>
+        <field name="name">CILINDRO 55 GAL (200 LT)</field>
+        <field name="code">CIL55G</field>
+        <field name="pack_units_factor">1</field>
+        <field name="equity_factor_t_equit">0.9000</field>
+    </record>
+    <record id="pres_bidon_20l" model="conagra.master.presentation">
+        <field name="sequence">70</field>
+        <field name="name">ENVASE BIDÓN 20 LT / SACO 50 LB</field>
+        <field name="code">BID20L</field>
+        <field name="pack_units_factor">1</field>
+        <field name="equity_factor_t_equit">0.9500</field>
+    </record>
+    <record id="pres_envase_1l" model="conagra.master.presentation">
+        <field name="sequence">80</field>
+        <field name="name">ENVASE 1 LT / KG (UNIDAD)</field>
+        <field name="code">ENV1L</field>
+        <field name="pack_units_factor">1</field>
+        <field name="equity_factor_t_equit">1.0000</field>
+    </record>
+    <record id="pres_envase_500ml" model="conagra.master.presentation">
+        <field name="sequence">90</field>
+        <field name="name">ENVASE 1/2 LT / KG (UNIDAD)</field>
+        <field name="code">ENV500</field>
+        <field name="pack_units_factor">1</field>
+        <field name="equity_factor_t_equit">1.0500</field>
+    </record>
+    <record id="pres_envase_250ml" model="conagra.master.presentation">
+        <field name="sequence">100</field>
+        <field name="name">ENVASE 1/4 LT / KG (UNIDAD)</field>
+        <field name="code">ENV250</field>
+        <field name="pack_units_factor">1</field>
+        <field name="equity_factor_t_equit">1.1000</field>
+    </record>
+    <record id="pres_envase_100ml" model="conagra.master.presentation">
+        <field name="sequence">110</field>
+        <field name="name">ENVASE 100 ML / GR (UNIDAD)</field>
+        <field name="code">ENV100</field>
+        <field name="pack_units_factor">1</field>
+        <field name="equity_factor_t_equit">1.1500</field>
+    </record>
+    <record id="pres_galonera_4l" model="conagra.master.presentation">
+        <field name="sequence">120</field>
+        <field name="name">ENVASE GALONERA 4 LT / BOLSA</field>
+        <field name="code">GAL4L</field>
+        <field name="pack_units_factor">1</field>
+        <field name="equity_factor_t_equit">0.9800</field>
+    </record>
+
+    <!-- 5. Zonas de Cercanía de Agencias de Transporte (conagra.master.agency.zone) -->
+    <record id="ag_zone_la_victoria" model="conagra.master.agency.zone">
+        <field name="sequence">10</field>
+        <field name="name">Cercana: La Victoria / San Luis (Prioritaria - Despacho Rápido)</field>
+        <field name="code">LA_VICTORIA</field>
+        <field name="is_distant_alert" eval="False"/>
+    </record>
+    <record id="ag_zone_centro_lima" model="conagra.master.agency.zone">
+        <field name="sequence">20</field>
+        <field name="name">Cercana: Cercado de Lima</field>
+        <field name="code">CERCADO</field>
+        <field name="is_distant_alert" eval="False"/>
+    </record>
+    <record id="ag_zone_ate" model="conagra.master.agency.zone">
+        <field name="sequence">30</field>
+        <field name="name">Media: Ate / Santa Anita</field>
+        <field name="code">ATE</field>
+        <field name="is_distant_alert" eval="False"/>
+    </record>
+    <record id="ag_zone_lurin" model="conagra.master.agency.zone">
+        <field name="sequence">40</field>
+        <field name="name">Lejana: Lurín / Cono Sur (Demora > 24h)</field>
+        <field name="code">LURIN</field>
+        <field name="is_distant_alert" eval="True"/>
+    </record>
+    <record id="ag_zone_los_olivos" model="conagra.master.agency.zone">
+        <field name="sequence">50</field>
+        <field name="name">Lejana: Los Olivos / Plaza Norte / Puente Piedra (Demora > 24h)</field>
+        <field name="code">LOS_OLIVOS</field>
+        <field name="is_distant_alert" eval="True"/>
+    </record>
+
+    <!-- 6. Plazos Máximos de Crédito Autorizados (conagra.master.credit.term) -->
+    <record id="cred_contado" model="conagra.master.credit.term">
+        <field name="sequence">10</field>
+        <field name="name">Contado (0 Días)</field>
+        <field name="days">0</field>
+        <field name="allows_letras" eval="False"/>
+    </record>
+    <record id="cred_30" model="conagra.master.credit.term">
+        <field name="sequence">20</field>
+        <field name="name">Crédito 30 Días</field>
+        <field name="days">30</field>
+        <field name="allows_letras" eval="False"/>
+    </record>
+    <record id="cred_60" model="conagra.master.credit.term">
+        <field name="sequence">30</field>
+        <field name="name">Crédito 60 Días</field>
+        <field name="days">60</field>
+        <field name="allows_letras" eval="True"/>
+    </record>
+    <record id="cred_90" model="conagra.master.credit.term">
+        <field name="sequence">40</field>
+        <field name="name">Crédito 90 Días</field>
+        <field name="days">90</field>
+        <field name="allows_letras" eval="True"/>
+    </record>
+    <record id="cred_120" model="conagra.master.credit.term">
+        <field name="sequence">50</field>
+        <field name="name">Crédito 120 Días</field>
+        <field name="days">120</field>
+        <field name="allows_letras" eval="True"/>
+    </record>
+    <record id="cred_160" model="conagra.master.credit.term">
+        <field name="sequence">60</field>
+        <field name="name">Crédito Especial 160 Días (Con Letras)</field>
+        <field name="days">160</field>
+        <field name="allows_letras" eval="True"/>
+    </record>
+
+    <!-- 7. Estados de Letra de Cambio (conagra.master.letra.status) -->
+    <record id="letra_cartera" model="conagra.master.letra.status">
+        <field name="sequence">10</field>
+        <field name="name">En Cartera</field>
+        <field name="code">CARTERA</field>
+        <field name="is_overdue_alert" eval="False"/>
+    </record>
+    <record id="letra_descuento" model="conagra.master.letra.status">
+        <field name="sequence">20</field>
+        <field name="name">En Descuento Bancario (BCP)</field>
+        <field name="code">DESCUENTO</field>
+        <field name="is_overdue_alert" eval="False"/>
+    </record>
+    <record id="letra_cobranza" model="conagra.master.letra.status">
+        <field name="sequence">30</field>
+        <field name="name">En Cobranza Libre / Garantía</field>
+        <field name="code">COBRANZA</field>
+        <field name="is_overdue_alert" eval="False"/>
+    </record>
+    <record id="letra_protestada" model="conagra.master.letra.status">
+        <field name="sequence">40</field>
+        <field name="name">Protestada / En Mora</field>
+        <field name="code">PROTESTADA</field>
+        <field name="is_overdue_alert" eval="True"/>
+    </record>
+    <record id="letra_pagada" model="conagra.master.letra.status">
+        <field name="sequence">50</field>
+        <field name="name">Cancelada / Pagada</field>
+        <field name="code">PAGADA</field>
+        <field name="is_overdue_alert" eval="False"/>
+    </record>
+
+    <!-- 8. Sedes / Tiendas y Reloj Biométrico (conagra.master.store.location) -->
+    <record id="store_planta_lima" model="conagra.master.store.location">
+        <field name="sequence">10</field>
+        <field name="name">Planta Principal Lima (4 Sub-Almacenes)</field>
+        <field name="code">LIMA</field>
+        <field name="zona_id" ref="zona_lima"/>
+        <field name="freight_surcharge_pen">0.0</field>
+    </record>
+    <record id="store_piura" model="conagra.master.store.location">
+        <field name="sequence">20</field>
+        <field name="name">Tienda Piura</field>
+        <field name="code">PIURA</field>
+        <field name="zona_id" ref="zona_piura"/>
+        <field name="freight_surcharge_pen">5.0</field>
+    </record>
+    <record id="store_huaura" model="conagra.master.store.location">
+        <field name="sequence">30</field>
+        <field name="name">Tienda Huaura</field>
+        <field name="code">HUAURA</field>
+        <field name="zona_id" ref="zona_huaura"/>
+        <field name="freight_surcharge_pen">2.5</field>
+    </record>
+    <record id="store_casma" model="conagra.master.store.location">
+        <field name="sequence">40</field>
+        <field name="name">Tienda Casma</field>
+        <field name="code">CASMA</field>
+        <field name="zona_id" ref="zona_casma"/>
+        <field name="freight_surcharge_pen">3.5</field>
+    </record>
+    <record id="store_imperial" model="conagra.master.store.location">
+        <field name="sequence">50</field>
+        <field name="name">Tienda Imperial (Cañete)</field>
+        <field name="code">IMPERIAL</field>
+        <field name="zona_id" ref="zona_canete"/>
+        <field name="freight_surcharge_pen">2.0</field>
+    </record>
+    <record id="store_huancayo" model="conagra.master.store.location">
+        <field name="sequence">60</field>
+        <field name="name">Sede Stock Rápido Huancayo</field>
+        <field name="code">HUANCAYO</field>
+        <field name="zona_id" ref="zona_huancayo"/>
+        <field name="freight_surcharge_pen">4.0</field>
+    </record>
+
+    <!-- 9. Reglas y Tramos de Comisión Parametrizables (conagra.master.commission.rule) -->
+    <record id="comm_rule_disc_15" model="conagra.master.commission.rule">
+        <field name="sequence">10</field>
+        <field name="name">Descuento Mayor a 15% (Reduce Comisión al 50%)</field>
+        <field name="rule_type">discount_tier</field>
+        <field name="threshold_value">15.0</field>
+        <field name="multiplier_or_bonus">0.50</field>
+    </record>
+    <record id="comm_rule_disc_5" model="conagra.master.commission.rule">
+        <field name="sequence">20</field>
+        <field name="name">Descuento Mayor a 5% (Reduce Comisión al 75%)</field>
+        <field name="rule_type">discount_tier</field>
+        <field name="threshold_value">5.0</field>
+        <field name="multiplier_or_bonus">0.75</field>
+    </record>
+    <record id="comm_rule_delay_60" model="conagra.master.commission.rule">
+        <field name="sequence">30</field>
+        <field name="name">Mora ATD Mayor a 60 Días (Pierde Comisión = 0%)</field>
+        <field name="rule_type">delay_tier</field>
+        <field name="threshold_value">60.0</field>
+        <field name="multiplier_or_bonus">0.00</field>
+    </record>
+    <record id="comm_rule_delay_15" model="conagra.master.commission.rule">
+        <field name="sequence">40</field>
+        <field name="name">Mora ATD Mayor a 15 Días (Castigo 30% -> Factor 0.70)</field>
+        <field name="rule_type">delay_tier</field>
+        <field name="threshold_value">15.0</field>
+        <field name="multiplier_or_bonus">0.70</field>
+    </record>
+    <record id="comm_rule_new_cust" model="conagra.master.commission.rule">
+        <field name="sequence">50</field>
+        <field name="name">Bono por Captación de Cliente Nuevo (+1.0%)</field>
+        <field name="rule_type">new_customer_bonus</field>
+        <field name="threshold_value">0.0</field>
+        <field name="multiplier_or_bonus">1.00</field>
+    </record>
+</odoo>

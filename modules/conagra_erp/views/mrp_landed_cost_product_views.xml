@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- 1. Herencia de Producto (product.template): Costeo Dinámico, 12 Presentaciones, Combos Makita y Fletes -->
+    <record id="product_template_form_view_conagra_costing" model="ir.ui.view">
+        <field name="name">product.template.form.conagra.costing</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_recalculate_overhead_and_prices"
+                        string="Recalcular % G. Indirectos/Fijos y Costo Final"
+                        type="object"
+                        class="btn-secondary"/>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="CONAGRA: Costeo, Presentación y Makita" name="conagra_costing_page">
+                    <group>
+                        <group string="Clasificación, Makita y Ficha Técnica WhatsApp">
+                            <field name="conagra_business_line_id"/>
+                            <field name="presentation_id"/>
+                            <field name="pack_units_factor"/>
+                            <field name="is_makita_combo"/>
+                            <field name="is_bonus_free_item"/>
+                            <field name="max_discount_pct"/>
+                            <field name="base_commission_pct"/>
+                            <field name="ficha_tecnica_pdf" filename="ficha_tecnica_filename"/>
+                            <field name="ficha_tecnica_filename" invisible="1"/>
+                        </group>
+                        <group string="Matriz de Costo de Fabricación (+ % G. Indirectos/Fijos Calculado)">
+                            <field name="cost_supplies_pen"/>
+                            <field name="cost_raw_material_pen"/>
+                            <field name="total_production_cost_pen"/>
+                            <field name="applied_overhead_pct"/>
+                            <field name="final_manufacturing_cost_pen" class="fw-bold text-primary"/>
+                            <field name="min_margin_pct"/>
+                            <field name="equity_factor_t_equit"/>
+                            <field name="suggested_distributor_price_pen" class="fw-bold text-success"/>
+                        </group>
+                    </group>
+                    <group string="Recargo de Flete por Tienda Descentralizada">
+                        <group>
+                            <field name="freight_surcharge_piura"/>
+                            <field name="freight_surcharge_huaura"/>
+                        </group>
+                        <group>
+                            <field name="freight_surcharge_casma"/>
+                            <field name="freight_surcharge_imperial"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- 2. Herencia de Lista de Materiales (mrp.bom) y Orden de Producción (mrp.production) -->
+    <record id="mrp_bom_form_view_conagra" model="ir.ui.view">
+        <field name="name">mrp.bom.form.conagra</field>
+        <field name="model">mrp.bom</field>
+        <field name="inherit_id" ref="mrp.mrp_bom_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='type']" position="after">
+                <field name="is_premix_dilution"/>
+                <field name="presentation_id"/>
+                <field name="pack_factor"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="mrp_production_form_view_conagra" model="ir.ui.view">
+        <field name="name">mrp.production.form.conagra</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='user_id']" position="after">
+                <field name="source_bulky_lot_id"/>
+                <field name="merma_quantity"/>
+                <field name="applied_overhead_pct"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- 3. Herencia de Lotes (stock.lot): Doble Vencimiento SENASA (1 año) vs Fábrica (5 años) -->
+    <record id="view_production_lot_form_conagra" model="ir.ui.view">
+        <field name="name">stock.lot.form.conagra</field>
+        <field name="model">stock.lot</field>
+        <field name="inherit_id" ref="stock.view_production_lot_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='ref']" position="after">
+                <field name="dua_reference"/>
+                <field name="senasa_expiration_date"/>
+                <field name="factory_expiration_date"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- 4. Herencia de Costos en Destino / Liquidación DUA (stock.landed.cost) -->
+    <record id="view_stock_landed_cost_form_conagra" model="ir.ui.view">
+        <field name="name">stock.landed.cost.form.conagra</field>
+        <field name="model">stock.landed.cost</field>
+        <field name="inherit_id" ref="stock_landed_costs.view_stock_landed_cost_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet/group" position="after">
+                <group string="CONAGRA: Liquidación Aduanera (DUA), Conversión Galones/Libras y TC Protegido">
+                    <group>
+                        <field name="dua_number"/>
+                        <field name="container_number"/>
+                        <field name="customs_agency_partner_id"/>
+                        <field name="fob_total_usd"/>
+                        <field name="nationalization_expenses_usd"/>
+                        <field name="proforma_advance_usd"/>
+                        <field name="letter_interest_usd"/>
+                        <field name="liquidation_balance_usd"/>
+                        <field name="cost_increase_pct"/>
+                    </group>
+                    <group>
+                        <field name="protected_exchange_rate"/>
+                        <field name="imported_gallons_qty"/>
+                        <field name="converted_liters_qty"/>
+                        <field name="imported_pounds_qty"/>
+                        <field name="converted_kilos_qty"/>
+                        <field name="unit_cost_liter_or_kg_pen" class="fw-bold text-success"/>
+                    </group>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

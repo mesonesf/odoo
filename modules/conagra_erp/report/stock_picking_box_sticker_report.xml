@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_conagra_box_sticker" model="ir.actions.report">
+        <field name="name">CONAGRA: Sticker / Rótulo de Despacho por Caja</field>
+        <field name="model">stock.picking</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">conagra_erp.report_conagra_box_sticker_document</field>
+        <field name="report_file">conagra_erp.report_conagra_box_sticker_document</field>
+        <field name="print_report_name">'Rotulo_Cajas_%s' % (object.name)</field>
+        <field name="binding_model_id" ref="stock.model_stock_picking"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_conagra_box_sticker_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-set="total_boxes" t-value="o.boxes_count if o.boxes_count and o.boxes_count &gt; 0 else 1"/>
+                <t t-foreach="range(1, total_boxes + 1)" t-as="box_num">
+                    <div class="page" style="page-break-after: always; border: 3px solid #1b5e20; padding: 18px; font-family: Arial, sans-serif;">
+                        <div style="border-bottom: 2px solid #1b5e20; padding-bottom: 8px; margin-bottom: 12px; display: flex; justify-content: space-between;">
+                            <div>
+                                <h2 style="margin: 0; color: #1b5e20; font-weight: bold;">CONAGRA PERÚ</h2>
+                                <small>Nutrición Vegetal Agrícola &amp; Representante Oficial Makita</small>
+                            </div>
+                            <div style="text-align: right;">
+                                <h3 style="margin: 0;">GUÍA / DESPACHO: <span t-field="o.name"/></h3>
+                                <strong>PEDIDO: <span t-field="o.origin"/></strong>
+                            </div>
+                        </div>
+
+                        <table style="width: 100%; font-size: 16px; border-collapse: collapse; margin-bottom: 12px;">
+                            <tr>
+                                <td style="padding: 6px; width: 30%;"><strong>DESTINATARIO:</strong></td>
+                                <td style="padding: 6px; font-size: 20px; font-weight: bold;"><span t-field="o.partner_id.name"/></td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 6px;"><strong>RUC / DNI:</strong></td>
+                                <td style="padding: 6px; font-size: 18px;"><span t-field="o.partner_id.vat"/></td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 6px;"><strong>DIRECCIÓN / DESTINO:</strong></td>
+                                <td style="padding: 6px;">
+                                    <span t-field="o.partner_id.street"/> - <span t-field="o.partner_id.city"/>
+                                    (<span t-field="o.partner_id.conagra_zona"/>)
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 6px;"><strong>TELÉFONO:</strong></td>
+                                <td style="padding: 6px;"><span t-field="o.partner_id.phone"/> / <span t-field="o.partner_id.mobile"/></td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 6px;"><strong>AGENCIA TRANSPORTE:</strong></td>
+                                <td style="padding: 6px; font-size: 18px; font-weight: bold; color: #b71c1c;">
+                                    <span t-field="o.transport_agency_id.name"/>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <div style="background-color: #f1f8e9; border: 2px dashed #33691e; padding: 12px; text-align: center;">
+                            <h1 style="margin: 0; font-size: 32px; color: #1b5e20;">
+                                CAJA <t t-esc="box_num"/> DE <t t-esc="total_boxes"/>
+                            </h1>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- 1. Herencia de Contactos / Clientes / Agencias (res.partner) -->
+    <record id="view_partner_form_conagra_credit_agency" model="ir.ui.view">
+        <field name="name">res.partner.form.conagra.credit.agency</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="CONAGRA: Créditos, Grupo Espejo y Agencias" name="conagra_partner_page">
+                    <group>
+                        <group string="Segmentación Agrícola &amp; Regla de 1 Año">
+                            <field name="conagra_zona_id"/>
+                            <field name="conagra_cultivo_id"/>
+                            <field name="conagra_is_new_customer"/>
+                            <field name="last_conagra_invoice_date"/>
+                            <field name="reverted_to_lima_office"/>
+                        </group>
+                        <group string="Control Crediticio de Empresas Vinculadas (Espejo)">
+                            <field name="max_credit_term_id"/>
+                            <field name="group_overdue_amount"/>
+                            <field name="is_group_credit_blocked"/>
+                            <field name="linked_credit_partner_ids" widget="many2many_tags"/>
+                        </group>
+                    </group>
+                    <group string="Configuración de Agencia de Transporte (Shalom / Marvisur / Móvil Bus)">
+                        <field name="is_transport_agency"/>
+                        <field name="agency_zone_id" invisible="not is_transport_agency"/>
+                        <field name="preferred_nearby_agency_id" invisible="not is_transport_agency"/>
+                        <field name="partner_latitude" invisible="not is_transport_agency"/>
+                        <field name="partner_longitude" invisible="not is_transport_agency"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- 2. Herencia de Pedido de Venta (sale.order) -->
+    <record id="view_order_form_conagra_credit_agency" model="ir.ui.view">
+        <field name="name">sale.order.form.conagra.credit.agency</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='payment_term_id']" position="after">
+                <field name="transport_agency_id"/>
+                <field name="agency_distance_warning" readonly="1"
+                       invisible="not agency_distance_warning"
+                       decoration-warning="1"/>
+                <field name="requires_credit_approval" readonly="1"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- 3. Herencia de Factura / Letras y Liquidación de Comisiones (account.move) -->
+    <record id="view_move_form_conagra_commissions_letras" model="ir.ui.view">
+        <field name="name">account.move.form.conagra.commissions.letras</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="CONAGRA: Comisiones (7 Reglas) &amp; Letras" name="conagra_commissions_letras_page"
+                      invisible="move_type not in ('out_invoice', 'out_refund')">
+                    <group>
+                        <group string="Liquidación de Comisiones (Corte Día 24)">
+                            <field name="commission_cutoff_period"/>
+                            <field name="payment_delay_days"/>
+                            <field name="total_commission_base_pen"/>
+                            <field name="total_commission_amount_pen"/>
+                            <field name="commission_settled"/>
+                        </group>
+                        <group string="Control de Letras de Cambio (BCP Telecrédito)">
+                            <field name="is_letra_cambio"/>
+                            <field name="letra_unique_number" invisible="not is_letra_cambio"/>
+                            <field name="letra_status_id" invisible="not is_letra_cambio"/>
+                            <field name="canje_source_invoice_ids" widget="many2many_tags" invisible="not is_letra_cambio"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+            <xpath expr="//field[@name='invoice_line_ids']/list/field[@name='price_subtotal']" position="after">
+                <field name="is_igv_exonerated" optional="show"/>
+                <field name="conagra_commission_base" optional="show"/>
+                <field name="conagra_commission_rate_pct" optional="show"/>
+                <field name="conagra_commission_amount" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

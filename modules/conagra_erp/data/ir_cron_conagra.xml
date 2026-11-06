@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!-- 1. Cron Job Horario: Control SLA 2 Horas (7200s) en Canales WhatsApp -->
+    <record id="ir_cron_whatsapp_sla_conagra" model="ir.cron">
+        <field name="name">CONAGRA: Control SLA 2 Horas en Canales WhatsApp (Bot Silverio)</field>
+        <field name="model_id" ref="mail.model_discuss_channel"/>
+        <field name="state">code</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">hours</field>
+        <field name="active" eval="True"/>
+        <field name="code"><![CDATA[
+now = datetime.datetime.now()
+channels = env['discuss.channel'].search([
+    ('bot_state', '=', '4_assigned'),
+    ('channel_type', '=', 'gateway'),
+])
+karina = env['res.users'].search([('name', 'ilike', 'Karina'), ('share', '=', False)], limit=1) or env.user
+comment_subtype = env.ref('mail.mt_comment', raise_if_not_found=False)
+
+for channel in channels:
+    msg_domain = [
+        ('model', '=', 'discuss.channel'),
+        ('res_id', '=', channel.id),
+        ('message_type', '=', 'comment'),
+    ]
+    if comment_subtype:
+        msg_domain.append(('subtype_id', '=', comment_subtype.id))
+
+    last_msg = env['mail.message'].search(msg_domain, order='date desc, id desc', limit=1)
+    if not last_msg or not last_msg.date:
+        continue
+
+    internal_users = last_msg.author_id.user_ids.filtered(lambda u: not u.share)
+    if internal_users:
+        continue
+
+    diff_seconds = (now - last_msg.date).total_seconds()
+    if diff_seconds > 7200:
+        if channel.crm_lead_id:
+            channel.crm_lead_id.write({'user_id': karina.id})
+            if karina.partner_id:
+                channel.crm_lead_id.message_subscribe(partner_ids=[karina.partner_id.id])
+
+        if karina.partner_id:
+            channel.add_members(partner_ids=[karina.partner_id.id], post_joined_message=False)
+            channel.message_subscribe(partner_ids=[karina.partner_id.id])
+
+        alert_body = (
+            '<div style="color: #a94442; background-color: #f2dede; border-left: 4px solid #d9534f; padding: 10px;">'
+            '<strong>🚨 ALERTA ROJA DE SLA (WHATSAPP CONAGRA)</strong><br/>'
+            'Han transcurrido más de 2 horas (%d segundos) desde el último mensaje del cliente sin respuesta '
+            'del comercial asignado. El Lead y este Canal han sido reasignados automáticamente a '
+            '<strong>%s (Oficina Lima)</strong>.'
+            '</div>'
+        ) % (int(diff_seconds), karina.name)
+
+        channel.with_context(no_gateway_notification=True).message_post(
+            body=alert_body,
+            message_type='notification',
+            subtype_xmlid='mail.mt_note',
+        )
+]]></field>
+    </record>
+
+    <!-- 2. Cron Diario: Regla de Inactividad de 1 Año -> Revertir Clientes a Oficina Lima -->
+    <record id="ir_cron_inactive_customers_1year_conagra" model="ir.cron">
+        <field name="name">CONAGRA: Reversión de Clientes con 1 Año sin Compras a Oficina Lima</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="state">code</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active" eval="True"/>
+        <field name="code">model._cron_revert_inactive_customers_to_lima()</field>
+    </record>
+
+    <!-- 3. Cron cada 15 Minutos: Sincronización API GPS Flota y Geocercas de Agencias -->
+    <record id="ir_cron_fleet_gps_sync_conagra" model="ir.cron">
+        <field name="name">CONAGRA: Sincronización API GPS Vehículos, Geocercas y Alertas SOAT/ Taller</field>
+        <field name="model_id" ref="fleet.model_fleet_vehicle"/>
+        <field name="state">code</field>
+        <field name="interval_number">15</field>
+        <field name="interval_type">minutes</field>
+        <field name="active" eval="True"/>
+        <field name="code">model._cron_sync_gps_and_check_fleet_alerts()</field>
+    </record>
+</odoo>

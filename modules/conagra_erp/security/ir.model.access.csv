@@ -1,0 +1,10 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_conagra_master_zona_user,conagra.master.zona.user,model_conagra_master_zona,base.group_user,1,1,1,1
+access_conagra_master_cultivo_user,conagra.master.cultivo.user,model_conagra_master_cultivo,base.group_user,1,1,1,1
+access_conagra_master_business_line_user,conagra.master.business.line.user,model_conagra_master_business_line,base.group_user,1,1,1,1
+access_conagra_master_presentation_user,conagra.master.presentation.user,model_conagra_master_presentation,base.group_user,1,1,1,1
+access_conagra_master_agency_zone_user,conagra.master.agency.zone.user,model_conagra_master_agency_zone,base.group_user,1,1,1,1
+access_conagra_master_credit_term_user,conagra.master.credit.term.user,model_conagra_master_credit_term,base.group_user,1,1,1,1
+access_conagra_master_letra_status_user,conagra.master.letra.status.user,model_conagra_master_letra_status,base.group_user,1,1,1,1
+access_conagra_master_store_location_user,conagra.master.store.location.user,model_conagra_master_store_location,base.group_user,1,1,1,1
+access_conagra_master_commission_rule_user,conagra.master.commission.rule.user,model_conagra_master_commission_rule,base.group_user,1,1,1,1

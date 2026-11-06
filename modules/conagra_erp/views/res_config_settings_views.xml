@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_conagra" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.conagra</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="CONAGRA ERP" string="CONAGRA ERP" name="conagra_erp">
+                    <block title="Punto 5: Cálculo Dinámico de % Gastos Indirectos, Fijos y Punto de Equilibrio" name="conagra_overhead_block">
+                        <setting string="Modo de Cálculo del % de Gastos Indirectos y Fijos"
+                                 help="Permite elegir entre el 35% manual histórico o el cálculo dinámico real (mensual, trimestral, semestral o anual) desde Contabilidad.">
+                            <div class="content-group">
+                                <div class="row mt16">
+                                    <label for="conagra_overhead_mode" class="col-lg-4 o_light_label"/>
+                                    <field name="conagra_overhead_mode"/>
+                                </div>
+                                <div class="row mt8" invisible="conagra_overhead_mode != 'manual'">
+                                    <label for="conagra_overhead_manual_pct" class="col-lg-4 o_light_label"/>
+                                    <field name="conagra_overhead_manual_pct"/>
+                                </div>
+                                <div class="row mt8">
+                                    <label for="conagra_indirect_account_prefix" class="col-lg-4 o_light_label"/>
+                                    <field name="conagra_indirect_account_prefix"/>
+                                </div>
+                                <div class="row mt8">
+                                    <label for="conagra_direct_cost_account_prefix" class="col-lg-4 o_light_label"/>
+                                    <field name="conagra_direct_cost_account_prefix"/>
+                                </div>
+                                <div class="row mt8">
+                                    <label for="conagra_period_indirect_expenses" class="col-lg-4 o_light_label"/>
+                                    <field name="conagra_period_indirect_expenses"/>
+                                </div>
+                                <div class="row mt8">
+                                    <label for="conagra_period_direct_costs" class="col-lg-4 o_light_label"/>
+                                    <field name="conagra_period_direct_costs"/>
+                                </div>
+                                <div class="row mt8">
+                                    <label for="conagra_effective_overhead_pct" class="col-lg-4 o_light_label fw-bold"/>
+                                    <field name="conagra_effective_overhead_pct" class="fw-bold text-success"/>
+                                </div>
+                                <div class="row mt8">
+                                    <label for="conagra_monthly_breakeven_sales" class="col-lg-4 o_light_label fw-bold"/>
+                                    <field name="conagra_monthly_breakeven_sales" class="fw-bold text-primary"/>
+                                </div>
+                            </div>
+                        </setting>
+                        <setting string="Tipo de Cambio Colchón para Importaciones y Costeo"
+                                 help="Tipo de cambio protector (ej. S/ 4.12) empleado en la valorización de DUAs y matriz de precios.">
+                            <field name="conagra_protected_exchange_rate"/>
+                        </setting>
+                    </block>
+
+                    <block title="Punto 7: Integración con API GPS del Proveedor de Flota (Pamela)" name="conagra_gps_block">
+                        <setting string="Conexión REST API GPS y Geocercas de Agencias"
+                                 help="Configura la URL y Token del proveedor GPS para rastrear camionetas, geocercas zonales y visitas automáticas a Shalom/Marvisur/Móvil Bus.">
+                            <div class="content-group">
+                                <div class="row mt16">
+                                    <label for="conagra_gps_api_url" class="col-lg-4 o_light_label"/>
+                                    <field name="conagra_gps_api_url"/>
+                                </div>
+                                <div class="row mt8">
+                                    <label for="conagra_gps_api_token" class="col-lg-4 o_light_label"/>
+                                    <field name="conagra_gps_api_token" password="True"/>
+                                </div>
+                                <div class="row mt8">
+                                    <label for="conagra_gps_agency_radius_meters" class="col-lg-4 o_light_label"/>
+                                    <field name="conagra_gps_agency_radius_meters"/>
+                                </div>
+                            </div>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+</odoo>
