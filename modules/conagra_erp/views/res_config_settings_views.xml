@@ -70,6 +70,19 @@
                             </div>
                         </setting>
                     </block>
+
+                    <block title="Almacenes, Tiendas y Establecimientos Anexos SUNAT" name="conagra_warehouse_block">
+                        <setting string="Carga Asistida de Tiendas y Almacenes de Provincia"
+                                 help="Permite cargar o restaurar en 1 clic los almacenes oficiales de CONAGRA (Lurín, Piura, Imperial, Casma y Huaral). También puede gestionarlos, editarlos o crear nuevos manualmente desde Inventario > Configuración > Almacenes.">
+                            <div class="mt8">
+                                <button name="action_init_conagra_default_warehouses"
+                                        string="Inicializar Tiendas y Almacenes Sugeridos de CONAGRA"
+                                        type="object"
+                                        class="btn-secondary"
+                                        icon="fa-building-o"/>
+                            </div>
+                        </setting>
+                    </block>
                 </app>
             </xpath>
         </field>

@@ -4,8 +4,30 @@ from datetime import timedelta
 from odoo import api, fields, models
 
 
+class ProductCategory(models.Model):
+    _inherit = "product.category"
+
+    conagra_code_prefix = fields.Char(
+        string="Prefijo de Código CONAGRA (Ej. JD, FFL, ACC)",
+        help="Abreviatura para autogenerar el código interno de productos pertenecientes a esta categoría.",
+    )
+
+
 class ProductTemplate(models.Model):
     _inherit = "product.template"
+
+    # Doble código: Código Interno CONAGRA (autogenerado con prefijo) y Código de Proveedor (Makita)
+    conagra_internal_code = fields.Char(
+        string="Código Interno CONAGRA",
+        index=True,
+        copy=False,
+        help="Código autogenerado a partir de la abreviatura de la categoría (ej. FFL-0012) o asignado manualmente.",
+    )
+    supplier_product_code = fields.Char(
+        string="Código del Proveedor (Ej. Makita 632... / BL1860B)",
+        index=True,
+        help="Código oficial asignado por el fabricante o proveedor extranjero.",
+    )
 
     # Punto 1, 5 y 6: Clasificación y Presentaciones parametrizables desde Tablas Maestras CONAGRA
     ficha_tecnica_pdf = fields.Binary(
@@ -109,6 +131,35 @@ class ProductTemplate(models.Model):
         if self.presentation_id:
             self.pack_units_factor = self.presentation_id.pack_units_factor
             self.equity_factor_t_equit = self.presentation_id.equity_factor_t_equit
+
+    @api.onchange("categ_id")
+    def _onchange_categ_id_conagra_code(self):
+        if self.categ_id and not self.conagra_internal_code:
+            prefix = self._get_conagra_category_prefix(self.categ_id)
+            if prefix:
+                self.conagra_internal_code = self._generate_conagra_code(prefix)
+
+    def _get_conagra_category_prefix(self, category):
+        curr = category
+        while curr:
+            if curr.conagra_code_prefix:
+                return curr.conagra_code_prefix.strip().upper()
+            curr = curr.parent_id
+        return False
+
+    def _generate_conagra_code(self, prefix):
+        # Cuenta cuántos productos ya tienen este prefijo
+        count = self.search_count([
+            ("conagra_internal_code", "=like", f"{prefix}-%"),
+        ])
+        return f"{prefix}-{(count + 1):04d}"
+
+    def action_generate_conagra_code(self):
+        """Genera o regenera el código interno en base a la categoría actual."""
+        for tmpl in self:
+            prefix = tmpl._get_conagra_category_prefix(tmpl.categ_id) or "CNG"
+            tmpl.conagra_internal_code = tmpl._generate_conagra_code(prefix)
+        return True
 
     @api.depends(
         "cost_supplies_pen",

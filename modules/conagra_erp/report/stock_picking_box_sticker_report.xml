@@ -52,6 +52,23 @@
                                 <td style="padding: 6px;"><strong>AGENCIA TRANSPORTE:</strong></td>
                                 <td style="padding: 6px; font-size: 18px; font-weight: bold; color: #b71c1c;">
                                     <span t-field="o.transport_agency_id.name"/>
+                                    <span t-if="o.delivery_agency_type" style="font-size: 14px; color: #2e7d32;">
+                                        (<span t-field="o.delivery_agency_type"/>)
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr t-if="o.agency_pickup_partner_id">
+                                <td style="padding: 6px;"><strong>AUTORIZADO RECOJO 1:</strong></td>
+                                <td style="padding: 6px; font-size: 16px; font-weight: bold;">
+                                    <span t-field="o.agency_pickup_partner_id.name"/>
+                                    <t t-if="o.agency_pickup_dni"> - DNI: <span t-field="o.agency_pickup_dni"/></t>
+                                </td>
+                            </tr>
+                            <tr t-if="o.agency_pickup_partner_id_2">
+                                <td style="padding: 6px;"><strong>AUTORIZADO RECOJO 2:</strong></td>
+                                <td style="padding: 6px; font-size: 15px;">
+                                    <span t-field="o.agency_pickup_partner_id_2.name"/>
+                                    <t t-if="o.agency_pickup_dni_2"> - DNI: <span t-field="o.agency_pickup_dni_2"/></t>
                                 </td>
                             </tr>
                         </table>

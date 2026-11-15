@@ -77,15 +77,91 @@ class ResCompany(models.Model):
         help="Distancia máxima en metros para detectar automáticamente que una camioneta de reparto visitó una agencia (Shalom, Marvisur, Móvil Bus).",
     )
 
-    def _get_overhead_months_window(self):
+    def action_init_conagra_default_warehouses(self):
+        """Asistente para inicializar o restaurar las tiendas y almacenes descentralizados sugeridos de CONAGRA."""
         self.ensure_one()
-        mapping = {
-            "monthly": 1,
-            "quarterly": 3,
-            "semiannual": 6,
-            "annual": 12,
-        }
-        return mapping.get(self.conagra_overhead_mode, 1)
+        company = self.env.company
+        main_partner = company.partner_id
+        Partner = self.env["res.partner"].sudo()
+        Warehouse = self.env["stock.warehouse"].sudo()
+
+        stores_data = [
+            {
+                "wh_code": "PIUR",
+                "wh_name": "Almacén Tienda Piura",
+                "partner_name": f"{company.name} - Tienda Piura",
+                "city": "Piura",
+                "street": "Zona Industrial II Etapa, Piura",
+                "sunat_code": "0001",
+            },
+            {
+                "wh_code": "IMPE",
+                "wh_name": "Almacén Tienda Imperial",
+                "partner_name": f"{company.name} - Tienda Imperial (Cañete)",
+                "city": "Cañete",
+                "street": "Jr. El Carmen 478, Imperial, Cañete",
+                "sunat_code": "0002",
+            },
+            {
+                "wh_code": "CASM",
+                "wh_name": "Almacén Tienda Casma",
+                "partner_name": f"{company.name} - Tienda Casma",
+                "city": "Casma",
+                "street": "Av. Luis Ormeño, Casma, Ancash",
+                "sunat_code": "0003",
+            },
+            {
+                "wh_code": "HUAR",
+                "wh_name": "Almacén Depósito Vendedor Huaral",
+                "partner_name": f"{company.name} - Depósito Vendedor Huaral",
+                "city": "Huaral",
+                "street": "Calle Cusco s/n, Huaral",
+                "sunat_code": "0004",
+            },
+        ]
+
+        # Actualizar almacén principal
+        main_wh = Warehouse.search([("company_id", "=", company.id)], order="id asc", limit=1)
+        if main_wh:
+            main_wh.write({
+                "name": f"Almacén Principal Lurín (Planta Central)",
+                "code": "LIMA",
+            })
+            if main_partner and not main_partner.sunat_establishment_code:
+                main_partner.sunat_establishment_code = "0000"
+
+        for data in stores_data:
+            partner = Partner.search([
+                ("parent_id", "=", main_partner.id),
+                ("sunat_establishment_code", "=", data["sunat_code"]),
+            ], limit=1)
+            if not partner:
+                partner = Partner.create({
+                    "name": data["partner_name"],
+                    "parent_id": main_partner.id,
+                    "type": "other",
+                    "city": data["city"],
+                    "street": data["street"],
+                    "sunat_establishment_code": data["sunat_code"],
+                })
+            wh = Warehouse.search([
+                ("company_id", "=", company.id),
+                ("code", "=", data["wh_code"]),
+            ], limit=1)
+            if not wh:
+                Warehouse.create({
+                    "name": data["wh_name"],
+                    "code": data["wh_code"],
+                    "company_id": company.id,
+                    "partner_id": partner.id,
+                    "is_conagra_branch_store": True,
+                })
+            else:
+                wh.write({
+                    "partner_id": partner.id,
+                    "is_conagra_branch_store": True,
+                })
+        return True
 
     @api.depends(
         "conagra_overhead_mode",
@@ -207,3 +283,7 @@ class ResConfigSettings(models.TransientModel):
         related="company_id.conagra_gps_agency_radius_meters",
         readonly=False,
     )
+
+    def action_init_conagra_default_warehouses(self):
+        """Dispara la inicialización de almacenes y tiendas sugeridas desde Ajustes."""
+        return self.company_id.action_init_conagra_default_warehouses()

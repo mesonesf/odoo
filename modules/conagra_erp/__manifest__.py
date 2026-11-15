@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 {
     "name": "CONAGRA ERP - Suite Integral Agroindustrial",
-    "version": "18.0.2.1.0",
+    "version": "18.0.2.2.0",
     "category": "Industries/Agriculture",
-    "summary": "Solución integral para CONAGRA con Tablas Maestras Parametrizables",
+    "summary": "Solución integral para CONAGRA: Multi-Almacén, Doble Código, Despacho Agencia y Custodia CDR SUNAT",
     "description": """
 CONAGRA ERP - Suite Integral Agroindustrial
 ===========================================

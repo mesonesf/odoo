@@ -407,4 +407,126 @@
         <field name="threshold_value">0.0</field>
         <field name="multiplier_or_bonus">1.00</field>
     </record>
+
+    <!-- 10. Categorías Oficiales CONAGRA con Prefijos de Autocódigo (product.category) -->
+    <record id="categ_nutricion_vegetal" model="product.category">
+        <field name="name">Nutrición Vegetal</field>
+        <field name="conagra_code_prefix">NV</field>
+    </record>
+    <record id="categ_foliares_liquidos" model="product.category">
+        <field name="name">Foliares Líquidos</field>
+        <field name="parent_id" ref="categ_nutricion_vegetal"/>
+        <field name="conagra_code_prefix">FFL</field>
+    </record>
+    <record id="categ_foliares_solidos" model="product.category">
+        <field name="name">Foliares Sólidos (Polvos / Sacos)</field>
+        <field name="parent_id" ref="categ_nutricion_vegetal"/>
+        <field name="conagra_code_prefix">FFS</field>
+    </record>
+
+    <record id="categ_makita" model="product.category">
+        <field name="name">Herramientas y Maquinaria Makita</field>
+        <field name="conagra_code_prefix">MAK</field>
+    </record>
+    <record id="categ_makita_jardineria" model="product.category">
+        <field name="name">Jardinería / Agrícola OPE</field>
+        <field name="parent_id" ref="categ_makita"/>
+        <field name="conagra_code_prefix">JD</field>
+    </record>
+    <record id="categ_makita_herramientas" model="product.category">
+        <field name="name">Herramientas (Sola sin Batería)</field>
+        <field name="parent_id" ref="categ_makita"/>
+        <field name="conagra_code_prefix">HER</field>
+    </record>
+    <record id="categ_makita_accesorios" model="product.category">
+        <field name="name">Accesorios (Baterías / Cargadores)</field>
+        <field name="parent_id" ref="categ_makita"/>
+        <field name="conagra_code_prefix">ACC</field>
+    </record>
+    <record id="categ_makita_promociones" model="product.category">
+        <field name="name">Promociones y Combos (Packs)</field>
+        <field name="parent_id" ref="categ_makita"/>
+        <field name="conagra_code_prefix">PRO</field>
+    </record>
+
+    <!-- 11. Establecimientos Anexos SUNAT de CONAGRA S.A.C. (res.partner) -->
+    <record id="partner_anexo_piura" model="res.partner">
+        <field name="name">CONAGRA S.A.C. - Tienda Piura</field>
+        <field name="type">other</field>
+        <field name="parent_id" ref="base.main_partner"/>
+        <field name="city">Piura</field>
+        <field name="street">Zona Industrial II Etapa, Piura</field>
+        <field name="sunat_establishment_code">0001</field>
+    </record>
+    <record id="partner_anexo_imperial" model="res.partner">
+        <field name="name">CONAGRA S.A.C. - Tienda Imperial (Cañete)</field>
+        <field name="type">other</field>
+        <field name="parent_id" ref="base.main_partner"/>
+        <field name="city">Cañete</field>
+        <field name="street">Jr. El Carmen 478, Imperial, Cañete</field>
+        <field name="sunat_establishment_code">0002</field>
+    </record>
+    <record id="partner_anexo_casma" model="res.partner">
+        <field name="name">CONAGRA S.A.C. - Tienda Casma</field>
+        <field name="type">other</field>
+        <field name="parent_id" ref="base.main_partner"/>
+        <field name="city">Casma</field>
+        <field name="street">Av. Luis Ormeño, Casma, Ancash</field>
+        <field name="sunat_establishment_code">0003</field>
+    </record>
+    <record id="partner_anexo_huaral" model="res.partner">
+        <field name="name">CONAGRA S.A.C. - Depósito Vendedor Huaral</field>
+        <field name="type">other</field>
+        <field name="parent_id" ref="base.main_partner"/>
+        <field name="city">Huaral</field>
+        <field name="street">Calle Cusco s/n, Huaral</field>
+        <field name="sunat_establishment_code">0004</field>
+    </record>
+
+    <!-- 12. Almacenes de Tiendas Descentralizadas de CONAGRA (stock.warehouse) -->
+    <record id="warehouse_piura" model="stock.warehouse">
+        <field name="name">Almacén Tienda Piura</field>
+        <field name="code">PIUR</field>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="partner_id" ref="partner_anexo_piura"/>
+        <field name="is_conagra_branch_store">True</field>
+    </record>
+    <record id="warehouse_imperial" model="stock.warehouse">
+        <field name="name">Almacén Tienda Imperial</field>
+        <field name="code">IMPE</field>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="partner_id" ref="partner_anexo_imperial"/>
+        <field name="is_conagra_branch_store">True</field>
+    </record>
+    <record id="warehouse_casma" model="stock.warehouse">
+        <field name="name">Almacén Tienda Casma</field>
+        <field name="code">CASM</field>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="partner_id" ref="partner_anexo_casma"/>
+        <field name="is_conagra_branch_store">True</field>
+    </record>
+    <record id="warehouse_huaral" model="stock.warehouse">
+        <field name="name">Almacén Depósito Vendedor Huaral</field>
+        <field name="code">HUAR</field>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="partner_id" ref="partner_anexo_huaral"/>
+        <field name="is_conagra_branch_store">True</field>
+    </record>
+
+    <!-- 13. Terminología Oficial CONAGRA: Guías de Remisión en reemplazo de Albaranes / Transferencias -->
+    <record id="stock.menu_stock_transfers" model="ir.ui.menu">
+        <field name="name">Guías de Remisión</field>
+    </record>
+    <record id="stock.out_picking" model="ir.ui.menu">
+        <field name="name">Guías de Remisión / Despachos</field>
+    </record>
+    <record id="stock.in_picking" model="ir.ui.menu">
+        <field name="name">Guías de Recepción</field>
+    </record>
+    <record id="stock.int_picking" model="ir.ui.menu">
+        <field name="name">Traslados Internos entre Locales</field>
+    </record>
+    <record id="stock.action_picking_tree_all" model="ir.actions.act_window">
+        <field name="name">Guías de Remisión</field>
+    </record>
 </odoo>

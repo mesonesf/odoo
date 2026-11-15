@@ -31,11 +31,39 @@ def _haversine_meters(lat1, lon1, lat2, lon2):
 
 class StockPicking(models.Model):
     _inherit = "stock.picking"
+    _description = "Guía de Remisión / Despacho"
 
     transport_agency_id = fields.Many2one(
         comodel_name="res.partner",
         string="Agencia de Transporte (Shalom / Marvisur / Móvil Bus)",
         domain="[('is_transport_agency', '=', True)]",
+        tracking=True,
+    )
+    delivery_agency_type = fields.Selection(
+        selection=[
+            ("recojo_agencia", "Recojo en Agencia (Destino)"),
+            ("entrega_domicilio", "Entrega a Domicilio por Agencia"),
+        ],
+        string="Modalidad de Entrega",
+        default="recojo_agencia",
+        tracking=True,
+    )
+    agency_pickup_partner_id = fields.Many2one(
+        comodel_name="res.partner",
+        string="Persona Autorizada 1 (Recojo)",
+        tracking=True,
+    )
+    agency_pickup_partner_id_2 = fields.Many2one(
+        comodel_name="res.partner",
+        string="Persona Autorizada 2 (Recojo)",
+        tracking=True,
+    )
+    agency_pickup_dni = fields.Char(
+        string="DNI Persona 1",
+        tracking=True,
+    )
+    agency_pickup_dni_2 = fields.Char(
+        string="DNI Persona 2",
         tracking=True,
     )
     vehicle_id = fields.Many2one(
@@ -158,6 +186,22 @@ class StockPicking(models.Model):
                 subtype_xmlid="mail.mt_note",
             )
         return True
+
+
+class StockWarehouse(models.Model):
+    _inherit = "stock.warehouse"
+
+    sunat_establishment_code = fields.Char(
+        string="Código Establecimiento Anexo SUNAT",
+        related="partner_id.sunat_establishment_code",
+        readonly=False,
+        help="Código de 4 dígitos asignado por SUNAT a este almacén/tienda anexa de CONAGRA (ej. 0000, 0001, etc.).",
+    )
+    is_conagra_branch_store = fields.Boolean(
+        string="Es Tienda/Sucursal Descentralizada CONAGRA",
+        default=False,
+        help="Marca este almacén si corresponde a una tienda de provincia (Piura, Casma, Imperial, etc.).",
+    )
 
 
 class FleetVehicle(models.Model):

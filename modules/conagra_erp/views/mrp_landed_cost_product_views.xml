@@ -1,16 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- 1. Herencia de Producto (product.template): Costeo Dinámico, 12 Presentaciones, Combos Makita y Fletes -->
+    <!-- 0. Herencia de Categoría de Productos (product.category): Prefijo de Código CONAGRA -->
+    <record id="product_category_form_view_conagra_prefix" model="ir.ui.view">
+        <field name="name">product.category.form.conagra.prefix</field>
+        <field name="model">product.category</field>
+        <field name="inherit_id" ref="product.product_category_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='parent_id']" position="after">
+                <field name="conagra_code_prefix" placeholder="Ej. JD, FFL, FFS, ACC, HER, PRO"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- 1. Herencia de Producto (product.template): Doble Código, Costeo Dinámico, 12 Presentaciones, Combos Makita y Fletes -->
     <record id="product_template_form_view_conagra_costing" model="ir.ui.view">
         <field name="name">product.template.form.conagra.costing</field>
         <field name="model">product.template</field>
         <field name="inherit_id" ref="product.product_template_form_view"/>
         <field name="arch" type="xml">
             <xpath expr="//header" position="inside">
+                <button name="action_generate_conagra_code"
+                        string="Generar Código Interno CONAGRA"
+                        type="object"
+                        class="btn-secondary"
+                        icon="fa-barcode"/>
                 <button name="action_recalculate_overhead_and_prices"
                         string="Recalcular % G. Indirectos/Fijos y Costo Final"
                         type="object"
                         class="btn-secondary"/>
+            </xpath>
+            <xpath expr="//div[hasclass('oe_title')]" position="after">
+                <group>
+                    <group>
+                        <field name="conagra_internal_code" placeholder="Ej. FFL-0001, ACC-0045" class="fw-bold text-success"/>
+                    </group>
+                    <group>
+                        <field name="supplier_product_code" placeholder="Ej. 632... / BL1860B (Makita)" class="text-primary"/>
+                    </group>
+                </group>
             </xpath>
             <xpath expr="//notebook" position="inside">
                 <page string="CONAGRA: Costeo, Presentación y Makita" name="conagra_costing_page">
@@ -48,6 +75,19 @@
                         </group>
                     </group>
                 </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- 1.1 Vista Tree / List de Producto con Código Interno y de Proveedor -->
+    <record id="product_template_tree_view_conagra_codes" model="ir.ui.view">
+        <field name="name">product.template.tree.conagra.codes</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_tree_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="before">
+                <field name="conagra_internal_code" optional="show"/>
+                <field name="supplier_product_code" optional="show"/>
             </xpath>
         </field>
     </record>

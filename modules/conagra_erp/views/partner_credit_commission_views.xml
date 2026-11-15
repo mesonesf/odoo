@@ -15,6 +15,8 @@
                             <field name="conagra_is_new_customer"/>
                             <field name="last_conagra_invoice_date"/>
                             <field name="reverted_to_lima_office"/>
+                            <field name="sunat_establishment_code" placeholder="Ej. 0001 (Para locales propios)"/>
+                            <field name="is_pickup_authorized"/>
                         </group>
                         <group string="Control Crediticio de Empresas Vinculadas (Espejo)">
                             <field name="max_credit_term_id"/>
@@ -43,6 +45,17 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='payment_term_id']" position="after">
                 <field name="transport_agency_id"/>
+                <field name="delivery_agency_type" invisible="not transport_agency_id"/>
+                <field name="agency_pickup_partner_id"
+                       invisible="not transport_agency_id or delivery_agency_type != 'recojo_agencia'"
+                       options="{'no_create': True}"/>
+                <field name="agency_pickup_dni"
+                       invisible="not agency_pickup_partner_id"/>
+                <field name="agency_pickup_partner_id_2"
+                       invisible="not transport_agency_id or delivery_agency_type != 'recojo_agencia'"
+                       options="{'no_create': True}"/>
+                <field name="agency_pickup_dni_2"
+                       invisible="not agency_pickup_partner_id_2"/>
                 <field name="agency_distance_warning" readonly="1"
                        invisible="not agency_distance_warning"
                        decoration-warning="1"/>
@@ -73,6 +86,20 @@
                             <field name="letra_unique_number" invisible="not is_letra_cambio"/>
                             <field name="letra_status_id" invisible="not is_letra_cambio"/>
                             <field name="canje_source_invoice_ids" widget="many2many_tags" invisible="not is_letra_cambio"/>
+                        </group>
+                    </group>
+                    <group string="Custodia de Comprobante Electrónico y CDR de SUNAT">
+                        <group>
+                            <field name="sunat_cdr_status" widget="badge"
+                                   decoration-success="sunat_cdr_status == 'accepted'"
+                                   decoration-warning="sunat_cdr_status == 'observed'"
+                                   decoration-danger="sunat_cdr_status == 'rejected'"/>
+                            <field name="sunat_cdr_code"/>
+                        </group>
+                        <group>
+                            <field name="sunat_cdr_file" filename="sunat_cdr_filename"/>
+                            <field name="sunat_cdr_filename" invisible="1"/>
+                            <field name="sunat_cdr_notes"/>
                         </group>
                     </group>
                 </page>

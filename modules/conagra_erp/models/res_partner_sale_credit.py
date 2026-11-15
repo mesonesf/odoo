@@ -35,6 +35,18 @@ class ResPartner(models.Model):
     partner_latitude = fields.Float(string="Geo Latitud", digits=(10, 7))
     partner_longitude = fields.Float(string="Geo Longitud", digits=(10, 7))
 
+    # Sucursales / Establecimientos Anexos SUNAT
+    sunat_establishment_code = fields.Char(
+        string="Código Anexo SUNAT",
+        size=4,
+        help="Código de 4 dígitos registrado ante SUNAT para este local/tienda (ej. 0000 para Principal, 0001 para Piura).",
+    )
+    is_pickup_authorized = fields.Boolean(
+        string="Autorizado para Recojo en Agencia",
+        default=False,
+        help="Indica si esta persona o contacto está formalmente facultada para retirar mercadería de la agencia.",
+    )
+
     # Punto 2: Grupo Económico / Familiar (Empresas Espejo hasta 3 RUCs vinculados)
     linked_credit_partner_ids = fields.Many2many(
         comodel_name="res.partner",
@@ -165,6 +177,39 @@ class SaleOrder(models.Model):
         string="Agencia de Transporte Solicitada",
         domain="[('is_transport_agency', '=', True)]",
     )
+    delivery_agency_type = fields.Selection(
+        selection=[
+            ("recojo_agencia", "Recojo en Agencia (Destino)"),
+            ("entrega_domicilio", "Entrega a Domicilio por Agencia"),
+        ],
+        string="Modalidad de Entrega",
+        default="recojo_agencia",
+        help="Especifica si el cliente recogerá los bultos en la oficina de destino de la agencia o si se solicitará reparto a su domicilio.",
+    )
+    agency_pickup_partner_id = fields.Many2one(
+        comodel_name="res.partner",
+        string="Persona Autorizada 1 (Recojo)",
+        domain="['|', ('parent_id', '=', partner_id), ('id', '=', partner_id)]",
+        help="Contacto del cliente autorizado para retirar la carga en la agencia.",
+    )
+    agency_pickup_partner_id_2 = fields.Many2one(
+        comodel_name="res.partner",
+        string="Persona Autorizada 2 (Recojo)",
+        domain="['|', ('parent_id', '=', partner_id), ('id', '=', partner_id)]",
+        help="Segunda persona facultada para recoger en caso de indisponibilidad de la primera.",
+    )
+    agency_pickup_dni = fields.Char(
+        string="DNI / Doc Persona 1",
+        compute="_compute_agency_pickup_dnis",
+        store=True,
+        readonly=False,
+    )
+    agency_pickup_dni_2 = fields.Char(
+        string="DNI / Doc Persona 2",
+        compute="_compute_agency_pickup_dnis",
+        store=True,
+        readonly=False,
+    )
     agency_distance_warning = fields.Char(
         string="Alerta de Ubicación de Agencia",
         compute="_compute_agency_distance_warning",
@@ -173,6 +218,14 @@ class SaleOrder(models.Model):
         string="Requiere Aprobación de Créditos (Karina)",
         compute="_compute_credit_and_discount_alerts",
     )
+
+    @api.depends("agency_pickup_partner_id", "agency_pickup_partner_id_2")
+    def _compute_agency_pickup_dnis(self):
+        for order in self:
+            if order.agency_pickup_partner_id and not order.agency_pickup_dni:
+                order.agency_pickup_dni = order.agency_pickup_partner_id.vat or ""
+            if order.agency_pickup_partner_id_2 and not order.agency_pickup_dni_2:
+                order.agency_pickup_dni_2 = order.agency_pickup_partner_id_2.vat or ""
 
     @api.depends(
         "transport_agency_id",
@@ -235,8 +288,20 @@ class SaleOrder(models.Model):
                     )
         res = super().action_confirm()
         for order in self:
-            if order.transport_agency_id and order.picking_ids:
-                order.picking_ids.filtered(lambda p: p.state != "cancel").write({
-                    "transport_agency_id": order.transport_agency_id.id,
-                })
+            if order.picking_ids:
+                vals_to_write = {}
+                if order.transport_agency_id:
+                    vals_to_write["transport_agency_id"] = order.transport_agency_id.id
+                if order.delivery_agency_type:
+                    vals_to_write["delivery_agency_type"] = order.delivery_agency_type
+                if order.agency_pickup_partner_id:
+                    vals_to_write["agency_pickup_partner_id"] = order.agency_pickup_partner_id.id
+                if order.agency_pickup_partner_id_2:
+                    vals_to_write["agency_pickup_partner_id_2"] = order.agency_pickup_partner_id_2.id
+                if order.agency_pickup_dni:
+                    vals_to_write["agency_pickup_dni"] = order.agency_pickup_dni
+                if order.agency_pickup_dni_2:
+                    vals_to_write["agency_pickup_dni_2"] = order.agency_pickup_dni_2
+                if vals_to_write:
+                    order.picking_ids.filtered(lambda p: p.state != "cancel").write(vals_to_write)
         return res

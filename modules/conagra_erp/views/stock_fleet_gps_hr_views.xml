@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- 1. Herencia de Albarán / Despacho (stock.picking): Agencias, Capacidad Camioneta, Foto Guía y Confirmación Vendedor -->
+    <!-- 1. Herencia de Guía de Remisión / Despacho (stock.picking): Agencias, Capacidad Camioneta, Foto Guía y Confirmación Vendedor -->
     <record id="view_picking_form_conagra_dispatch_gps" model="ir.ui.view">
         <field name="name">stock.picking.form.conagra.dispatch.gps</field>
         <field name="model">stock.picking</field>
@@ -23,6 +23,11 @@
                     <group>
                         <group string="Transporte, Agencia y Capacidad de Cajas">
                             <field name="transport_agency_id"/>
+                            <field name="delivery_agency_type" invisible="not transport_agency_id"/>
+                            <field name="agency_pickup_partner_id" invisible="not transport_agency_id or delivery_agency_type != 'recojo_agencia'"/>
+                            <field name="agency_pickup_dni" invisible="not agency_pickup_partner_id"/>
+                            <field name="agency_pickup_partner_id_2" invisible="not transport_agency_id or delivery_agency_type != 'recojo_agencia'"/>
+                            <field name="agency_pickup_dni_2" invisible="not agency_pickup_partner_id_2"/>
                             <field name="vehicle_id"/>
                             <field name="driver_employee_id"/>
                             <field name="boxes_count"/>
@@ -133,6 +138,18 @@
                     <field name="biometric_store_id"/>
                     <field name="biometric_raw_log_id"/>
                 </group>
+            </xpath>
+        </field>
+    </record>
+    <!-- 5. Herencia de Almacenes (stock.warehouse): Establecimiento Anexo SUNAT y Tienda Descentralizada -->
+    <record id="view_warehouse_form_conagra_branch" model="ir.ui.view">
+        <field name="name">stock.warehouse.form.conagra.branch</field>
+        <field name="model">stock.warehouse</field>
+        <field name="inherit_id" ref="stock.view_warehouse"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='code']" position="after">
+                <field name="sunat_establishment_code" placeholder="Ej. 0000, 0001, 0002"/>
+                <field name="is_conagra_branch_store"/>
             </xpath>
         </field>
     </record>

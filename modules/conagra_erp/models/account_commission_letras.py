@@ -29,6 +29,32 @@ class AccountMove(models.Model):
         string="Facturas Canjeadas por esta Letra",
     )
 
+    # Custodia y Archivo del CDR de SUNAT (Constancia de Recepción Electrónica)
+    sunat_cdr_file = fields.Binary(
+        string="Archivo CDR SUNAT (XML / ZIP)",
+        attachment=True,
+        help="Archivo oficial de Constancia de Recepción (CDR) emitido por SUNAT u OSE para sustento tributario de libros electrónicos.",
+    )
+    sunat_cdr_filename = fields.Char(string="Nombre Archivo CDR")
+    sunat_cdr_status = fields.Selection(
+        selection=[
+            ("pending", "Pendiente de Envío / Sin CDR"),
+            ("accepted", "Aceptado por SUNAT (Código 0)"),
+            ("observed", "Aceptado con Observaciones"),
+            ("rejected", "Rechazado por SUNAT"),
+        ],
+        string="Estado CDR SUNAT",
+        default="pending",
+        tracking=True,
+    )
+    sunat_cdr_code = fields.Char(
+        string="Código Respuesta SUNAT",
+        help="Código numérico de respuesta retornado en el CDR (0 = Aceptado, o código de error/observación).",
+    )
+    sunat_cdr_notes = fields.Text(
+        string="Detalle / Observaciones CDR",
+    )
+
     # Punto 3: Resumen de Comisiones CONAGRA (Corte día 24 de cada mes)
     commission_cutoff_period = fields.Char(
         string="Período Corte Comisión (Día 24)",
