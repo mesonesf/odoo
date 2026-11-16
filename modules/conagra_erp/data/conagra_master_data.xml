@@ -483,35 +483,7 @@
         <field name="sunat_establishment_code">0004</field>
     </record>
 
-    <!-- 12. Almacenes de Tiendas Descentralizadas de CONAGRA (stock.warehouse) -->
-    <record id="warehouse_piura" model="stock.warehouse">
-        <field name="name">Almacén Tienda Piura</field>
-        <field name="code">PIUR</field>
-        <field name="company_id" ref="base.main_company"/>
-        <field name="partner_id" ref="partner_anexo_piura"/>
-        <field name="is_conagra_branch_store">True</field>
-    </record>
-    <record id="warehouse_imperial" model="stock.warehouse">
-        <field name="name">Almacén Tienda Imperial</field>
-        <field name="code">IMPE</field>
-        <field name="company_id" ref="base.main_company"/>
-        <field name="partner_id" ref="partner_anexo_imperial"/>
-        <field name="is_conagra_branch_store">True</field>
-    </record>
-    <record id="warehouse_casma" model="stock.warehouse">
-        <field name="name">Almacén Tienda Casma</field>
-        <field name="code">CASM</field>
-        <field name="company_id" ref="base.main_company"/>
-        <field name="partner_id" ref="partner_anexo_casma"/>
-        <field name="is_conagra_branch_store">True</field>
-    </record>
-    <record id="warehouse_huaral" model="stock.warehouse">
-        <field name="name">Almacén Depósito Vendedor Huaral</field>
-        <field name="code">HUAR</field>
-        <field name="company_id" ref="base.main_company"/>
-        <field name="partner_id" ref="partner_anexo_huaral"/>
-        <field name="is_conagra_branch_store">True</field>
-    </record>
+    <!-- 12. Almacenes descentralizados: gestionados manualmente en Inventario o mediante el botón asistido en Ajustes -> CONAGRA ERP -->
 
     <!-- 13. Terminología Oficial CONAGRA: Guías de Remisión en reemplazo de Albaranes / Transferencias -->
     <record id="stock.menu_stock_transfers" model="ir.ui.menu">
