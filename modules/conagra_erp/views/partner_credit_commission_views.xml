@@ -59,7 +59,10 @@
                 <field name="agency_distance_warning" readonly="1"
                        invisible="not agency_distance_warning"
                        decoration-warning="1"/>
-                <field name="requires_credit_approval" readonly="1"/>
+                <field name="requires_credit_approval" readonly="1"
+                       invisible="not requires_credit_approval"
+                       widget="boolean"
+                       decoration-danger="1"/>
             </xpath>
         </field>
     </record>

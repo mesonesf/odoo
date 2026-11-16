@@ -163,6 +163,16 @@ class ResCompany(models.Model):
                 })
         return True
 
+    def _get_overhead_months_window(self):
+        self.ensure_one()
+        mapping = {
+            "monthly": 1,
+            "quarterly": 3,
+            "semiannual": 6,
+            "annual": 12,
+        }
+        return mapping.get(self.conagra_overhead_mode, 1)
+
     @api.depends(
         "conagra_overhead_mode",
         "conagra_overhead_manual_pct",
