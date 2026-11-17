@@ -1,7 +1,22 @@
 # -*- coding: utf-8 -*-
+import re
+import unicodedata
 from datetime import timedelta
 
 from odoo import api, fields, models
+
+_GENERIC_ROOT_NAMES = {"all", "todos", "saleable", "vendible", "expenses", "gastos", "pos"}
+_STOP_WORDS = {
+    "de", "del", "la", "las", "el", "los", "y", "e", "o", "u",
+    "en", "para", "por", "con", "sin", "sola",
+}
+
+
+def _normalize_text_ascii(text):
+    if not text:
+        return ""
+    nfkd = unicodedata.normalize("NFKD", text)
+    return "".join(c for c in nfkd if not unicodedata.combining(c))
 
 
 class ProductCategory(models.Model):
@@ -11,6 +26,80 @@ class ProductCategory(models.Model):
         string="Prefijo de Código CONAGRA (Ej. JD, FFL, ACC)",
         help="Abreviatura para autogenerar el código interno de productos pertenecientes a esta categoría.",
     )
+
+    @staticmethod
+    def _extract_significant_words(text):
+        clean = _normalize_text_ascii(text or "").lower()
+        words = re.findall(r"[a-z0-9]+", clean)
+        sig = [w for w in words if w not in _STOP_WORDS]
+        return sig or words
+
+    def _get_auto_hierarchy_prefix(self):
+        """Genera un prefijo automático desde la ruta jerárquica ignorando raíces genéricas."""
+        self.ensure_one()
+        chain = []
+        curr = self
+        visited = set()
+        while curr:
+            key = curr._origin.id or id(curr)
+            if key in visited:
+                break
+            visited.add(key)
+            name_clean = _normalize_text_ascii(curr.name or "").strip().lower()
+            if name_clean and name_clean not in _GENERIC_ROOT_NAMES:
+                chain.append(curr)
+            curr = curr.parent_id
+        chain.reverse()
+
+        if not chain:
+            return False
+
+        if len(chain) == 1:
+            words = self._extract_significant_words(chain[0].name)
+            if not words:
+                return False
+            if len(words) == 1:
+                return words[0][:3].upper()
+            return "".join(w[0] for w in words[:4]).upper()
+
+        parts = []
+        for idx, node in enumerate(chain):
+            words = self._extract_significant_words(node.name)
+            if not words:
+                continue
+            if idx < len(chain) - 1:
+                parts.append(words[0][0])
+            elif len(chain) == 2 and len(words) >= 2:
+                parts.append("".join(w[0] for w in words[:2]))
+            elif len(chain) == 2 and len(words) == 1:
+                parts.append(words[0][:2])
+            else:
+                parts.append(words[0][0])
+
+        prefix = "".join(parts).upper()
+        return prefix[:6] if prefix else False
+
+    @api.onchange("name", "parent_id")
+    def _onchange_hierarchy_conagra_prefix(self):
+        for cat in self:
+            if not cat.name:
+                continue
+            is_new = not cat._origin or not cat._origin.id
+            parent_changed = bool(cat._origin and cat.parent_id != cat._origin.parent_id)
+            if is_new or parent_changed or not cat.conagra_code_prefix:
+                auto_prefix = cat._get_auto_hierarchy_prefix()
+                if auto_prefix:
+                    cat.conagra_code_prefix = auto_prefix
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        categories = super().create(vals_list)
+        for cat in categories:
+            if not cat.conagra_code_prefix:
+                auto_prefix = cat._get_auto_hierarchy_prefix()
+                if auto_prefix:
+                    cat.conagra_code_prefix = auto_prefix
+        return categories
 
 
 class ProductTemplate(models.Model):
@@ -132,27 +221,50 @@ class ProductTemplate(models.Model):
             self.pack_units_factor = self.presentation_id.pack_units_factor
             self.equity_factor_t_equit = self.presentation_id.equity_factor_t_equit
 
-    @api.onchange("categ_id")
+    @api.onchange("categ_id", "conagra_business_line_id")
     def _onchange_categ_id_conagra_code(self):
-        if self.categ_id and not self.conagra_internal_code:
-            prefix = self._get_conagra_category_prefix(self.categ_id)
+        for tmpl in self:
+            prefix = tmpl._get_conagra_category_prefix(tmpl.categ_id)
             if prefix:
-                self.conagra_internal_code = self._generate_conagra_code(prefix)
+                current_code = (tmpl.conagra_internal_code or "").strip().upper()
+                if not current_code.startswith(f"{prefix}-"):
+                    tmpl.conagra_internal_code = tmpl._generate_conagra_code(prefix)
+            else:
+                tmpl.conagra_internal_code = False
 
     def _get_conagra_category_prefix(self, category):
-        curr = category
-        while curr:
-            if curr.conagra_code_prefix:
-                return curr.conagra_code_prefix.strip().upper()
-            curr = curr.parent_id
+        if category:
+            if category.conagra_code_prefix:
+                return category.conagra_code_prefix.strip().upper()
+            auto_prefix = category._get_auto_hierarchy_prefix()
+            if auto_prefix:
+                return auto_prefix
+        if len(self) == 1 and self.conagra_business_line_id and self.conagra_business_line_id.code:
+            return self.conagra_business_line_id.code.strip().upper()
         return False
 
     def _generate_conagra_code(self, prefix):
-        # Cuenta cuántos productos ya tienen este prefijo
-        count = self.search_count([
-            ("conagra_internal_code", "=like", f"{prefix}-%"),
-        ])
-        return f"{prefix}-{(count + 1):04d}"
+        domain = [("conagra_internal_code", "=like", f"{prefix}-%")]
+        rec_id = False
+        if len(self) == 1:
+            rec_id = (self._origin.id if self._origin else False) or (
+                self.id if isinstance(self.id, int) else False
+            )
+        if rec_id:
+            domain.append(("id", "!=", rec_id))
+        existing_codes = (
+            self.with_context(active_test=False)
+            .search(domain)
+            .mapped("conagra_internal_code")
+        )
+        max_num = 0
+        prefix_dash = f"{prefix}-".upper()
+        for code in existing_codes:
+            if code and code.strip().upper().startswith(prefix_dash):
+                suffix = code.strip()[len(prefix_dash):].strip()
+                if suffix.isdigit():
+                    max_num = max(max_num, int(suffix))
+        return f"{prefix}-{(max_num + 1):04d}"
 
     def action_generate_conagra_code(self):
         """Genera o regenera el código interno en base a la categoría actual."""
@@ -160,6 +272,16 @@ class ProductTemplate(models.Model):
             prefix = tmpl._get_conagra_category_prefix(tmpl.categ_id) or "CNG"
             tmpl.conagra_internal_code = tmpl._generate_conagra_code(prefix)
         return True
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        templates = super().create(vals_list)
+        for tmpl in templates:
+            if not tmpl.conagra_internal_code:
+                prefix = tmpl._get_conagra_category_prefix(tmpl.categ_id)
+                if prefix:
+                    tmpl.conagra_internal_code = tmpl._generate_conagra_code(prefix)
+        return templates
 
     @api.depends(
         "cost_supplies_pen",
