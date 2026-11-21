@@ -218,6 +218,21 @@ class SaleOrder(models.Model):
         string="Requiere Aprobación de Créditos (Karina)",
         compute="_compute_credit_and_discount_alerts",
     )
+    show_product_image_in_quote = fields.Boolean(
+        string="Mostrar Foto del Producto",
+        default=True,
+        help="Si está marcado, muestra la fotografía del producto en la cotización y en su PDF.",
+    )
+    show_extra_description_in_quote = fields.Boolean(
+        string="Mostrar Descripción Adicional",
+        default=False,
+        help="Si está marcado, incluye el campo Descripción Adicional del producto en la cotización y en su PDF.",
+    )
+    show_extra_detail_in_quote = fields.Boolean(
+        string="Mostrar Detalle Adicional",
+        default=False,
+        help="Si está marcado, incluye el campo Detalle Adicional del producto en la cotización y en su PDF.",
+    )
 
     @api.depends("agency_pickup_partner_id", "agency_pickup_partner_id_2")
     def _compute_agency_pickup_dnis(self):
@@ -305,3 +320,35 @@ class SaleOrder(models.Model):
                 if vals_to_write:
                     order.picking_ids.filtered(lambda p: p.state != "cancel").write(vals_to_write)
         return res
+
+
+class SaleOrderLine(models.Model):
+    _inherit = "sale.order.line"
+
+    product_image_128 = fields.Image(
+        related="product_id.image_128",
+        string="Foto",
+    )
+    conagra_extra_description = fields.Text(
+        string="Descripción Adicional",
+        compute="_compute_conagra_extra_texts",
+        store=True,
+        readonly=False,
+    )
+    conagra_extra_detail = fields.Text(
+        string="Detalle Adicional",
+        compute="_compute_conagra_extra_texts",
+        store=True,
+        readonly=False,
+    )
+
+    @api.depends("product_id")
+    def _compute_conagra_extra_texts(self):
+        for line in self:
+            if line.product_id:
+                tmpl = line.product_id.product_tmpl_id
+                line.conagra_extra_description = tmpl.conagra_extra_description
+                line.conagra_extra_detail = tmpl.conagra_extra_detail
+            else:
+                line.conagra_extra_description = False
+                line.conagra_extra_detail = False

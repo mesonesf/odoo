@@ -39,6 +39,18 @@
                     </group>
                 </group>
             </xpath>
+            <xpath expr="//label[@for='list_price']" position="attributes">
+                <attribute name="string">Valor de Venta</attribute>
+            </xpath>
+            <xpath expr="//field[@name='list_price']" position="attributes">
+                <attribute name="string">Valor de Venta</attribute>
+            </xpath>
+            <xpath expr="//group[@name='internal_notes']" position="before">
+                <group string="Información Adicional para Cotizaciones (CONAGRA)" name="conagra_quote_extra_info">
+                    <field name="conagra_extra_description" placeholder="Descripción comercial o beneficios del producto para mostrar opcionalmente al cotizar..."/>
+                    <field name="conagra_extra_detail" placeholder="Dosis, especificaciones o detalle técnico adicional para mostrar opcionalmente al cotizar..."/>
+                </group>
+            </xpath>
             <xpath expr="//notebook" position="inside">
                 <page string="CONAGRA: Costeo, Presentación y Makita" name="conagra_costing_page">
                     <group>
@@ -88,6 +100,23 @@
             <xpath expr="//field[@name='name']" position="before">
                 <field name="conagra_internal_code" optional="show"/>
                 <field name="supplier_product_code" optional="show"/>
+            </xpath>
+            <xpath expr="//field[@name='list_price']" position="attributes">
+                <attribute name="string">Valor de Venta</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- 1.2 Vista Kanban de Producto: Etiqueta Valor de Venta -->
+    <record id="product_template_kanban_view_conagra_valor" model="ir.ui.view">
+        <field name="name">product.template.kanban.conagra.valor</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_kanban_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='list_price']/.." position="replace">
+                <span>
+                    Valor de Venta: <field name="list_price" widget="monetary" options="{'currency_field': 'currency_id', 'field_digits': True}"/>
+                </span>
             </xpath>
         </field>
     </record>

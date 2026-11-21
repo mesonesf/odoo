@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- 1. PDF de Cotización / Pedido de Venta: Columna de Foto y Textos Adicionales Opcionales -->
+    <template id="report_saleorder_document_conagra_media" inherit_id="sale.report_saleorder_document">
+        <xpath expr="//th[@name='th_description']" position="before">
+            <th name="th_conagra_image" t-if="doc.show_product_image_in_quote" class="text-center" style="width: 70px;">Foto</th>
+        </xpath>
+        <xpath expr="//td[@name='td_name']" position="before">
+            <td name="td_conagra_image" t-if="doc.show_product_image_in_quote" class="text-center align-middle">
+                <img t-if="line.product_id and line.product_id.image_128"
+                     t-att-src="image_data_uri(line.product_id.sudo().image_128)"
+                     style="max-height: 55px; max-width: 55px; object-fit: contain;"/>
+            </td>
+        </xpath>
+        <xpath expr="//td[@name='td_name']" position="inside">
+            <div t-if="doc.show_extra_description_in_quote and line.conagra_extra_description"
+                 class="text-muted small mt-1" style="white-space: pre-line;">
+                <span t-field="line.conagra_extra_description"/>
+            </div>
+            <div t-if="doc.show_extra_detail_in_quote and line.conagra_extra_detail"
+                 class="small mt-1" style="white-space: pre-line;">
+                <strong>Detalle:</strong> <span t-field="line.conagra_extra_detail"/>
+            </div>
+        </xpath>
+    </template>
+
+    <!-- 2. Vista Portal / Previsualización Online de Cotización -->
+    <template id="sale_order_portal_content_conagra_media" inherit_id="sale.sale_order_portal_content">
+        <xpath expr="//th[@id='product_name_header']" position="before">
+            <th name="th_portal_conagra_image" t-if="sale_order.show_product_image_in_quote" class="text-center" style="width: 70px;">Foto</th>
+        </xpath>
+        <xpath expr="//td[@id='product_name']" position="before">
+            <td name="td_portal_conagra_image" t-if="sale_order.show_product_image_in_quote" class="text-center align-middle">
+                <img t-if="line.product_id and line.product_id.image_128"
+                     t-att-src="image_data_uri(line.product_id.sudo().image_128)"
+                     style="max-height: 55px; max-width: 55px; object-fit: contain;"/>
+            </td>
+        </xpath>
+        <xpath expr="//td[@id='product_name']" position="inside">
+            <div t-if="sale_order.show_extra_description_in_quote and line.conagra_extra_description"
+                 class="text-muted small mt-1" style="white-space: pre-line;">
+                <span t-field="line.conagra_extra_description"/>
+            </div>
+            <div t-if="sale_order.show_extra_detail_in_quote and line.conagra_extra_detail"
+                 class="small mt-1" style="white-space: pre-line;">
+                <strong>Detalle:</strong> <span t-field="line.conagra_extra_detail"/>
+            </div>
+        </xpath>
+    </template>
+</odoo>

@@ -105,6 +105,16 @@ class ProductCategory(models.Model):
 class ProductTemplate(models.Model):
     _inherit = "product.template"
 
+    list_price = fields.Float(string="Valor de Venta")
+    conagra_extra_description = fields.Text(
+        string="Descripción Adicional",
+        help="Descripción comercial o técnica extendida para mostrar opcionalmente en cotizaciones.",
+    )
+    conagra_extra_detail = fields.Text(
+        string="Detalle Adicional",
+        help="Dosis de aplicación, ficha rápida o especificaciones técnicas para mostrar opcionalmente en cotizaciones.",
+    )
+
     # Doble código: Código Interno CONAGRA (autogenerado con prefijo) y Código de Proveedor (Makita)
     conagra_internal_code = fields.Char(
         string="Código Interno CONAGRA",

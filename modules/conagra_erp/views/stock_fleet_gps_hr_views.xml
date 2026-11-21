@@ -11,7 +11,7 @@
                         string="Chofer: Notificar Guía Sellada en Agencia"
                         type="object"
                         class="btn-primary"
-                        invisible="not agency_stamped_guide_photo"/>
+                        invisible="not agency_stamped_guide_photo and not agency_package_photo"/>
                 <button name="action_salesperson_confirm_delivery"
                         string="Vendedor: Confirmar Recepción Cliente"
                         type="object"
@@ -23,6 +23,13 @@
                     <group>
                         <group string="Transporte, Agencia y Capacidad de Cajas">
                             <field name="transport_agency_id"/>
+                            <field name="agency_dispatch_state" widget="badge"
+                                   decoration-warning="agency_dispatch_state == 'pending'"
+                                   decoration-info="agency_dispatch_state == 'dropped_off'"
+                                   decoration-success="agency_dispatch_state == 'delivered'"/>
+                            <field name="agency_tracking_number"/>
+                            <field name="agency_pickup_pin"/>
+                            <field name="agency_dropoff_datetime"/>
                             <field name="delivery_agency_type" invisible="not transport_agency_id"/>
                             <field name="agency_pickup_partner_id" invisible="not transport_agency_id or delivery_agency_type != 'recojo_agencia'"/>
                             <field name="agency_pickup_dni" invisible="not agency_pickup_partner_id"/>
@@ -35,9 +42,11 @@
                                    invisible="not vehicle_capacity_warning"
                                    decoration-danger="1"/>
                         </group>
-                        <group string="Evidencia Guía Sellada, Rastreo GPS y Confirmación">
+                        <group string="Evidencia Guía Sellada, Paquete, Rastreo GPS y Confirmación">
                             <field name="agency_stamped_guide_photo" filename="agency_stamped_guide_filename" widget="image"/>
                             <field name="agency_stamped_guide_filename" invisible="1"/>
+                            <field name="agency_package_photo" filename="agency_package_filename" widget="image"/>
+                            <field name="agency_package_filename" invisible="1"/>
                             <field name="gps_agency_visit_detected"/>
                             <field name="gps_agency_visit_datetime"/>
                             <field name="salesperson_delivery_confirmed"/>
@@ -45,6 +54,25 @@
                         </group>
                     </group>
                 </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- 1.1 Vista Lista de Guías de Remisión: Estado y Evidencia de Despacho en Agencia -->
+    <record id="vpicktree_conagra_agency_dispatch" model="ir.ui.view">
+        <field name="name">stock.picking.list.conagra.agency.dispatch</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.vpicktree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='origin']" position="after">
+                <field name="transport_agency_id" optional="show"/>
+                <field name="agency_tracking_number" optional="show"/>
+                <field name="agency_dispatch_state"
+                       widget="badge"
+                       optional="show"
+                       decoration-warning="agency_dispatch_state == 'pending'"
+                       decoration-info="agency_dispatch_state == 'dropped_off'"
+                       decoration-success="agency_dispatch_state == 'delivered'"/>
             </xpath>
         </field>
     </record>

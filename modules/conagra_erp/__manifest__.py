@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 {
     "name": "CONAGRA ERP - Suite Integral Agroindustrial",
-    "version": "18.0.2.2.0",
+    "version": "18.0.2.3.0",
     "category": "Industries/Agriculture",
-    "summary": "Solución integral para CONAGRA: Multi-Almacén, Doble Código, Despacho Agencia y Custodia CDR SUNAT",
+    "summary": "Solución integral para CONAGRA: Multi-Almacén, Doble Código, Cotizaciones con Foto/Detalle, Evidencia Agencia y Custodia CDR SUNAT",
     "description": """
 CONAGRA ERP - Suite Integral Agroindustrial
 ===========================================
@@ -35,6 +35,7 @@ integrado nativamente con los módulos base del sistema CONAGRA y `mail_gateway`
         "data/conagra_master_data.xml",
         "data/ir_cron_conagra.xml",
         "report/stock_picking_box_sticker_report.xml",
+        "report/sale_order_conagra_report.xml",
         "views/conagra_master_tables_views.xml",
         "views/res_config_settings_views.xml",
         "views/crm_whatsapp_views.xml",

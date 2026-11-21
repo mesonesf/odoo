@@ -63,6 +63,30 @@
                        invisible="not requires_credit_approval"
                        widget="boolean"
                        decoration-danger="1"/>
+                <field name="show_product_image_in_quote"/>
+                <field name="show_extra_description_in_quote"/>
+                <field name="show_extra_detail_in_quote"/>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/list/field[@name='product_template_id']" position="before">
+                <field name="product_image_128"
+                       widget="image"
+                       options="{'size': [40, 40]}"
+                       column_invisible="not parent.show_product_image_in_quote"
+                       optional="show"/>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/list/field[@name='name']" position="after">
+                <field name="conagra_extra_description"
+                       column_invisible="not parent.show_extra_description_in_quote"
+                       optional="show"/>
+                <field name="conagra_extra_detail"
+                       column_invisible="not parent.show_extra_detail_in_quote"
+                       optional="show"/>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/form//field[@name='name']" position="after">
+                <group invisible="display_type">
+                    <field name="conagra_extra_description"/>
+                    <field name="conagra_extra_detail"/>
+                </group>
             </xpath>
         </field>
     </record>

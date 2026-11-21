@@ -91,6 +91,37 @@ class StockPicking(models.Model):
         help="Fotografía tomada por el chofer o ayudante con el sello de recepción de Shalom/Marvisur/Móvil Bus.",
     )
     agency_stamped_guide_filename = fields.Char(string="Nombre Archivo Foto Guía")
+    agency_package_photo = fields.Binary(
+        string="Foto Paquete / Cajas en Agencia",
+        attachment=True,
+        help="Fotografía física de los bultos o cajas rotuladas dejadas en la agencia de transporte.",
+    )
+    agency_package_filename = fields.Char(string="Nombre Archivo Foto Paquete")
+    agency_tracking_number = fields.Char(
+        string="N° de Orden / Tracking Agencia",
+        tracking=True,
+        help="Número de guía o voucher emitido por Shalom, Marvisur o Móvil Bus.",
+    )
+    agency_pickup_pin = fields.Char(
+        string="Clave / PIN de Recojo en Destino",
+        tracking=True,
+        help="Clave de seguridad requerida al cliente para recoger las cajas en la agencia destino.",
+    )
+    agency_dropoff_datetime = fields.Datetime(
+        string="Fecha/Hora Entrega en Agencia",
+        readonly=True,
+        tracking=True,
+    )
+    agency_dispatch_state = fields.Selection(
+        selection=[
+            ("pending", "Pendiente de Dejar en Agencia"),
+            ("dropped_off", "Dejado en Agencia (Con Evidencia)"),
+            ("delivered", "Entregado al Cliente en Destino"),
+        ],
+        string="Estado Despacho Agencia",
+        compute="_compute_agency_dispatch_state",
+        store=True,
+    )
     gps_agency_visit_detected = fields.Boolean(
         string="Visita a Agencia Verificada por GPS",
         default=False,
@@ -142,13 +173,33 @@ class StockPicking(models.Model):
                 )
         return super().button_validate()
 
+    @api.depends(
+        "salesperson_delivery_confirmed",
+        "agency_dropoff_datetime",
+        "agency_stamped_guide_photo",
+        "agency_package_photo",
+    )
+    def _compute_agency_dispatch_state(self):
+        for picking in self:
+            if picking.salesperson_delivery_confirmed:
+                picking.agency_dispatch_state = "delivered"
+            elif (
+                picking.agency_dropoff_datetime
+                or picking.agency_stamped_guide_photo
+                or picking.agency_package_photo
+            ):
+                picking.agency_dispatch_state = "dropped_off"
+            else:
+                picking.agency_dispatch_state = "pending"
+
     def action_driver_notify_stamped_guide(self):
-        """Notifica al vendedor de la orden que la mercadería ya fue dejada en la agencia con foto de la guía sellada."""
+        """Notifica al vendedor de la orden que la mercadería ya fue dejada en la agencia con evidencia fotográfica."""
         self.ensure_one()
-        if not self.agency_stamped_guide_photo:
+        if not self.agency_stamped_guide_photo and not self.agency_package_photo:
             raise ValidationError(
-                "El chofer debe subir la foto de la Guía de Remisión sellada por la agencia antes de notificar."
+                "El chofer debe subir al menos una foto (Guía sellada o Paquete/Cajas en agencia) antes de notificar."
             )
+        self.agency_dropoff_datetime = fields.Datetime.now()
         salesperson = self.sale_id.user_id or self.user_id
         partner_ids = [salesperson.partner_id.id] if salesperson and salesperson.partner_id else []
         msg = Markup(
@@ -156,13 +207,17 @@ class StockPicking(models.Model):
             "📦 <b>Mercadería Entregada en Agencia de Transporte</b><br/>"
             "• <b>Agencia:</b> %s<br/>"
             "• <b>Bultos/Cajas:</b> %s<br/>"
+            "• <b>N° Tracking / Orden:</b> %s<br/>"
+            "• <b>Clave / PIN Recojo:</b> %s<br/>"
             "• <b>Vehículo:</b> %s<br/>"
-            "<i>Se adjuntó la foto de la guía sellada. Por favor, hacer seguimiento con el cliente y pulsar "
+            "<i>Se adjuntó evidencia fotográfica de la entrega en agencia. Por favor, hacer seguimiento con el cliente y pulsar "
             "<b>Confirmar Recepción Cliente</b>.</i>"
             "</div>"
         ) % (
             self.transport_agency_id.name if self.transport_agency_id else "Directo",
             self.boxes_count,
+            self.agency_tracking_number or "-",
+            self.agency_pickup_pin or "-",
             self.vehicle_id.name if self.vehicle_id else "-",
         )
         self.message_post(
