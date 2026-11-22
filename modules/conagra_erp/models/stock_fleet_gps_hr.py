@@ -86,15 +86,15 @@ class StockPicking(models.Model):
         compute="_compute_vehicle_capacity_warning",
     )
     agency_stamped_guide_photo = fields.Binary(
-        string="Foto Guía Sellada por Agencia (Chofer)",
+        string="Foto Guía / Voucher Sellado",
         attachment=True,
-        help="Fotografía tomada por el chofer o ayudante con el sello de recepción de Shalom/Marvisur/Móvil Bus.",
+        help="Foto principal de la guía o voucher con el sello de recepción de la agencia (Shalom/Marvisur/Móvil Bus). Basta subir esta foto para habilitar la notificación.",
     )
     agency_stamped_guide_filename = fields.Char(string="Nombre Archivo Foto Guía")
     agency_package_photo = fields.Binary(
-        string="Foto Paquete / Cajas en Agencia",
+        string="Foto Bultos / Cajas (Opcional)",
         attachment=True,
-        help="Fotografía física de los bultos o cajas rotuladas dejadas en la agencia de transporte.",
+        help="Opcional: fotografía adicional de los bultos o cajas rotuladas dejadas en agencia. No es obligatoria si ya subió la guía sellada.",
     )
     agency_package_filename = fields.Char(string="Nombre Archivo Foto Paquete")
     agency_tracking_number = fields.Char(
