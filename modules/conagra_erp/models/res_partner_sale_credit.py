@@ -226,12 +226,12 @@ class SaleOrder(models.Model):
     show_extra_description_in_quote = fields.Boolean(
         string="Mostrar Descripción Adicional",
         default=False,
-        help="Si está marcado, incluye el campo Descripción Adicional del producto en la cotización y en su PDF.",
+        help="Si está marcado, reemplaza el nombre/descripción del producto por la Descripción Adicional en el PDF y vista previa de la cotización (si el producto tiene Descripción Adicional).",
     )
     show_extra_detail_in_quote = fields.Boolean(
         string="Mostrar Detalle Adicional",
         default=False,
-        help="Si está marcado, incluye el campo Detalle Adicional del producto en la cotización y en su PDF.",
+        help="Si está marcado, muestra el Detalle Adicional como una columna separada al costado del producto o descripción adicional en el PDF y vista previa de la cotización.",
     )
 
     @api.depends("agency_pickup_partner_id", "agency_pickup_partner_id_2")
