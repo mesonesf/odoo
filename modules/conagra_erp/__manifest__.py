@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     "name": "CONAGRA ERP - Suite Integral Agroindustrial",
-    "version": "18.0.2.3.2",
+    "version": "18.0.2.3.3",
     "category": "Industries/Agriculture",
     "summary": "Solución integral para CONAGRA: Multi-Almacén, Doble Código, Cotizaciones con Foto/Detalle, Evidencia Agencia y Custodia CDR SUNAT",
     "description": """

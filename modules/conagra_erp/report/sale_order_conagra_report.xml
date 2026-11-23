@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <!-- 1. PDF de Cotización / Pedido de Venta: Columna de Foto, Descripción Adicional en reemplazo del nombre y Detalle Adicional al costado -->
-    <template id="report_saleorder_document_conagra_media" inherit_id="sale.report_saleorder_document">
+    <template id="report_saleorder_document_conagra_media" inherit_id="sale.report_saleorder_document" priority="99">
         <xpath expr="//th[@name='th_description']" position="before">
             <th name="th_conagra_image" t-if="doc.show_product_image_in_quote" class="text-center" style="width: 70px;">Foto</th>
         </xpath>
@@ -15,20 +15,22 @@
                      style="max-height: 55px; max-width: 55px; object-fit: contain;"/>
             </td>
         </xpath>
-        <xpath expr="//td[@name='td_name']/span[@t-field='line.name']" position="replace">
-            <span t-if="doc.show_extra_description_in_quote and line.conagra_extra_description"
-                  t-field="line.conagra_extra_description" style="white-space: pre-line;"/>
-            <span t-else="" t-field="line.name">Bacon Burger</span>
-        </xpath>
         <xpath expr="//td[@name='td_name']" position="after">
             <td name="td_conagra_detail" t-if="doc.show_extra_detail_in_quote" class="text-start" style="white-space: pre-line;">
                 <span t-field="line.conagra_extra_detail"/>
             </td>
         </xpath>
+        <xpath expr="//td[@name='td_name']" position="replace">
+            <td name="td_name">
+                <span t-if="doc.show_extra_description_in_quote and line.conagra_extra_description"
+                      t-field="line.conagra_extra_description" style="white-space: pre-line;"/>
+                <span t-else="" t-field="line.name">Bacon Burger</span>
+            </td>
+        </xpath>
     </template>
 
-    <!-- 2. Vista Portal / Previsualización Online de Cotización -->
-    <template id="sale_order_portal_content_conagra_media" inherit_id="sale.sale_order_portal_content">
+    <!-- 2. Vista Portal / Previsualización Online de Cotización (priority="99" para aplicarse después de website_sale / sale_loyalty) -->
+    <template id="sale_order_portal_content_conagra_media" inherit_id="sale.sale_order_portal_content" priority="99">
         <xpath expr="//th[@id='product_name_header']" position="before">
             <th name="th_portal_conagra_image" t-if="sale_order.show_product_image_in_quote" class="text-center" style="width: 70px;">Foto</th>
         </xpath>
@@ -42,14 +44,16 @@
                      style="max-height: 55px; max-width: 55px; object-fit: contain;"/>
             </td>
         </xpath>
-        <xpath expr="//td[@id='product_name']/span[@t-field='line.name']" position="replace">
-            <span t-if="sale_order.show_extra_description_in_quote and line.conagra_extra_description"
-                  t-field="line.conagra_extra_description" style="white-space: pre-line;"/>
-            <span t-else="" t-field="line.name"/>
-        </xpath>
         <xpath expr="//td[@id='product_name']" position="after">
             <td name="td_portal_conagra_detail" t-if="sale_order.show_extra_detail_in_quote" class="text-start" style="white-space: pre-line;">
                 <span t-field="line.conagra_extra_detail"/>
+            </td>
+        </xpath>
+        <xpath expr="//td[@id='product_name']" position="replace">
+            <td id="product_name">
+                <span t-if="sale_order.show_extra_description_in_quote and line.conagra_extra_description"
+                      t-field="line.conagra_extra_description" class="d-block text-wrap" style="white-space: pre-line;"/>
+                <span t-else="" t-field="line.name" class="d-block text-wrap"/>
             </td>
         </xpath>
     </template>
