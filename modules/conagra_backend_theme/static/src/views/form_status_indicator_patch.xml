@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="conagra_backend_theme.FormStatusIndicator"
+       t-inherit="web.FormStatusIndicator"
+       t-inherit-mode="extension">
+        <xpath expr="//button[contains(@class, 'o_form_button_save')]/i" position="replace">
+            <svg class="o_conagra_icon o_conagra_icon_save" width="15" height="15" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                 aria-hidden="true">
+                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                <polyline points="17 21 17 13 7 13 7 21"/>
+                <polyline points="7 3 7 8 15 8"/>
+            </svg>
+            <span class="o_conagra_btn_label d-none d-sm-inline">Guardar</span>
+        </xpath>
+        <xpath expr="//button[contains(@class, 'o_form_button_cancel')]/i" position="replace">
+            <svg class="o_conagra_icon o_conagra_icon_cancel" width="15" height="15" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                 aria-hidden="true">
+                <circle cx="12" cy="12" r="9"/>
+                <line x1="15" y1="9" x2="9" y2="15"/>
+                <line x1="9" y1="9" x2="15" y2="15"/>
+            </svg>
+            <span class="o_conagra_btn_label d-none d-sm-inline">Cancelar</span>
+        </xpath>
+    </t>
+</templates>

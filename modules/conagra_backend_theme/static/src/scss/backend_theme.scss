@@ -215,4 +215,105 @@ $conagra-green-soft: #EDF7EE;
         border: 1px solid $conagra-border;
         box-shadow: 0 8px 24px rgba(15, 23, 42, 0.1);
     }
+
+    // 8. Botones modernos de Guardar (Diskette) y Cancelar en formularios, diálogos y listas
+    .o_form_status_indicator_buttons {
+        gap: 6px;
+        align-items: center;
+
+        .o_form_button_save,
+        .o_form_button_cancel {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border-radius: 7px !important;
+            font-size: 13px;
+            line-height: 1.2 !important;
+            transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+
+            .o_conagra_icon {
+                flex-shrink: 0;
+            }
+        }
+
+        .o_form_button_save {
+            background-color: $conagra-green !important;
+            color: #FFFFFF !important;
+            border: 1px solid $conagra-green !important;
+            padding: 5px 11px !important;
+            font-weight: 600;
+            box-shadow: 0 1px 2px rgba(20, 61, 34, 0.18);
+
+            &:hover,
+            &:focus {
+                background-color: $conagra-green-dark !important;
+                border-color: $conagra-green-dark !important;
+                color: #FFFFFF !important;
+            }
+
+            &:disabled,
+            &.disabled {
+                opacity: 0.55;
+                box-shadow: none;
+            }
+        }
+
+        .o_form_button_cancel {
+            background-color: #FFFFFF !important;
+            color: #475569 !important;
+            border: 1px solid #CBD5E1 !important;
+            padding: 5px 10px !important;
+            font-weight: 500;
+
+            &:hover,
+            &:focus {
+                background-color: #FEF2F2 !important;
+                color: #DC2626 !important;
+                border-color: #FCA5A5 !important;
+            }
+        }
+    }
+
+    // Iconos vectoriales consistentes en botones de Guardar / Cancelar de modales, x2many y listas editables
+    .o_form_buttons_edit .o_form_button_save,
+    .modal-footer .o_form_button_save,
+    .o_form_button_save_new,
+    .o_list_button_save,
+    .o_form_buttons_edit .o_form_button_cancel,
+    .modal-footer .o_form_button_cancel,
+    .o_list_button_discard {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+
+        &::before {
+            content: "";
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            flex-shrink: 0;
+            background-color: currentColor;
+            -webkit-mask-repeat: no-repeat;
+            mask-repeat: no-repeat;
+            -webkit-mask-position: center;
+            mask-position: center;
+            -webkit-mask-size: contain;
+            mask-size: contain;
+        }
+    }
+
+    .o_form_buttons_edit .o_form_button_save::before,
+    .modal-footer .o_form_button_save::before,
+    .o_form_button_save_new::before,
+    .o_list_button_save::before {
+        -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z'/%3E%3Cpolyline points='17 21 17 13 7 13 7 21'/%3E%3Cpolyline points='7 3 7 8 15 8'/%3E%3C/svg%3E");
+        mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z'/%3E%3Cpolyline points='17 21 17 13 7 13 7 21'/%3E%3Cpolyline points='7 3 7 8 15 8'/%3E%3C/svg%3E");
+    }
+
+    .o_form_buttons_edit .o_form_button_cancel::before,
+    .modal-footer .o_form_button_cancel::before,
+    .o_list_button_discard::before {
+        -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cline x1='15' y1='9' x2='9' y2='15'/%3E%3Cline x1='9' y1='9' x2='15' y2='15'/%3E%3C/svg%3E");
+        mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cline x1='15' y1='9' x2='9' y2='15'/%3E%3Cline x1='9' y1='9' x2='15' y2='15'/%3E%3C/svg%3E");
+    }
 }

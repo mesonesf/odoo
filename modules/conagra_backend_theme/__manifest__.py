@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     "name": "CONAGRA Backend Theme - Interfaz Moderna ERP",
-    "version": "18.0.1.0.0",
+    "version": "18.0.1.1.0",
     "category": "Themes/Backend",
     "summary": "Tema corporativo CONAGRA: Sidebar lateral colapsable, paleta verde agroindustrial y diseño moderno SaaS para Odoo 18 CE",
     "description": """
@@ -24,6 +24,7 @@ Rediseño visual integral y desacoplado para Odoo 18 Community:
         "web.assets_backend": [
             "conagra_backend_theme/static/src/scss/sidebar.scss",
             "conagra_backend_theme/static/src/scss/backend_theme.scss",
+            "conagra_backend_theme/static/src/views/form_status_indicator_patch.xml",
             "conagra_backend_theme/static/src/webclient/sidebar/conagra_sidebar.xml",
             "conagra_backend_theme/static/src/webclient/sidebar/conagra_sidebar.js",
             "conagra_backend_theme/static/src/webclient/webclient_patch.xml",
