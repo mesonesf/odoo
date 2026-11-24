@@ -7,30 +7,42 @@
         <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="arch" type="xml">
             <xpath expr="//notebook" position="inside">
-                <page string="CONAGRA: Créditos, Grupo Espejo y Agencias" name="conagra_partner_page">
+                <page string="CONAGRA: Cliente, Créditos y Agencia" name="conagra_partner_page">
+                    <div class="alert alert-danger mb-3" role="alert" invisible="not is_group_credit_blocked">
+                        <strong>Crédito Bloqueado (Grupo Espejo CONAGRA):</strong>
+                        Este contacto o una de sus empresas vinculadas registra deuda vencida. Requiere aprobación de Créditos y Cobranzas.
+                    </div>
+                    <div class="alert alert-warning mb-3" role="alert" invisible="not reverted_to_lima_office">
+                        <strong>Regla de Inactividad de 1 Año:</strong>
+                        La cuenta fue revertida automáticamente a Oficina Lima por superar 365 días sin facturación.
+                    </div>
                     <group>
-                        <group string="Segmentación Agrícola &amp; Regla de 1 Año">
+                        <group string="1. Segmentación Agrícola y Regla de 1 Año">
                             <field name="conagra_zona_id"/>
                             <field name="conagra_cultivo_id"/>
-                            <field name="conagra_is_new_customer"/>
+                            <field name="conagra_is_new_customer" widget="boolean_toggle"/>
                             <field name="last_conagra_invoice_date"/>
-                            <field name="reverted_to_lima_office"/>
-                            <field name="sunat_establishment_code" placeholder="Ej. 0001 (Para locales propios)"/>
-                            <field name="is_pickup_authorized"/>
+                            <field name="reverted_to_lima_office" widget="boolean_toggle"/>
                         </group>
-                        <group string="Control Crediticio de Empresas Vinculadas (Espejo)">
+                        <group string="2. Control Crediticio (Grupo Espejo)">
                             <field name="max_credit_term_id"/>
                             <field name="group_overdue_amount"/>
-                            <field name="is_group_credit_blocked"/>
+                            <field name="is_group_credit_blocked" widget="boolean_toggle" readonly="1"/>
                             <field name="linked_credit_partner_ids" widget="many2many_tags"/>
                         </group>
                     </group>
-                    <group string="Configuración de Agencia de Transporte (Shalom / Marvisur / Móvil Bus)">
-                        <field name="is_transport_agency"/>
-                        <field name="agency_zone_id" invisible="not is_transport_agency"/>
-                        <field name="preferred_nearby_agency_id" invisible="not is_transport_agency"/>
-                        <field name="partner_latitude" invisible="not is_transport_agency"/>
-                        <field name="partner_longitude" invisible="not is_transport_agency"/>
+                    <group>
+                        <group string="3. Logística y Establecimiento SUNAT">
+                            <field name="is_pickup_authorized" widget="boolean_toggle"/>
+                            <field name="sunat_establishment_code" placeholder="Ej. 0001 (Para locales propios)"/>
+                        </group>
+                        <group string="4. Configuración como Agencia de Transporte">
+                            <field name="is_transport_agency" widget="boolean_toggle"/>
+                            <field name="agency_zone_id" invisible="not is_transport_agency"/>
+                            <field name="preferred_nearby_agency_id" invisible="not is_transport_agency"/>
+                            <field name="partner_latitude" invisible="not is_transport_agency"/>
+                            <field name="partner_longitude" invisible="not is_transport_agency"/>
+                        </group>
                     </group>
                 </page>
             </xpath>
@@ -43,29 +55,43 @@
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='payment_term_id']" position="after">
-                <field name="transport_agency_id"/>
-                <field name="delivery_agency_type" invisible="not transport_agency_id"/>
-                <field name="agency_pickup_partner_id"
-                       invisible="not transport_agency_id or delivery_agency_type != 'recojo_agencia'"
-                       options="{'no_create': True}"/>
-                <field name="agency_pickup_dni"
-                       invisible="not agency_pickup_partner_id"/>
-                <field name="agency_pickup_partner_id_2"
-                       invisible="not transport_agency_id or delivery_agency_type != 'recojo_agencia'"
-                       options="{'no_create': True}"/>
-                <field name="agency_pickup_dni_2"
-                       invisible="not agency_pickup_partner_id_2"/>
-                <field name="agency_distance_warning" readonly="1"
-                       invisible="not agency_distance_warning"
-                       decoration-warning="1"/>
-                <field name="requires_credit_approval" readonly="1"
-                       invisible="not requires_credit_approval"
-                       widget="boolean"
-                       decoration-danger="1"/>
-                <field name="show_product_image_in_quote"/>
-                <field name="show_extra_description_in_quote"/>
-                <field name="show_extra_detail_in_quote"/>
+            <xpath expr="//sheet" position="before">
+                <div class="alert alert-danger mb-2" role="alert" invisible="not requires_credit_approval">
+                    <field name="requires_credit_approval" invisible="1"/>
+                    <strong>Bloqueo Crediticio / Tope de Descuento (CONAGRA):</strong>
+                    El cliente registra deuda vencida en grupo espejo o alguna línea supera el descuento máximo permitido. Requiere autorización antes de confirmar.
+                </div>
+                <div class="alert alert-warning mb-2" role="alert" invisible="not agency_distance_warning">
+                    <field name="agency_distance_warning" readonly="1" class="mb-0"/>
+                </div>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="CONAGRA: Agencia y Formato Cotización" name="conagra_sale_options_page">
+                    <group>
+                        <group string="1. Despacho por Agencia de Transporte">
+                            <field name="transport_agency_id"/>
+                            <field name="delivery_agency_type" invisible="not transport_agency_id"/>
+                            <field name="agency_pickup_partner_id"
+                                   invisible="not transport_agency_id or delivery_agency_type != 'recojo_agencia'"
+                                   options="{'no_create': True}"/>
+                            <field name="agency_pickup_dni"
+                                   invisible="not agency_pickup_partner_id"/>
+                            <field name="agency_pickup_partner_id_2"
+                                   invisible="not transport_agency_id or delivery_agency_type != 'recojo_agencia'"
+                                   options="{'no_create': True}"/>
+                            <field name="agency_pickup_dni_2"
+                                   invisible="not agency_pickup_partner_id_2"/>
+                        </group>
+                        <group string="2. Opciones de Presentación (PDF y Vista Previa)">
+                            <div class="text-muted small mb-2" colspan="2">
+                                Active o desactive qué información adicional de los productos se imprimirá en el PDF y la Vista Previa de esta cotización.
+                            </div>
+                            <field name="show_product_image_in_quote" widget="boolean_toggle"/>
+                            <field name="show_extra_description_in_quote" widget="boolean_toggle"/>
+                            <field name="show_extra_detail_in_quote" widget="boolean_toggle"/>
+                        </group>
+                    </group>
+                </page>
             </xpath>
             <xpath expr="//field[@name='order_line']/list/field[@name='product_template_id']" position="before">
                 <field name="product_image_128"
@@ -83,7 +109,7 @@
                        optional="show"/>
             </xpath>
             <xpath expr="//field[@name='order_line']/form//field[@name='name']" position="after">
-                <group invisible="display_type">
+                <group string="Textos Adicionales para Cotización" invisible="display_type">
                     <field name="conagra_extra_description"/>
                     <field name="conagra_extra_detail"/>
                 </group>
@@ -100,22 +126,27 @@
             <xpath expr="//notebook" position="inside">
                 <page string="CONAGRA: Comisiones (7 Reglas) &amp; Letras" name="conagra_commissions_letras_page"
                       invisible="move_type not in ('out_invoice', 'out_refund')">
+                    <div class="alert alert-warning mb-3" role="alert"
+                         invisible="sunat_cdr_status not in ('observed', 'rejected')">
+                        <strong>Atención CDR SUNAT:</strong>
+                        El comprobante figura como <em>Observado</em> o <em>Rechazado</em>. Revise el código de respuesta y el archivo CDR adjunto.
+                    </div>
                     <group>
-                        <group string="Liquidación de Comisiones (Corte Día 24)">
+                        <group string="1. Liquidación de Comisiones (Corte Día 24)">
                             <field name="commission_cutoff_period"/>
                             <field name="payment_delay_days"/>
                             <field name="total_commission_base_pen"/>
                             <field name="total_commission_amount_pen"/>
-                            <field name="commission_settled"/>
+                            <field name="commission_settled" widget="boolean_toggle"/>
                         </group>
-                        <group string="Control de Letras de Cambio (BCP Telecrédito)">
-                            <field name="is_letra_cambio"/>
+                        <group string="2. Letras de Cambio (BCP Telecrédito)">
+                            <field name="is_letra_cambio" widget="boolean_toggle"/>
                             <field name="letra_unique_number" invisible="not is_letra_cambio"/>
                             <field name="letra_status_id" invisible="not is_letra_cambio"/>
                             <field name="canje_source_invoice_ids" widget="many2many_tags" invisible="not is_letra_cambio"/>
                         </group>
                     </group>
-                    <group string="Custodia de Comprobante Electrónico y CDR de SUNAT">
+                    <group string="3. Custodia de Comprobante Electrónico y CDR SUNAT">
                         <group>
                             <field name="sunat_cdr_status" widget="badge"
                                    decoration-success="sunat_cdr_status == 'accepted'"

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="conagraBg" x1="8" y1="6" x2="56" y2="58" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#1B5E20"/>
+      <stop offset="100%" stop-color="#143D22"/>
+    </linearGradient>
+    <linearGradient id="conagraLeaf" x1="18" y1="46" x2="48" y2="14" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#16A34A"/>
+      <stop offset="100%" stop-color="#4ADE80"/>
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="60" height="60" rx="14" fill="url(#conagraBg)" stroke="#4ADE80" stroke-opacity="0.35" stroke-width="2"/>
+  <path d="M46 16C31 16 20 26 20 40C20 42.5 20.4 44.8 21.1 47C23.4 47.6 25.8 48 28.4 48C41.4 48 48 37 48 21.5C48 19.4 47.3 17.5 46 16Z" fill="url(#conagraLeaf)"/>
+  <path d="M19 48C25.5 39.5 33 31 43 23" stroke="#143D22" stroke-width="2.8" stroke-linecap="round"/>
+  <path d="M27 39C31 39 34.5 37.8 37.5 35.5" stroke="#143D22" stroke-width="2.4" stroke-linecap="round"/>
+  <circle cx="21" cy="21" r="4" fill="#86EFAC" fill-opacity="0.85"/>
+</svg>

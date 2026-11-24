@@ -1,0 +1,218 @@
+// ============================================================================
+// CONAGRA ERP - Diseño Moderno Global para Vistas Backend (SaaS Agroindustrial)
+// ============================================================================
+
+$conagra-canvas: #F4F6F5;
+$conagra-surface: #FFFFFF;
+$conagra-border: #E2E8F0;
+$conagra-text: #1E293B;
+$conagra-muted: #64748B;
+$conagra-green: #1B5E20;
+$conagra-green-dark: #143D22;
+$conagra-green-soft: #EDF7EE;
+
+.o_web_client {
+    background-color: $conagra-canvas;
+    color: $conagra-text;
+
+    // 1. Panel de Control y Búsqueda
+    .o_control_panel {
+        background-color: $conagra-surface;
+        border-bottom: 1px solid $conagra-border;
+        padding-top: 10px;
+        padding-bottom: 10px;
+
+        .o_breadcrumb {
+            font-weight: 600;
+            color: $conagra-text;
+        }
+
+        .o_searchview {
+            border-radius: 8px;
+            border-color: $conagra-border;
+            background-color: #F8FAF9;
+            padding: 3px 10px;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+            &:focus-within {
+                background-color: $conagra-surface;
+                border-color: $conagra-green;
+                box-shadow: 0 0 0 3px rgba($conagra-green, 0.1);
+            }
+        }
+
+        .o_cp_switch_buttons .btn {
+            border-radius: 6px;
+        }
+    }
+
+    // 2. Botones modernos con jerarquía clara
+    .btn {
+        border-radius: 7px;
+        font-weight: 500;
+        transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .btn-primary {
+        background-color: $conagra-green;
+        border-color: $conagra-green;
+
+        &:hover,
+        &:focus {
+            background-color: $conagra-green-dark;
+            border-color: $conagra-green-dark;
+        }
+    }
+
+    .btn-outline-primary {
+        color: $conagra-green;
+        border-color: $conagra-green;
+
+        &:hover {
+            background-color: $conagra-green;
+            border-color: $conagra-green;
+            color: #FFFFFF;
+        }
+    }
+
+    // 3. Formularios (Hojas tipo tarjeta moderna + pestañas limpias)
+    .o_form_view {
+        background-color: $conagra-canvas;
+
+        .o_form_statusbar {
+            background-color: $conagra-surface;
+            border-bottom: 1px solid $conagra-border;
+        }
+
+        .o_form_sheet_bg {
+            background-color: $conagra-canvas;
+        }
+
+        .o_form_sheet {
+            background-color: $conagra-surface;
+            border: 1px solid $conagra-border;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
+        }
+
+        .o_horizontal_separator {
+            color: $conagra-green-dark !important;
+            font-weight: 700;
+            font-size: 13px;
+            letter-spacing: 0.02em;
+            border-bottom: 1px solid #E2E8F0;
+            padding-bottom: 6px;
+            margin-top: 10px;
+            margin-bottom: 12px;
+        }
+
+        .o_notebook {
+            margin-top: 14px;
+
+            .nav-tabs {
+                border-bottom: 1px solid $conagra-border;
+                gap: 4px;
+
+                .nav-link {
+                    border: none;
+                    border-bottom: 2px solid transparent;
+                    border-radius: 6px 6px 0 0;
+                    color: $conagra-muted;
+                    font-weight: 500;
+                    padding: 8px 14px;
+
+                    &:hover {
+                        color: $conagra-green;
+                        background-color: $conagra-green-soft;
+                    }
+
+                    &.active {
+                        color: $conagra-green;
+                        background-color: transparent;
+                        border-bottom: 2px solid $conagra-green;
+                        font-weight: 600;
+                    }
+                }
+            }
+        }
+    }
+
+    // 4. Listas / Tablas modernas
+    .o_list_view {
+        background-color: $conagra-surface;
+
+        .o_list_table {
+            thead th {
+                background-color: #F8FAF9;
+                color: #475569;
+                font-weight: 600;
+                font-size: 12.5px;
+                border-bottom: 1px solid $conagra-border;
+                padding-top: 10px;
+                padding-bottom: 10px;
+            }
+
+            tbody tr.o_data_row {
+                transition: background-color 0.12s ease;
+
+                td {
+                    padding-top: 9px;
+                    padding-bottom: 9px;
+                    border-bottom-color: #F1F5F9;
+                }
+
+                &:hover {
+                    background-color: $conagra-green-soft !important;
+                }
+            }
+        }
+    }
+
+    // 5. Tarjetas Kanban
+    .o_kanban_view {
+        background-color: $conagra-canvas;
+
+        .o_kanban_record {
+            border-radius: 10px;
+            border: 1px solid $conagra-border !important;
+            box-shadow: 0 1px 4px rgba(15, 23, 42, 0.04);
+            transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
+
+            &:hover {
+                border-color: rgba($conagra-green, 0.4) !important;
+                box-shadow: 0 4px 12px rgba(27, 94, 32, 0.08);
+            }
+        }
+    }
+
+    // 6. Chatter, Badges y Alertas
+    .o-mail-Chatter {
+        background-color: #FAFBF9;
+        border-left: 1px solid $conagra-border;
+    }
+
+    .badge {
+        border-radius: 999px;
+        font-weight: 600;
+        padding: 0.35em 0.7em;
+    }
+
+    .alert {
+        border-radius: 9px;
+        border-left-width: 4px;
+    }
+
+    // 7. Modales y Dropdowns limpios
+    .modal-content {
+        border-radius: 12px;
+        border: 1px solid $conagra-border;
+        box-shadow: 0 12px 32px rgba(15, 23, 42, 0.15);
+    }
+
+    .o-dropdown--menu,
+    .dropdown-menu {
+        border-radius: 9px;
+        border: 1px solid $conagra-border;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.1);
+    }
+}

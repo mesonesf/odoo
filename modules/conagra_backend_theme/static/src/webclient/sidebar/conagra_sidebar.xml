@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="conagra_backend_theme.ConagraSidebar">
+        <aside class="o_conagra_sidebar d-none d-md-flex flex-column d-print-none"
+               t-att-class="{ 'o_collapsed': state.collapsed }"
+               aria-label="Navegación de aplicaciones CONAGRA">
+
+            <!-- Cabecera de marca + botón colapsar -->
+            <div class="o_conagra_sidebar_header">
+                <div class="o_conagra_brand" title="CONAGRA ERP">
+                    <img src="/conagra_backend_theme/static/src/img/conagra_mark.svg"
+                         alt="CONAGRA"
+                         class="o_conagra_brand_logo"/>
+                    <div class="o_conagra_brand_text" t-if="!state.collapsed">
+                        <span class="o_conagra_brand_name">CONAGRA</span>
+                        <span class="o_conagra_brand_sub">ERP Agroindustrial</span>
+                    </div>
+                </div>
+                <button type="button"
+                        class="o_conagra_collapse_btn"
+                        t-att-title="state.collapsed ? 'Expandir menú lateral' : 'Colapsar menú lateral'"
+                        t-att-aria-expanded="!state.collapsed"
+                        t-on-click="toggleCollapse">
+                    <i t-attf-class="fa {{ state.collapsed ? 'fa-angle-double-right' : 'fa-angle-double-left' }}" aria-hidden="true"/>
+                </button>
+            </div>
+
+            <!-- Buscador rápido de módulos -->
+            <div class="o_conagra_sidebar_search" t-if="!state.collapsed">
+                <div class="o_conagra_search_box">
+                    <i class="fa fa-search o_conagra_search_icon" aria-hidden="true"/>
+                    <input type="text"
+                           class="o_conagra_search_input"
+                           placeholder="Buscar módulo..."
+                           t-model="state.search"
+                           t-on-keydown="onSearchKeydown"/>
+                    <button type="button"
+                            class="o_conagra_search_clear"
+                            t-if="state.search"
+                            title="Limpiar búsqueda"
+                            t-on-click="clearSearch">
+                        <i class="fa fa-times" aria-hidden="true"/>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Lista de Aplicaciones -->
+            <nav class="o_conagra_sidebar_nav flex-grow-1 overflow-auto" role="navigation">
+                <ul class="o_conagra_app_list list-unstyled mb-0">
+                    <li t-foreach="apps" t-as="app" t-key="app.id" class="o_conagra_app_li">
+                        <a t-att-href="getMenuItemHref(app)"
+                           class="o_conagra_app_item"
+                           t-att-class="{ 'o_active': app.id === currentAppId }"
+                           t-att-title="app.name"
+                           t-att-data-menu-xmlid="app.xmlid"
+                           t-on-click.prevent="() => this.selectApp(app)">
+                            <span class="o_conagra_app_icon_wrap">
+                                <img t-if="app.webIconData"
+                                     t-att-src="app.webIconData"
+                                     t-att-alt="app.name"
+                                     class="o_conagra_app_icon"/>
+                                <span t-else="" class="o_conagra_app_fallback" t-esc="getAppInitials(app.name)"/>
+                            </span>
+                            <span class="o_conagra_app_name" t-if="!state.collapsed" t-esc="app.name"/>
+                        </a>
+                    </li>
+                </ul>
+                <div class="o_conagra_empty_search text-center px-3 py-4" t-if="!apps.length and !state.collapsed">
+                    <i class="fa fa-search mb-2 d-block opacity-50"/>
+                    <span>Sin coincidencias</span>
+                </div>
+            </nav>
+
+            <!-- Pie del Sidebar -->
+            <div class="o_conagra_sidebar_footer">
+                <span t-if="!state.collapsed" class="o_conagra_footer_label">CONAGRA ERP • v18</span>
+                <button t-else=""
+                        type="button"
+                        class="o_conagra_footer_expand"
+                        title="Expandir menú lateral"
+                        t-on-click="toggleCollapse">
+                    <i class="fa fa-angle-double-right" aria-hidden="true"/>
+                </button>
+            </div>
+        </aside>
+    </t>
+</templates>

@@ -54,18 +54,16 @@
             <xpath expr="//notebook" position="inside">
                 <page string="CONAGRA: Costeo, Presentación y Makita" name="conagra_costing_page">
                     <group>
-                        <group string="Clasificación, Makita y Ficha Técnica WhatsApp">
+                        <group string="1. Clasificación Comercial y Reglas de Venta">
                             <field name="conagra_business_line_id"/>
                             <field name="presentation_id"/>
                             <field name="pack_units_factor"/>
-                            <field name="is_makita_combo"/>
-                            <field name="is_bonus_free_item"/>
                             <field name="max_discount_pct"/>
                             <field name="base_commission_pct"/>
-                            <field name="ficha_tecnica_pdf" filename="ficha_tecnica_filename"/>
-                            <field name="ficha_tecnica_filename" invisible="1"/>
+                            <field name="is_makita_combo" widget="boolean_toggle"/>
+                            <field name="is_bonus_free_item" widget="boolean_toggle"/>
                         </group>
-                        <group string="Matriz de Costo de Fabricación (+ % G. Indirectos/Fijos Calculado)">
+                        <group string="2. Matriz de Costeo y Precio Sugerido">
                             <field name="cost_supplies_pen"/>
                             <field name="cost_raw_material_pen"/>
                             <field name="total_production_cost_pen"/>
@@ -76,12 +74,14 @@
                             <field name="suggested_distributor_price_pen" class="fw-bold text-success"/>
                         </group>
                     </group>
-                    <group string="Recargo de Flete por Tienda Descentralizada">
-                        <group>
+                    <group>
+                        <group string="3. Ficha Técnica PDF (WhatsApp / CRM)">
+                            <field name="ficha_tecnica_pdf" filename="ficha_tecnica_filename"/>
+                            <field name="ficha_tecnica_filename" invisible="1"/>
+                        </group>
+                        <group string="4. Recargo de Flete por Tienda Descentralizada">
                             <field name="freight_surcharge_piura"/>
                             <field name="freight_surcharge_huaura"/>
-                        </group>
-                        <group>
                             <field name="freight_surcharge_casma"/>
                             <field name="freight_surcharge_imperial"/>
                         </group>
@@ -170,7 +170,7 @@
         <field name="arch" type="xml">
             <xpath expr="//sheet/group" position="after">
                 <group string="CONAGRA: Liquidación Aduanera (DUA), Conversión Galones/Libras y TC Protegido">
-                    <group>
+                    <group string="1. Datos Aduaneros y Valores en USD">
                         <field name="dua_number"/>
                         <field name="container_number"/>
                         <field name="customs_agency_partner_id"/>
@@ -181,7 +181,7 @@
                         <field name="liquidation_balance_usd"/>
                         <field name="cost_increase_pct"/>
                     </group>
-                    <group>
+                    <group string="2. Conversión de Unidades y Costo Unitario (S/)">
                         <field name="protected_exchange_rate"/>
                         <field name="imported_gallons_qty"/>
                         <field name="converted_liters_qty"/>

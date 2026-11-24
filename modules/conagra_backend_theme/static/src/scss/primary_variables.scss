@@ -1,0 +1,39 @@
+// ============================================================================
+// CONAGRA ERP - Variables Primarias (Paleta Verde Agroindustrial + Neutros)
+// Solo valores literales: este archivo se inyecta con prepend antes de
+// web/static/src/scss/primary_variables.scss.
+// ============================================================================
+
+// Colores principales de marca (reemplazan el morado estándar de Odoo)
+$o-community-color: #1B5E20;
+$o-enterprise-color: #143D22;
+$o-enterprise-action-color: #15803D;
+
+$o-brand-odoo: #1B5E20;
+$o-brand-primary: #1B5E20;
+$o-action: #15803D;
+
+$o-success: #16A34A;
+$o-info: #0284C7;
+$o-warning: #D97706;
+$o-danger: #DC2626;
+
+// Barra superior blanca y limpia
+$o-navbar-height: 52px;
+$o-navbar-background: #FFFFFF;
+$o-navbar-border-bottom: 1px solid #E2E8F0;
+$o-navbar-entry-color: #334155;
+$o-navbar-entry-color--hover: #1B5E20;
+$o-navbar-entry-bg--hover: #EDF7EE;
+$o-navbar-entry-color--active: #1B5E20;
+$o-navbar-entry-bg--active: #E8F5E9;
+$o-navbar-brand-color: #143D22;
+$o-navbar-badge-bg: #16A34A;
+$o-navbar-badge-color: #FFFFFF;
+$o-navbar-badge-text-shadow: none;
+
+// Superficies y tipografía base
+$o-gray-100: #F8FAF9;
+$o-gray-200: #E2E8F0;
+$o-gray-300: #CBD5E1;
+$o-main-text-color: #1E293B;

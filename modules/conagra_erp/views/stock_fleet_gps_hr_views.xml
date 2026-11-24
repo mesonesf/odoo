@@ -152,10 +152,20 @@
                         class="btn-primary"
                         icon="fa-map-marker"/>
             </xpath>
+            <xpath expr="//sheet" position="before">
+                <div class="alert alert-danger mb-2" role="alert" invisible="not gps_out_of_zone_alert">
+                    <strong>Alerta GPS CONAGRA:</strong>
+                    Este vehículo se encuentra fuera de su geocerca o zona autorizada.
+                </div>
+                <div class="alert alert-danger mb-2" role="alert" invisible="compliance_alert_status != 'expired'">
+                    <strong>Alerta Documentaria / Mantenimiento Crítico:</strong>
+                    El vehículo tiene documentos legales vencidos (SOAT / Revisión Técnica / Póliza / Brevete) o alcanzó su kilometraje de mantenimiento.
+                </div>
+            </xpath>
             <xpath expr="//sheet/notebook" position="inside">
                 <page string="CONAGRA: Telemetría GPS, Geocercas y Vencimientos" name="conagra_fleet_gps_page">
                     <group>
-                        <group string="API GPS Proveedor (Pamela) &amp; Geocerca Zonal">
+                        <group string="1. Telemetría GPS y Geocerca Zonal">
                             <field name="gps_device_imei"/>
                             <field name="gps_assigned_zone_id"/>
                             <field name="gps_latitude"/>
@@ -166,7 +176,7 @@
                             <field name="gps_out_of_zone_alert" decoration-danger="gps_out_of_zone_alert"/>
                             <field name="gps_google_maps_url" widget="url"/>
                         </group>
-                        <group string="Capacidad de Reparto y Alertas Legales (SOAT / Rev. Técnica / Brevete)">
+                        <group string="2. Capacidad de Reparto y Documentos Legales">
                             <field name="max_box_capacity"/>
                             <field name="soat_due_date"/>
                             <field name="technical_review_due_date"/>

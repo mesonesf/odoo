@@ -1,0 +1,362 @@
+// ============================================================================
+// CONAGRA ERP - Sidebar Lateral Colapsable & Barra Superior Blanca
+// ============================================================================
+
+$conagra-sidebar-width: 236px;
+$conagra-sidebar-collapsed-width: 68px;
+$conagra-sidebar-bg-top: #12371F;
+$conagra-sidebar-bg-bottom: #1B4D2B;
+$conagra-sidebar-accent: #4ADE80;
+$conagra-sidebar-border: rgba(255, 255, 255, 0.08);
+
+@include media-breakpoint-up(md) {
+    body.o_web_client.o_conagra_has_sidebar {
+        --conagra-sidebar-width: #{$conagra-sidebar-width};
+        padding-left: var(--conagra-sidebar-width);
+        transition: padding-left 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+        &.o_conagra_sidebar_collapsed {
+            --conagra-sidebar-width: #{$conagra-sidebar-collapsed-width};
+        }
+
+        // En escritorio, el sidebar reemplaza al botón desplegable de 9 puntos
+        .o_main_navbar .o_navbar_apps_menu {
+            display: none;
+        }
+    }
+}
+
+.o_conagra_sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: var(--conagra-sidebar-width, #{$conagra-sidebar-width});
+    z-index: 990;
+    background: linear-gradient(180deg, $conagra-sidebar-bg-top 0%, $conagra-sidebar-bg-bottom 100%);
+    color: #E2E8F0;
+    border-right: 1px solid $conagra-sidebar-border;
+    box-shadow: 2px 0 12px rgba(15, 23, 42, 0.12);
+    transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    user-select: none;
+
+    .o_conagra_sidebar_header {
+        height: $o-navbar-height;
+        padding: 0 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid $conagra-sidebar-border;
+        flex-shrink: 0;
+        gap: 8px;
+    }
+
+    .o_conagra_brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 0;
+        overflow: hidden;
+    }
+
+    .o_conagra_brand_logo {
+        width: 32px;
+        height: 32px;
+        flex-shrink: 0;
+        border-radius: 8px;
+    }
+
+    .o_conagra_brand_text {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.15;
+        min-width: 0;
+    }
+
+    .o_conagra_brand_name {
+        font-weight: 700;
+        font-size: 14px;
+        letter-spacing: 0.04em;
+        color: #FFFFFF;
+        white-space: nowrap;
+    }
+
+    .o_conagra_brand_sub {
+        font-size: 10px;
+        color: #86EFAC;
+        letter-spacing: 0.02em;
+        white-space: nowrap;
+    }
+
+    .o_conagra_collapse_btn,
+    .o_conagra_footer_expand {
+        width: 28px;
+        height: 28px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 7px;
+        background: rgba(255, 255, 255, 0.06);
+        color: #CBD5E1;
+        cursor: pointer;
+        flex-shrink: 0;
+        transition: background 0.15s ease, color 0.15s ease;
+
+        &:hover {
+            background: rgba(255, 255, 255, 0.16);
+            color: #FFFFFF;
+        }
+    }
+
+    .o_conagra_sidebar_search {
+        padding: 10px 12px 6px;
+        flex-shrink: 0;
+    }
+
+    .o_conagra_search_box {
+        position: relative;
+        display: flex;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        padding: 0 8px;
+        transition: border-color 0.15s ease, background 0.15s ease;
+
+        &:focus-within {
+            background: rgba(255, 255, 255, 0.13);
+            border-color: rgba($conagra-sidebar-accent, 0.55);
+        }
+    }
+
+    .o_conagra_search_icon {
+        font-size: 12px;
+        color: #94A3B8;
+        margin-right: 6px;
+    }
+
+    .o_conagra_search_input {
+        width: 100%;
+        border: none;
+        background: transparent;
+        color: #FFFFFF;
+        font-size: 12.5px;
+        padding: 6px 0;
+        outline: none;
+
+        &::placeholder {
+            color: #94A3B8;
+        }
+    }
+
+    .o_conagra_search_clear {
+        border: none;
+        background: transparent;
+        color: #94A3B8;
+        padding: 2px 4px;
+        cursor: pointer;
+        font-size: 12px;
+
+        &:hover {
+            color: #FFFFFF;
+        }
+    }
+
+    .o_conagra_sidebar_nav {
+        padding: 8px 8px 14px;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+
+        &::-webkit-scrollbar {
+            width: 5px;
+        }
+        &::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 99px;
+        }
+    }
+
+    .o_conagra_app_li {
+        margin-bottom: 3px;
+    }
+
+    .o_conagra_app_item {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 10px;
+        border-radius: 9px;
+        color: #E2E8F0;
+        text-decoration: none;
+        font-size: 13.5px;
+        font-weight: 500;
+        transition: background 0.15s ease, color 0.15s ease, transform 0.1s ease;
+
+        &:hover {
+            background: rgba(255, 255, 255, 0.09);
+            color: #FFFFFF;
+            text-decoration: none;
+        }
+
+        &.o_active {
+            background: rgba($conagra-sidebar-accent, 0.16);
+            color: #FFFFFF;
+            font-weight: 600;
+
+            &::before {
+                content: "";
+                position: absolute;
+                left: 0;
+                top: 7px;
+                bottom: 7px;
+                width: 3px;
+                border-radius: 0 3px 3px 0;
+                background: $conagra-sidebar-accent;
+            }
+        }
+    }
+
+    .o_conagra_app_icon_wrap {
+        width: 28px;
+        height: 28px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        border-radius: 7px;
+        background: rgba(255, 255, 255, 0.07);
+        overflow: hidden;
+    }
+
+    .o_conagra_app_icon {
+        width: 22px;
+        height: 22px;
+        object-fit: contain;
+    }
+
+    .o_conagra_app_fallback {
+        font-size: 11px;
+        font-weight: 700;
+        color: #86EFAC;
+    }
+
+    .o_conagra_app_name {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .o_conagra_empty_search {
+        font-size: 12.5px;
+        color: #94A3B8;
+    }
+
+    .o_conagra_sidebar_footer {
+        padding: 10px 12px;
+        border-top: 1px solid $conagra-sidebar-border;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .o_conagra_footer_label {
+        font-size: 11px;
+        color: rgba(255, 255, 255, 0.55);
+        letter-spacing: 0.04em;
+    }
+
+    &.o_collapsed {
+        .o_conagra_sidebar_header {
+            justify-content: center;
+            padding: 0 8px;
+        }
+
+        .o_conagra_collapse_btn {
+            display: none;
+        }
+
+        .o_conagra_app_item {
+            justify-content: center;
+            padding: 8px;
+        }
+    }
+}
+
+// = Barra Superior Blanca Moderna (.o_main_navbar)
+// ============================================================================
+.o_main_navbar {
+    background: #FFFFFF !important;
+    border-bottom: 1px solid #E2E8F0 !important;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    padding-left: 8px;
+    padding-right: 10px;
+
+    .o_menu_brand {
+        font-weight: 700;
+        font-size: 15px;
+        color: #143D22 !important;
+        padding-left: 8px;
+        padding-right: 12px;
+    }
+
+    .o_menu_sections {
+        gap: 2px;
+        align-items: center;
+
+        .o_nav_entry,
+        .dropdown-toggle {
+            background: transparent !important;
+            color: #334155 !important;
+            border-radius: 7px !important;
+            height: 36px !important;
+            line-height: 36px !important;
+            margin: 0 2px;
+            font-weight: 500;
+            font-size: 13.5px;
+            transition: background 0.15s ease, color 0.15s ease;
+
+            &:hover,
+            &:focus {
+                background: #EDF7EE !important;
+                color: #1B5E20 !important;
+            }
+        }
+
+        .dropdown.show > .dropdown-toggle,
+        .o_nav_entry.active {
+            background: #E8F5E9 !important;
+            color: #1B5E20 !important;
+            font-weight: 600;
+        }
+    }
+
+    .o_menu_systray {
+        align-items: center;
+        gap: 2px;
+
+        > div > button,
+        > div > a,
+        .dropdown-toggle,
+        .o_nav_entry {
+            color: #334155 !important;
+            border-radius: 7px;
+
+            &:hover {
+                background: #EDF7EE !important;
+                color: #1B5E20 !important;
+            }
+        }
+
+        .o-dropdown--menu .dropdown-item {
+            color: #1E293B;
+        }
+    }
+
+    // Móvil: toggle hamburguesa limpio
+    .o_menu_toggle {
+        color: #143D22 !important;
+    }
+}

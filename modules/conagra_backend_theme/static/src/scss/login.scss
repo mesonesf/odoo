@@ -1,0 +1,51 @@
+// ============================================================================
+// CONAGRA ERP - Estilos Modernos de Login (Compatible con y sin Website)
+// ============================================================================
+
+body:has(.oe_login_form) {
+    background: linear-gradient(135deg, #F0F7F1 0%, #E6EFE8 50%, #F8FAF9 100%);
+}
+
+.o_database_list,
+.oe_website_login_container {
+    .oe_login_form,
+    &.card {
+        background-color: #FFFFFF !important;
+        border: 1px solid #E2E8F0 !important;
+        border-radius: 14px !important;
+        box-shadow: 0 12px 32px rgba(20, 61, 34, 0.09) !important;
+    }
+
+    .oe_login_form {
+        .form-control {
+            border-radius: 8px;
+            border-color: #CBD5E1;
+            padding: 9px 12px;
+
+            &:focus {
+                border-color: #1B5E20;
+                box-shadow: 0 0 0 3px rgba(27, 94, 32, 0.14);
+            }
+        }
+
+        .btn-primary {
+            background-color: #1B5E20;
+            border-color: #1B5E20;
+            border-radius: 8px;
+            font-weight: 600;
+            padding: 10px 14px;
+
+            &:hover,
+            &:focus {
+                background-color: #143D22;
+                border-color: #143D22;
+            }
+        }
+    }
+}
+
+.oe_website_login_container .oe_login_form {
+    max-width: 420px;
+    margin: 2rem auto;
+    padding: 2rem;
+}
